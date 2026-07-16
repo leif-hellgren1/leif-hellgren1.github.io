@@ -103,7 +103,7 @@
 
   /* ---------- Progress rail ---------- */
   .rail { position:fixed; right:22px; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:14px; z-index:55; }
-  .rail a { width:9px; height:9px; border-radius:50%; background:rgba(255,255,255,0.16); transition:background 0.3s var(--ease), box-shadow 0.3s var(--ease); position:relative; }
+  .rail a { width:9px; height:9px; border-radius:50%; background:rgba(233,238,250,0.55); box-shadow:0 0 6px rgba(233,238,250,0.22); transition:background 0.3s var(--ease), box-shadow 0.3s var(--ease); position:relative; }
   .rail a:hover::after {
     content:attr(data-label); position:absolute; right:20px; top:50%; transform:translateY(-50%);
     font-family:"Space Mono",monospace; font-size:0.62rem; letter-spacing:0.14em; text-transform:uppercase;
@@ -219,13 +219,22 @@
       radial-gradient(circle at 30% 28%, hsla(var(--ph,25),90%,85%,0.12), transparent 55%);
     filter: blur(1.5px);
   }
-  /* landmark ships parked near planets */
-  .ship-lm { position:absolute; pointer-events:none; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.55)); }
-  .ship-lm svg { width:100%; height:auto; display:block; }
-  @media (prefers-reduced-motion: no-preference) {
-    .ship-lm { animation: lmfloat 16s ease-in-out infinite alternate; }
+  /* the derelict — one large, low-key ship lingering behind the hero card */
+  .big-ship {
+    position:absolute; left:-52%; top:-6%; width:58%;
+    transform: translateZ(-520px);
+    opacity:0.85; pointer-events:none;
+    filter: drop-shadow(0 6px 18px rgba(0,0,0,0.6)) brightness(0.94);
   }
-  @keyframes lmfloat { from { transform:translateY(-5px); } to { transform:translateY(6px); } }
+  .big-ship svg { width:100%; height:auto; display:block; }
+  @media (prefers-reduced-motion: no-preference) {
+    .big-ship { animation: driftship 24s ease-in-out infinite alternate; }
+  }
+  @keyframes driftship {
+    from { transform: translateZ(-520px) translateY(-6px); }
+    to   { transform: translateZ(-520px) translateY(9px); }
+  }
+  @media (max-width:820px) { .big-ship { left:-18%; top:-30%; width:76%; } }
   .ring3d {
     position:absolute; width:158%; height:44%; left:-29%; top:34%;
     border-radius:50%;
@@ -353,6 +362,30 @@
 
       <!-- STOP 0 · HERO -->
       <div class="stop hero-stop" data-loc="top">
+        <div class="big-ship" aria-hidden="true">
+          <svg viewBox="0 0 520 190" xmlns="http://www.w3.org/2000/svg">
+            <g transform="rotate(-9 260 95)">
+              <line x1="150" y1="18" x2="150" y2="66" stroke="#6e6a5e" stroke-width="2"/>
+              <line x1="150" y1="18" x2="176" y2="40" stroke="#5b574d" stroke-width="1.2"/>
+              <circle cx="150" cy="16" r="2.5" fill="#7a7568"/>
+              <rect x="128" y="64" width="46" height="20" rx="3" fill="#5f5b50" stroke="#33312b" stroke-width="1"/>
+              <rect x="136" y="58" width="28" height="8" rx="2" fill="#544f45"/>
+              <rect x="60" y="86" width="380" height="34" rx="6" fill="#565248" stroke="#2e2c27" stroke-width="1.2"/>
+              <g stroke="#3a372f" stroke-width="1">
+                <line x1="110" y1="86" x2="110" y2="120"/><line x1="160" y1="86" x2="160" y2="120"/>
+                <line x1="210" y1="86" x2="210" y2="120"/><line x1="260" y1="86" x2="260" y2="120"/>
+                <line x1="310" y1="86" x2="310" y2="120"/><line x1="360" y1="86" x2="360" y2="120"/>
+              </g>
+              <rect x="424" y="78" width="58" height="50" rx="7" fill="#615c50" stroke="#2e2c27" stroke-width="1.2"/>
+              <rect x="470" y="90" width="22" height="26" rx="4" fill="#6b6659" stroke="#33312b"/>
+              <rect x="96" y="118" width="60" height="16" rx="4" fill="#4a463e" stroke="#2c2a25"/>
+              <rect x="230" y="118" width="44" height="13" rx="4" fill="#4a463e" stroke="#2c2a25"/>
+              <rect x="40" y="90" width="24" height="26" rx="4" fill="#4e4a42" stroke="#2c2a25"/>
+              <g fill="#3b3a35"><circle cx="40" cy="97" r="4"/><circle cx="40" cy="109" r="4"/></g>
+              <rect x="60" y="86" width="380" height="5" rx="2.5" fill="#6e6a5d" opacity="0.5"/>
+            </g>
+          </svg>
+        </div>
         <div class="hero-glass glass" id="heroGlass">
           <div class="spotlight" id="spot"></div>
           <div class="mono">Leif Hellgren · Generalist Engineer</div>
@@ -459,7 +492,7 @@
             <a href="https://www.linkedin.com/" target="_blank" rel="noopener">LinkedIn &nearr;</a>
             <a href="Leif-Hellgren-Resume.pdf" download>Resume &darr;</a>
           </div>
-          <div class="colophon mono">Leif Hellgren · Built AI-natively · © 2026</div>
+          <div class="colophon mono">Leif Hellgren · Built AI-natively · © 2026 <span id="texCredit" hidden>· Planet maps © Solar System Scope (CC BY 4.0)</span></div>
         </div>
       </div>
 
@@ -571,12 +604,13 @@ function planetTexture(cfg) {
           mix = Math.max(0, Math.min(1, m * 0.62 + m2 * 0.38));
           bright = 0.86 + (m2 - 0.5) * 0.5;
         } else {
-          const warpAmt = cfg.type === 'ice' ? 0.05 : 0.11;
-          const warp = warpAmt * (fbm(n, u * 3, v * 1.6, 4) - 0.5) * 2;
+          const q = fbm(n2, u * 2.6, v * 2.6, 3); // domain-warp field: fluid shear
+          const warpAmt = cfg.type === 'ice' ? 0.055 : 0.12;
+          const warp = warpAmt * (fbm(n, u * 3 + q * 1.6, v * 1.6 + q * 0.8, 5) - 0.5) * 2;
           const band = v + warp;
-          mix = 0.5 + 0.5 * Math.sin(band * Math.PI * 2 * cfg.bands + fbm(n2, u * 2, band * 2, 3) * 2.4);
-          const speck = fbm(n2, u * 9, v * 9, 3);
-          bright = 0.9 + (speck - 0.5) * 0.35;
+          mix = 0.5 + 0.5 * Math.sin(band * Math.PI * 2 * cfg.bands + q * 1.5 + fbm(n2, u * 2, band * 2, 4) * 2.6);
+          const speck = fbm(n2, u * 10, v * 10, 4);
+          bright = 0.88 + (speck - 0.5) * 0.4 + (q - 0.5) * 0.12;
         }
         R = (A[0] + (B[0] - A[0]) * mix) * bright * pole;
         G = (A[1] + (B[1] - A[1]) * mix) * bright * pole;
@@ -629,44 +663,23 @@ function planetTexture(cfg) {
   }
   return cv.toDataURL('image/png');
 }
-/* Landmark ships — simplified vector homages, small but detailed */
-const SHIP_SVGS = {
-  iss: '<svg viewBox="0 0 240 120" xmlns="http://www.w3.org/2000/svg">' +
-    '<rect x="8" y="57" width="224" height="6" fill="#aeb9c9" stroke="#7f8aa0" stroke-width="1"/>' +
-    '<g fill="#b98f2e" stroke="#7a5d1c" stroke-width="1">' +
-    '<rect x="12" y="20" width="30" height="34"/><rect x="12" y="66" width="30" height="34"/>' +
-    '<rect x="48" y="20" width="30" height="34"/><rect x="48" y="66" width="30" height="34"/>' +
-    '<rect x="162" y="20" width="30" height="34"/><rect x="162" y="66" width="30" height="34"/>' +
-    '<rect x="198" y="20" width="30" height="34"/><rect x="198" y="66" width="30" height="34"/></g>' +
-    '<g stroke="#8a6f2f" stroke-width="0.8" opacity="0.7">' +
-    '<line x1="27" y1="20" x2="27" y2="100"/><line x1="63" y1="20" x2="63" y2="100"/>' +
-    '<line x1="177" y1="20" x2="177" y2="100"/><line x1="213" y1="20" x2="213" y2="100"/></g>' +
-    '<g fill="#e7ebf1" stroke="#98a3b3" stroke-width="1">' +
-    '<rect x="106" y="34" width="16" height="52" rx="7"/>' +
-    '<rect x="94" y="50" width="52" height="14" rx="7"/>' +
-    '<circle cx="120" cy="42" r="5" fill="#cdd5e0"/></g>' +
-    '<g fill="#c2cbd8"><rect x="128" y="56" width="20" height="3"/><rect x="92" y="56" width="12" height="3"/></g>' +
-    '</svg>',
-  odyssey: '<svg viewBox="0 0 260 64" xmlns="http://www.w3.org/2000/svg">' +
-    '<circle cx="34" cy="32" r="24" fill="#e3e8ee" stroke="#a9b2c0" stroke-width="1.5"/>' +
-    '<circle cx="26" cy="26" r="4.5" fill="#b7c0cd"/>' +
-    '<rect x="58" y="29" width="132" height="6" fill="#c6cdd7" stroke="#99a3b2" stroke-width="0.8"/>' +
-    '<g fill="#d4dae2" stroke="#9aa4b3" stroke-width="0.8">' +
-    '<rect x="74" y="24" width="12" height="16" rx="2"/><rect x="104" y="24" width="12" height="16" rx="2"/>' +
-    '<rect x="134" y="24" width="12" height="16" rx="2"/><rect x="164" y="24" width="12" height="16" rx="2"/></g>' +
-    '<rect x="190" y="18" width="46" height="28" rx="5" fill="#cfd6df" stroke="#9aa4b3"/>' +
-    '<g fill="#8f99a8"><circle cx="240" cy="24" r="4"/><circle cx="240" cy="32" r="4"/><circle cx="240" cy="40" r="4"/></g>' +
-    '</svg>',
-  alien: '<svg viewBox="0 0 240 130" xmlns="http://www.w3.org/2000/svg">' +
-    '<g stroke="#2f4a36" stroke-width="1.2">' +
-    '<ellipse cx="120" cy="34" rx="16" ry="10" fill="#6d9b77"/>' +
-    '<rect x="114" y="42" width="12" height="18" fill="#5c8766"/>' +
-    '<path d="M120 56 L96 66 L84 92 L100 84 L114 96 L120 78 L126 96 L140 84 L156 92 L144 66 Z" fill="#54815f"/>' +
-    '<path d="M96 66 L18 108 L44 112 L104 78 Z" fill="#4a7455"/>' +
-    '<path d="M144 66 L222 108 L196 112 L136 78 Z" fill="#4a7455"/></g>' +
-    '<g fill="#9fe8a9"><circle cx="120" cy="34" r="3.5"/><circle cx="30" cy="108" r="3"/><circle cx="210" cy="108" r="3"/></g>' +
-    '</svg>'
-};
+/* Real planet texture maps: tried first, procedural generator is the fallback.
+   Drop equirectangular maps into /textures with these names for photoreal planets. */
+function applyTexture(sph, cfg) {
+  const done = src => { sph.style.backgroundImage = 'url(' + src + ')'; };
+  if (cfg.tex) {
+    const img = new Image();
+    img.onload = () => {
+      done(cfg.tex);
+      const c = document.getElementById('texCredit');
+      if (c) c.hidden = false;
+    };
+    img.onerror = () => { setTimeout(() => done(planetTexture(cfg)), 15); };
+    img.src = cfg.tex;
+  } else {
+    setTimeout(() => done(planetTexture(cfg)), 15);
+  }
+}
 function buildPlanet(mount, cfg) {
   const p = document.createElement('div');
   p.className = 'planet3d';
@@ -683,8 +696,8 @@ function buildPlanet(mount, cfg) {
   }
   const sph = document.createElement('div');
   sph.className = 'sphere3d';
-  sph.style.backgroundImage = 'url(' + planetTexture(cfg) + ')';
   sph.style.animationDuration = (cfg.type === 'rock' ? 210 : 130) + 's';
+  applyTexture(sph, cfg);
   p.appendChild(sph);
   if (cfg.ring) {
     const rf = document.createElement('div');
@@ -703,26 +716,14 @@ function buildPlanet(mount, cfg) {
       p.appendChild(m);
     }
   }
-  if (cfg.landmark && SHIP_SVGS[cfg.landmark]) {
-    const lm = document.createElement('div');
-    lm.className = 'ship-lm';
-    lm.innerHTML = SHIP_SVGS[cfg.landmark];
-    lm.style.width = (cfg.lm && cfg.lm.w) || '38%';
-    lm.style.top = (cfg.lm && cfg.lm.top) || '-6%';
-    lm.style.left = (cfg.lm && cfg.lm.left) || '68%';
-    p.appendChild(lm);
-  }
   mount.appendChild(p);
 }
 const PLANETS = {
-  'now':         { type: 'gas',   c1: [26, 58, 46], c2: [12, 48, 24], bands: 5, ring: true, seed: 11 },
-  'blue-origin': { type: 'ice',   c1: [208, 42, 66], c2: [196, 34, 40], bands: 6, ring: true, seed: 22,
-                   landmark: 'iss', lm: { w: '44%', top: '-4%', left: '64%' } },
-  'clubs':       { type: 'rock',  c1: [14, 44, 44], c2: [355, 34, 18], seed: 33, moons: 2,
-                   landmark: 'odyssey', lm: { w: '48%', top: '10%', left: '-24%' } },
-  'education':   { type: 'terra', c1: [210, 60, 34], c2: [110, 30, 32], seed: 44 },
-  'trading':     { type: 'gas',   c1: [152, 40, 42], c2: [172, 44, 22], bands: 6, ring: true, seed: 55,
-                   landmark: 'alien', lm: { w: '40%', top: '-10%', left: '-14%' } }
+  'now':         { type: 'gas',   c1: [26, 58, 46], c2: [12, 48, 24], bands: 5, ring: true, seed: 11, tex: 'textures/jupiter.jpg' },
+  'blue-origin': { type: 'ice',   c1: [208, 42, 66], c2: [196, 34, 40], bands: 6, ring: true, seed: 22, tex: 'textures/neptune.jpg' },
+  'clubs':       { type: 'rock',  c1: [14, 44, 44], c2: [355, 34, 18], seed: 33, moons: 2, tex: 'textures/mars.jpg' },
+  'education':   { type: 'terra', c1: [210, 60, 34], c2: [110, 30, 32], seed: 44, tex: 'textures/earth.jpg' },
+  'trading':     { type: 'gas',   c1: [152, 40, 42], c2: [172, 44, 22], bands: 6, ring: true, seed: 55, tex: 'textures/uranus.jpg' }
 };
 document.querySelectorAll('.stop').forEach(st => {
   const cfg = PLANETS[st.dataset.loc];
@@ -748,43 +749,6 @@ document.querySelectorAll('.stop').forEach(st => {
   }
   function newStar() {
     return { x: Math.random() * 2 - 1, y: Math.random() * 2 - 1, z: Math.random() * 0.95 + 0.05, p: Math.random() * 6.28 };
-  }
-  /* --- rare passing spaceships (live in the same z-space as the stars) --- */
-  const ships = [];
-  function newShip() {
-    return {
-      x: (Math.random() < 0.5 ? -1 : 1) * (0.3 + Math.random() * 0.55), // keep off card center
-      y: (Math.random() * 2 - 1) * 0.5,
-      z: 0.98,
-      vx: (Math.random() - 0.5) * 0.0006,
-      vy: (Math.random() - 0.5) * 0.0004,
-      vz: (0.0005 + Math.random() * 0.0011) * (Math.random() < 0.65 ? 1 : -0.4), // self-propulsion
-      roll: Math.random() * 6.28,
-      vr: (Math.random() - 0.5) * 0.003
-    };
-  }
-  function drawShip(c, x, y, r, roll, tt) {
-    c.save(); c.translate(x, y); c.rotate(roll);
-    const g = c.createRadialGradient(0, r * 0.55, 0, 0, r * 0.55, r * 0.95);
-    g.addColorStop(0, 'rgba(140,215,255,' + (0.45 + 0.25 * Math.sin(tt * 7)) + ')');
-    g.addColorStop(1, 'rgba(140,215,255,0)');
-    c.fillStyle = g;
-    c.beginPath(); c.arc(0, r * 0.55, r * 0.95, 0, 6.29); c.fill();
-    c.fillStyle = 'rgba(205,214,234,0.92)';
-    c.beginPath();
-    c.moveTo(0, -r);
-    c.lineTo(r * 0.62, r * 0.52);
-    c.lineTo(r * 0.2, r * 0.3);
-    c.lineTo(0, r * 0.5);
-    c.lineTo(-r * 0.2, r * 0.3);
-    c.lineTo(-r * 0.62, r * 0.52);
-    c.closePath(); c.fill();
-    c.fillStyle = 'rgba(96,160,255,0.9)';
-    c.beginPath(); c.ellipse(0, -r * 0.22, r * 0.13, r * 0.3, 0, 0, 6.29); c.fill();
-    c.strokeStyle = 'rgba(18,24,38,0.55)';
-    c.lineWidth = Math.max(0.5, r * 0.05);
-    c.beginPath(); c.moveTo(0, -r); c.lineTo(0, r * 0.5); c.stroke();
-    c.restore();
   }
   let lastY = scrollY, sm = 0, t = 0;
   function frame() {
@@ -815,24 +779,6 @@ document.querySelectorAll('.stop').forEach(st => {
         ctx.fillStyle = 'hsla(215,55%,88%,' + alpha + ')';
         const r = Math.max(0.4, 1.5 * (1 - s.z));
         ctx.beginPath(); ctx.arc(sx, sy, r, 0, 6.29); ctx.fill();
-      }
-    }
-    /* ships: rare, small, riding world speed + their own thrust */
-    if (!reduced) {
-      if (ships.length < 2 && Math.random() < 0.0022) ships.push(newShip());
-      for (let i = ships.length - 1; i >= 0; i--) {
-        const sh = ships[i];
-        sh.z -= zvel * 0.92 + sh.vz * 0.06;
-        sh.x += sh.vx; sh.y += sh.vy; sh.roll += sh.vr;
-        if (sh.z <= 0.05 || sh.z > 1.05 || Math.abs(sh.x) > 1.7) { ships.splice(i, 1); continue; }
-        const sx = CX + (sh.x * SCALE) / sh.z;
-        const sy = CY + (sh.y * SCALE) / sh.z;
-        if (sx < -90 || sx > W + 90 || sy < -90 || sy > H + 90) continue;
-        const r = Math.min(46, 6 / sh.z);
-        const a = Math.max(0, Math.min(1, (1.08 - sh.z) * 1.7)) * Math.max(0, Math.min(1, (sh.z - 0.06) * 9));
-        ctx.globalAlpha = a;
-        drawShip(ctx, sx, sy, r, sh.roll, t);
-        ctx.globalAlpha = 1;
       }
     }
     requestAnimationFrame(frame);
