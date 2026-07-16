@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Leif Hellgren — Generalist Engineer</title>
+<meta name="description" content="Leif Hellgren — physics-trained generalist engineer. Flight-critical cryogenic systems on a lunar lander, rocket club founder, systematic trader. Currently seeking the next mission." />
+<meta property="og:title" content="Leif Hellgren — Generalist Engineer" />
+<meta property="og:description" content="Flight hardware, first-principles software, systematic trading. Currently seeking the next mission." />
+<meta property="og:type" content="website" />
+<meta name="theme-color" content="#0a0b0f" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🪐</text></svg>" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0a0b0f;
+    --ink: #eef1f7;
+    --ink-dim: #9aa3b2;
+    --ink-faint: #5c6373;
+    --accent: #ff8a4c;
+    --accent-soft: #ffb489;
+    --glass-tint: rgba(255,255,255,0.045);
+    --glass-border: rgba(255,255,255,0.12);
+    --radius: 20px;
+    --maxw: 1120px;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Space Grotesk", system-ui, sans-serif;
+    font-weight: 300;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  body.locked { overflow: hidden; }
+
+  /* ---------- Space backdrop ---------- */
+  .ambient {
+    position: fixed; inset: 0; z-index: -4;
+    background:
+      radial-gradient(55% 45% at 78% 12%, rgba(88,120,255,0.10), transparent 70%),
+      radial-gradient(60% 55% at 15% 85%, rgba(150,80,220,0.08), transparent 70%),
+      radial-gradient(40% 35% at 30% 20%, rgba(255,138,76,0.05), transparent 70%),
+      linear-gradient(180deg, #0a0b0f 0%, #0b0d14 55%, #0a0b0f 100%);
+  }
+  #space { position: fixed; inset: 0; z-index: -3; display: block; }
+  .grain {
+    position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ---------- Liquid glass ---------- */
+  .glass {
+    position: relative;
+    background: var(--glass-tint);
+    border: 1px solid var(--glass-border);
+    -webkit-backdrop-filter: blur(14px) saturate(150%);
+    backdrop-filter: url(#liquid) blur(7px) saturate(150%);
+    box-shadow:
+      0 8px 40px rgba(0,0,0,0.4),
+      inset 0 1px 0 rgba(255,255,255,0.14),
+      inset 0 -1px 0 rgba(255,255,255,0.04);
+  }
+  .glass::before {
+    content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+    background: linear-gradient(120deg, rgba(255,255,255,0.13), transparent 42%);
+    opacity:0.75;
+  }
+
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+  .mono { font-family:"Space Mono",monospace; font-size:0.72rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--ink-faint); }
+
+  /* ---------- Nav ---------- */
+  nav {
+    position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+    z-index: 60; width: min(95%, var(--maxw));
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 11px 12px 11px 22px; border-radius: 999px;
+    transition: padding 0.4s var(--ease);
+  }
+  nav .brand { font-family:"Instrument Serif",serif; font-size:1.3rem; white-space:nowrap; }
+  nav .links { display:flex; gap:20px; align-items:center; }
+  nav .links a { color:var(--ink-dim); text-decoration:none; font-size:0.88rem; transition:color 0.3s var(--ease); }
+  nav .links a:hover { color:var(--ink); }
+  nav .cta {
+    font-size:0.84rem; padding:9px 18px; border-radius:999px; color:#1a0f08;
+    background: linear-gradient(180deg, var(--accent-soft), var(--accent));
+    text-decoration:none; font-weight:500; white-space:nowrap;
+    box-shadow: 0 4px 18px rgba(255,138,76,0.35);
+    transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
+  }
+  nav .cta:hover { transform:translateY(-1px); box-shadow:0 8px 26px rgba(255,138,76,0.45); }
+
+  /* ---------- Buttons ---------- */
+  .btn {
+    display:inline-flex; align-items:center; gap:9px; text-decoration:none;
+    padding:13px 24px; border-radius:999px; font-size:0.95rem; font-weight:500;
+    transition: transform 0.3s var(--ease), border-color 0.3s var(--ease), box-shadow 0.3s var(--ease);
+  }
+  .btn.primary { background:linear-gradient(180deg,var(--accent-soft),var(--accent)); color:#1a0f08; box-shadow:0 6px 22px rgba(255,138,76,0.35); }
+  .btn.primary:hover { transform:translateY(-2px); box-shadow:0 10px 30px rgba(255,138,76,0.45); }
+  .btn.ghost { color:var(--ink); border:1px solid var(--glass-border); background:rgba(255,255,255,0.03); }
+  .btn.ghost:hover { border-color:var(--ink-dim); transform:translateY(-2px); }
+
+  /* ---------- Hero ---------- */
+  header.hero {
+    position:relative; min-height:100svh;
+    display:flex; flex-direction:column; justify-content:center;
+    padding:130px 0 90px;
+  }
+  .hero-glass { position:relative; border-radius:28px; padding:clamp(32px,6vw,72px); overflow:hidden; }
+  .spotlight {
+    position:absolute; width:520px; height:520px; left:0; top:0; margin:-260px 0 0 -260px;
+    border-radius:50%; pointer-events:none;
+    background: radial-gradient(circle, rgba(255,255,255,0.15), rgba(255,138,76,0.06) 40%, transparent 70%);
+    mix-blend-mode:screen; opacity:0; transition:opacity 0.4s var(--ease);
+    transform: translate(var(--mx,50%), var(--my,50%));
+  }
+  .hero-glass:hover .spotlight { opacity:1; }
+  .hero h1 {
+    font-family:"Instrument Serif",serif; font-weight:400;
+    font-size:clamp(2.7rem,8.5vw,6.2rem); line-height:1.02; letter-spacing:-0.01em;
+    margin-top:20px;
+  }
+  .hero h1 em { font-style:italic; color:var(--accent-soft); }
+  .hero .tagline { margin-top:26px; max-width:46ch; font-size:clamp(1.02rem,2.2vw,1.3rem); color:var(--ink-dim); }
+  .hero-actions { margin-top:38px; display:flex; gap:14px; flex-wrap:wrap; }
+  .scroll-hint { margin-top:52px; display:flex; align-items:center; gap:12px; color:var(--ink-faint); font-size:0.8rem; }
+  .scroll-hint .line { width:52px; height:1px; background:linear-gradient(90deg,var(--accent),transparent); }
+
+  /* ---------- Locations ---------- */
+  section.location { position:relative; min-height:92svh; display:flex; align-items:center; padding:clamp(70px,10vh,120px) 0; }
+  .loc-grid { display:grid; grid-template-columns:1fr 1fr; gap:clamp(28px,5vw,72px); align-items:center; width:100%; }
+  .loc-grid.flip .planet-zone { order:2; }
+
+  .planet-zone { display:flex; justify-content:center; align-items:center; min-height:300px; }
+  .planet { position:relative; width:var(--psize,min(36vw,380px)); height:var(--psize,min(36vw,380px)); will-change:transform; }
+  .sphere {
+    position:absolute; inset:0; border-radius:50%; overflow:hidden;
+    background:
+      radial-gradient(circle at 32% 26%, hsla(var(--p1),85%,78%,0.85), transparent 44%),
+      repeating-linear-gradient(var(--bandang,10deg),
+        hsl(var(--p1),42%,36%) 0 12%,
+        hsl(var(--p2),48%,27%) 12% 26%,
+        hsl(var(--p1),38%,22%) 26% 38%,
+        hsl(var(--p2),44%,31%) 38% 50%),
+      radial-gradient(circle at 50% 50%, hsl(var(--p1),40%,28%), hsl(var(--p2),45%,14%));
+    box-shadow:
+      inset -34px -28px 70px rgba(0,0,0,0.85),
+      inset 10px 8px 34px hsla(var(--p1),80%,80%,0.22),
+      0 0 90px hsla(var(--p1),75%,60%,0.16);
+  }
+  .sphere::after {
+    content:""; position:absolute; inset:0; border-radius:50%;
+    background: radial-gradient(circle at 68% 72%, rgba(0,0,0,0.55), transparent 55%);
+  }
+  .ring, .ring-front {
+    position:absolute; width:158%; height:44%; left:-29%; top:34%;
+    border-radius:50%; border:2px solid hsla(var(--p1),65%,80%,0.4);
+    box-shadow: 0 0 24px hsla(var(--p1),70%,70%,0.18), inset 0 0 18px hsla(var(--p1),70%,70%,0.12);
+    transform: rotate(-16deg);
+  }
+  .ring { z-index:-1; }
+  .ring-front { clip-path: inset(52% 0 0 0); }
+  .moon {
+    position:absolute; border-radius:50%;
+    background: radial-gradient(circle at 35% 30%, hsl(var(--p2),30%,72%), hsl(var(--p2),25%,34%) 70%);
+    box-shadow: inset -6px -5px 14px rgba(0,0,0,0.7), 0 0 18px hsla(var(--p2),50%,60%,0.2);
+  }
+  .no-ring .ring, .no-ring .ring-front { display:none; }
+
+  .loc-panel { border-radius:var(--radius); padding:clamp(26px,4vw,44px); }
+  .loc-panel .idx { color:hsl(var(--p1),90%,70%); }
+  .loc-panel h2 {
+    font-family:"Instrument Serif",serif; font-weight:400;
+    font-size:clamp(1.9rem,4.2vw,3rem); letter-spacing:-0.01em; line-height:1.08;
+    margin:14px 0 6px;
+  }
+  .loc-panel .sub { color:hsl(var(--p1),55%,75%); font-size:1rem; margin-bottom:16px; }
+  .loc-panel p.body { color:var(--ink-dim); font-size:1rem; max-width:52ch; }
+  .loc-panel ul.points { margin:16px 0 0 0; list-style:none; display:grid; gap:10px; }
+  .loc-panel ul.points li { color:var(--ink-dim); font-size:0.95rem; padding-left:20px; position:relative; }
+  .loc-panel ul.points li::before { content:"◆"; position:absolute; left:0; top:2px; font-size:0.6rem; color:hsl(var(--p1),85%,68%); }
+  .deep-link {
+    margin-top:26px; display:inline-flex; align-items:center; gap:10px;
+    color:hsl(var(--p1),90%,72%); text-decoration:none; font-size:0.95rem; font-weight:500;
+    border-bottom:1px solid transparent; transition:gap 0.3s var(--ease), border-color 0.3s var(--ease);
+  }
+  .deep-link:hover { gap:16px; border-color:hsl(var(--p1),90%,72%); }
+
+  .status-chips { display:flex; flex-wrap:wrap; gap:10px; margin:18px 0 4px; }
+  .chip {
+    padding:8px 15px; border-radius:999px; border:1px solid var(--glass-border);
+    background:rgba(255,255,255,0.03); font-size:0.85rem; color:var(--ink-dim);
+  }
+  .chip.live { border-color:rgba(120,255,170,0.35); color:#9fe8bd; }
+  .chip.live::before { content:"●"; color:#4ade80; margin-right:8px; font-size:0.6rem; vertical-align:middle; }
+
+  /* ---------- Contact ---------- */
+  footer { padding:clamp(80px,14vh,150px) 0 60px; position:relative; }
+  .contact-glass { border-radius:28px; padding:clamp(36px,6vw,68px); text-align:center; }
+  .contact-glass h2 { font-family:"Instrument Serif",serif; font-weight:400; font-size:clamp(2.2rem,6vw,4rem); }
+  .contact-glass p { color:var(--ink-dim); margin:18px auto 32px; max-width:44ch; }
+  .social { display:flex; gap:22px; justify-content:center; flex-wrap:wrap; margin-top:30px; }
+  .social a { color:var(--ink-dim); text-decoration:none; font-size:0.95rem; transition:color 0.3s var(--ease); }
+  .social a:hover { color:var(--ink); }
+  .colophon { text-align:center; margin-top:54px; }
+
+  /* ---------- Deep view overlay ---------- */
+  #deep {
+    position:fixed; inset:0; z-index:100; display:none; overflow-y:auto;
+    background:
+      radial-gradient(80% 60% at 50% 0%, hsla(var(--dh,25),70%,40%,0.16), transparent 70%),
+      rgba(6,7,10,0.82);
+    -webkit-backdrop-filter: blur(18px);
+    backdrop-filter: blur(18px);
+  }
+  #deep.open { display:block; }
+  .deep-inner { max-width:860px; margin:0 auto; padding:110px 24px 100px; }
+  .deep-panel { border-radius:28px; padding:clamp(30px,5vw,60px); }
+  .deep-panel h1 {
+    font-family:"Instrument Serif",serif; font-weight:400;
+    font-size:clamp(2.2rem,5.5vw,3.6rem); line-height:1.06; letter-spacing:-0.01em;
+    margin:14px 0 10px;
+  }
+  .deep-panel .idx { color:hsl(var(--dh,25),90%,70%); }
+  .deep-panel .sub { color:hsl(var(--dh,25),60%,75%); margin-bottom:26px; }
+  .deep-panel h3 {
+    font-weight:500; font-size:1.06rem; letter-spacing:0.02em;
+    margin:34px 0 12px; color:hsl(var(--dh,25),85%,74%);
+  }
+  .deep-panel p { color:var(--ink-dim); font-size:1rem; margin-bottom:14px; max-width:66ch; }
+  .deep-panel ul { list-style:none; display:grid; gap:10px; margin:0 0 8px; }
+  .deep-panel ul li { color:var(--ink-dim); font-size:0.97rem; padding-left:20px; position:relative; }
+  .deep-panel ul li::before { content:"◆"; position:absolute; left:0; top:2px; font-size:0.6rem; color:hsl(var(--dh,25),85%,68%); }
+  .deep-panel .note { font-size:0.85rem; color:var(--ink-faint); font-style:italic; }
+  .deep-close {
+    position:fixed; top:20px; right:22px; z-index:110;
+    width:46px; height:46px; border-radius:50%; border:1px solid var(--glass-border);
+    background:rgba(255,255,255,0.05); color:var(--ink); font-size:1.15rem; cursor:pointer;
+    -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+    transition:transform 0.3s var(--ease), border-color 0.3s var(--ease);
+  }
+  .deep-close:hover { transform:rotate(90deg); border-color:var(--ink-dim); }
+  .deep-back { margin-top:36px; }
+
+  /* ---------- Reveal ---------- */
+  .reveal { opacity:0; transform:translateY(26px); transition:opacity 0.9s var(--ease), transform 0.9s var(--ease); }
+  .reveal.in { opacity:1; transform:none; }
+
+  .sr-skip { position:absolute; left:-9999px; }
+  .sr-skip:focus { left:16px; top:16px; z-index:200; background:var(--bg); padding:10px 16px; border-radius:8px; }
+
+  @media (max-width: 820px) {
+    nav .links { display:none; }
+    .loc-grid { grid-template-columns:1fr; gap:26px; }
+    .loc-grid.flip .planet-zone { order:0; }
+    .planet-zone { min-height:0; }
+    .planet { --psize:min(52vw,240px) !important; }
+    section.location { min-height:0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior:auto; }
+    .reveal { transition:none; opacity:1; transform:none; }
+  }
+</style>
+</head>
+<body>
+  <a class="sr-skip" href="#now">Skip to content</a>
+  <div class="ambient"></div>
+  <canvas id="space" aria-hidden="true"></canvas>
+  <div class="grain"></div>
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <filter id="liquid" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.008 0.012" numOctaves="2" seed="7" result="noise"/>
+      <feGaussianBlur in="noise" stdDeviation="1.4" result="blur"/>
+      <feDisplacementMap in="SourceGraphic" in2="blur" scale="24" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </svg>
+
+  <nav class="glass">
+    <span class="brand">Leif Hellgren</span>
+    <div class="links">
+      <a href="#now">Now</a>
+      <a href="#blue-origin">Blue Origin</a>
+      <a href="#clubs">Clubs</a>
+      <a href="#education">Education</a>
+      <a href="#trading">Trading</a>
+    </div>
+    <a class="cta" href="#contact">Get in touch</a>
+  </nav>
+
+  <div class="wrap">
+    <!-- ============ HERO / LAUNCH ============ -->
+    <header class="hero" id="top">
+      <div class="hero-glass glass" id="heroGlass">
+        <div class="spotlight" id="spot"></div>
+        <div class="mono">Leif Hellgren · Generalist Engineer</div>
+        <h1>Physics-trained.<br />Flight-proven.<br /><em>Built to ship.</em></h1>
+        <p class="tagline">I've owned flight-critical hardware on a lunar lander, built my own analysis software from first principles, and trade systematically. Currently seeking the next mission — scroll to travel through the record.</p>
+        <div class="hero-actions">
+          <a class="btn primary" href="#now">Where I'm headed</a>
+          <a class="btn ghost" href="https://github.com/" target="_blank" rel="noopener">GitHub &nearr;</a>
+          <a class="btn ghost" href="Leif-Hellgren-Resume.pdf" download>Resume &darr;</a>
+        </div>
+        <div class="scroll-hint"><span class="line"></span><span class="mono">Scroll to engage warp</span></div>
+      </div>
+    </header>
+
+    <!-- ============ 01 · NOW ============ -->
+    <section class="location" id="now" style="--p1:28; --p2:12; --bandang:14deg;">
+      <div class="loc-grid">
+        <div class="planet-zone reveal">
+          <div class="planet" data-parallax>
+            <div class="ring"></div>
+            <div class="sphere"></div>
+            <div class="ring-front"></div>
+          </div>
+        </div>
+        <div class="loc-panel glass reveal">
+          <span class="mono idx">01 · Current trajectory</span>
+          <h2>Open for the next mission.</h2>
+          <div class="status-chips">
+            <span class="chip live">Actively seeking</span>
+            <span class="chip">Relocation-ready</span>
+            <span class="chip">[Move plan — city / timeline]</span>
+          </div>
+          <p class="body">I'm a generalist on purpose: a physics foundation, hard aerospace ownership, and self-built software tools mean I ramp fast in any technical domain. I work AI-natively — agents and LLM tooling are part of how I engineer, not a novelty.</p>
+          <ul class="points">
+            <li>Propulsion, fluid systems, mechanical, and systems engineering roles</li>
+            <li>Quant / trading technology and research engineering</li>
+            <li>AI-tooling and hard-tech generalist roles where range wins</li>
+          </ul>
+          <a class="deep-link" href="#/now">Full picture — skills, roles, how I work <span>→</span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 02 · BLUE ORIGIN ============ -->
+    <section class="location" id="blue-origin" style="--p1:210; --p2:190; --bandang:8deg;">
+      <div class="loc-grid flip">
+        <div class="planet-zone reveal">
+          <div class="planet" data-parallax style="--psize:min(38vw,400px)">
+            <div class="ring"></div>
+            <div class="sphere"></div>
+            <div class="ring-front"></div>
+          </div>
+        </div>
+        <div class="loc-panel glass reveal">
+          <span class="mono idx">02 · Blue Origin — Lunar Program</span>
+          <h2>Responsible Engineer, cryogenic pressure management.</h2>
+          <div class="sub">Flight-critical subsystem · concept through test readiness</div>
+          <p class="body">Owned a flight-critical propellant-tank pressure-management subsystem on a lunar lander — end to end. Accountable for design, analysis, procurement, integration, and risk.</p>
+          <ul class="points">
+            <li>Built first-principles fluid/thermal tools to size the system before formal analysis</li>
+            <li>Designed a large cryogenic routing assembly through a dense vehicle environment — and cut system mass versus the initial concept</li>
+            <li>Led FMECA and an independent hydrogen hazard assessment; presented the subsystem at PDR, CDR, and TRR</li>
+          </ul>
+          <a class="deep-link" href="#/blue-origin">Enter orbit — full scope <span>→</span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 03 · CLUBS ============ -->
+    <section class="location" id="clubs" style="--p1:8; --p2:350; --bandang:20deg;">
+      <div class="loc-grid">
+        <div class="planet-zone reveal">
+          <div class="planet no-ring" data-parallax style="--psize:min(34vw,340px)">
+            <div class="sphere"></div>
+            <div class="moon" style="width:17%; height:17%; top:-4%; right:6%;"></div>
+            <div class="moon" style="width:10%; height:10%; bottom:4%; left:-6%;"></div>
+          </div>
+        </div>
+        <div class="loc-panel glass reveal">
+          <span class="mono idx">03 · UCSB Rocketry</span>
+          <h2>Founded one rocket club. Co-founded another.</h2>
+          <div class="sub">ARC · RPL — from zero to the largest engineering club on campus</div>
+          <p class="body">Started UCSB's first rocket club (ARC) as a freshman, collaborating with an experimental astrophysics lab. Then co-founded the Rocket Propulsion Laboratory — now UCSB's largest engineering club and a sanctioned capstone option.</p>
+          <ul class="points">
+            <li>Led design of a methalox engine feed system — architecture, CAD, part sourcing</li>
+            <li>Built organizations that outlasted me, not just projects</li>
+          </ul>
+          <a class="deep-link" href="#/clubs">Visit both moons <span>→</span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 04 · EDUCATION ============ -->
+    <section class="location" id="education" style="--p1:225; --p2:45; --bandang:6deg;">
+      <div class="loc-grid flip">
+        <div class="planet-zone reveal">
+          <div class="planet" data-parallax style="--psize:min(32vw,320px)">
+            <div class="ring"></div>
+            <div class="sphere"></div>
+            <div class="ring-front"></div>
+          </div>
+        </div>
+        <div class="loc-panel glass reveal">
+          <span class="mono idx">04 · UC Santa Barbara</span>
+          <h2>B.S. Physics, engineering emphasis.</h2>
+          <div class="sub">Top-ranked physics program</div>
+          <p class="body">Physics for the first-principles thinking; deliberately supplemented with mechanical design and engineering systems coursework so the theory could ship. That combination is the root of everything else on this page.</p>
+          <a class="deep-link" href="#/education">Why physics → engineering <span>→</span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 05 · TRADING ============ -->
+    <section class="location" id="trading" style="--p1:150; --p2:170; --bandang:12deg;">
+      <div class="loc-grid">
+        <div class="planet-zone reveal">
+          <div class="planet" data-parallax style="--psize:min(33vw,330px)">
+            <div class="ring"></div>
+            <div class="sphere"></div>
+            <div class="ring-front"></div>
+          </div>
+        </div>
+        <div class="loc-panel glass reveal">
+          <span class="mono idx">05 · Independent work</span>
+          <h2>Systematic trading &amp; dev work.</h2>
+          <div class="sub">Research → backtest → live tooling</div>
+          <p class="body">Independent systematic trading: strategy research, backtesting infrastructure, and execution tooling, built and run personally. The same first-principles habit as the hardware work, pointed at markets.</p>
+          <a class="deep-link" href="#/trading">Inspect the approach <span>→</span></a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ CONTACT ============ -->
+  <footer id="contact">
+    <div class="wrap">
+      <div class="contact-glass glass reveal">
+        <div class="mono" style="margin-bottom:18px">06 · Final destination</div>
+        <h2>Let's talk.</h2>
+        <p>If you're hiring for hard problems — hardware, software, or somewhere in between — I'd like to hear about them.</p>
+        <a class="btn primary" href="mailto:leif@exelor.com">leif@exelor.com</a>
+        <div class="social">
+          <a href="https://github.com/" target="_blank" rel="noopener">GitHub &nearr;</a>
+          <a href="https://www.linkedin.com/" target="_blank" rel="noopener">LinkedIn &nearr;</a>
+          <a href="Leif-Hellgren-Resume.pdf" download>Resume &darr;</a>
+        </div>
+      </div>
+      <div class="colophon mono">Leif Hellgren · Built AI-natively · © 2026</div>
+    </div>
+  </footer>
+
+  <!-- ============ DEEP VIEW ============ -->
+  <div id="deep" role="dialog" aria-modal="true" aria-label="Location detail">
+    <button class="deep-close" id="deepClose" aria-label="Close">✕</button>
+    <div class="deep-inner">
+      <div class="deep-panel glass" id="deepPanel"></div>
+    </div>
+  </div>
+
+<script>
+/* ================= Deep-page content ================= */
+const DEEP = {
+  "now": {
+    hue: 28, idx: "01 · Current trajectory", title: "Where I'm headed.",
+    sub: "Roles, skills, and how I actually work",
+    body: `
+      <h3>Roles I'm targeting</h3>
+      <ul>
+        <li><strong>Propulsion / fluid systems / mechanical / systems engineering</strong> — where my flight-hardware ownership applies directly.</li>
+        <li><strong>Quant &amp; trading technology</strong> — research engineering, backtesting infrastructure, execution tooling.</li>
+        <li><strong>AI-tooling &amp; generalist engineering</strong> — teams that need someone who can move across hardware, software, and analysis without a handoff.</li>
+      </ul>
+      <h3>Why a generalist is the right hire</h3>
+      <p>My track record is a chain of domain jumps that worked: physics degree → responsible engineer on flight-critical cryogenic hardware → self-built first-principles modeling tools → systematic trading. Each jump was faster than the last because the foundation transfers. I don't need the domain handed to me pre-digested.</p>
+      <h3>AI-native by default</h3>
+      <p>I use LLM agents and custom automation as core engineering leverage — for analysis tooling, design iteration, and building things like this site. Teams adopting AI seriously get someone who already works that way; teams that aren't get a preview.</p>
+      <h3>Working style</h3>
+      <ul>
+        <li>First-principles models before formal tools — fast iteration, then rigor.</li>
+        <li>End-to-end ownership bias: concept, design, analysis, procurement, test.</li>
+        <li>Cross-functional by habit — thermal, GNC, structures, manufacturing, vendors.</li>
+      </ul>
+      <h3>Logistics</h3>
+      <p>[Move plan: city and timeline go here.] Relocation-ready, available to start on standard notice.</p>
+      <p class="note">Placeholder: exact move plan and start-date details pending.</p>
+    `
+  },
+  "blue-origin": {
+    hue: 210, idx: "02 · Blue Origin — Lunar Program", title: "Cryogenic pressure management, owned end to end.",
+    sub: "Responsible Engineer · flight-critical subsystem",
+    body: `
+      <p>Responsible Engineer for a flight-critical propellant-tank pressure-management subsystem on a lunar lander — a thermodynamic venting approach for managing cryogenic tank pressure in microgravity, where conventional venting isn't viable. Owned from early concept through hardware and test readiness.</p>
+      <h3>Ownership</h3>
+      <ul>
+        <li>Accountable for subsystem delivery, performance, and risk — design, analysis, procurement, integration, test.</li>
+        <li>Owned drawings, releases, revisions, BOMs, and the subsystem P&amp;ID within the vehicle fluids architecture.</li>
+        <li>Selected vendors, wrote specs, reviewed quotes, managed fabrication and inspection across all subsystem hardware.</li>
+        <li>Presented the subsystem in its entirety at PDR, CDR, and TRR.</li>
+      </ul>
+      <h3>What I built</h3>
+      <ul>
+        <li>A first-principles fluid/thermal modeling tool linking flow, geometry, and cooling performance — used to size the system and drive design decisions ahead of formal analysis.</li>
+        <li>A flow-restriction assembly with integrated heating to prevent cryogenic blockage, packaged with a custom-designed interface fitting for standard aerospace fluid systems.</li>
+        <li>A large cryogenic routing assembly — tubing, fittings, supports — designed in CAD around dense neighboring subsystems, with manufacturability, weld and bend feasibility, harness routing, assembly sequence, and wrench access designed in from the start.</li>
+        <li>The overboard venting interface, coordinated with GNC so venting behavior stayed compatible with vehicle control and stability.</li>
+      </ul>
+      <h3>Hard problems</h3>
+      <ul>
+        <li>Routing through a constrained vehicle environment while meeting flow, structural, and thermal requirements simultaneously — including a cooling redesign after updated thermal data landed mid-design.</li>
+        <li>Reducing system mass versus the initial concept without giving up flow, structural, or thermal performance.</li>
+        <li>Preventing cryogenic freezing at the flow restriction — solved with an integrated heater sized within vehicle power constraints.</li>
+      </ul>
+      <h3>Engineering tradeoffs I owned</h3>
+      <ul>
+        <li><strong>Thermal contact vs. pressure drop:</strong> more tank contact improved heat extraction but cost flow performance. Balanced with the sizing model rather than intuition.</li>
+        <li><strong>Bonded vs. welded attachment:</strong> welding offered conductivity but posed thermal-stress and tank-safety risk; a high-conductivity bonded approach met the heat-transfer requirement with far less risk. Validated by test.</li>
+        <li><strong>Extended cooling concept:</strong> evaluated routing residual cooling capacity further into the structure; killed it — the added complexity and mass outweighed the benefit. Knowing when not to build is part of the job.</li>
+      </ul>
+      <h3>Test</h3>
+      <ul>
+        <li>Defined component- and system-level test requirements, procedures, and success criteria.</li>
+        <li>Designed test rigs for vibration, thermal cycling/shock, and pressure/flow testing.</li>
+        <li>Oversaw vendor development, acceptance, and qualification testing; executed heater power/functional testing and adhesive strength testing with a thermal-conductivity trade study.</li>
+      </ul>
+      <h3>Risk leadership</h3>
+      <ul>
+        <li>Led the subsystem FMECA — failure modes, risk assessment, and mitigations driven back into the design.</li>
+        <li>Led an independent hazard assessment of hydrogen accumulation and ignition under off-nominal conditions; modeled the scenarios and presented findings demonstrating the design's mitigation.</li>
+      </ul>
+      <h3>Environment</h3>
+      <p>Hands-on with cryogenic propellants — liquid hydrogen and liquid oxygen — with liquid nitrogen as a test surrogate. Day-to-day coordination across thermal, GNC, structures, manufacturing, integration, systems, test, and safety.</p>
+      <p class="note">Details are kept at scope-and-ownership level intentionally. Specifics available in conversation where appropriate.</p>
+    `
+  },
+  "clubs": {
+    hue: 8, idx: "03 · UCSB Rocketry", title: "ARC and RPL.",
+    sub: "Founder · co-founder · propulsion lead",
+    body: `
+      <h3>ARC — the first one</h3>
+      <p>Founded UCSB's first rocket club as a freshman. Built it from nothing — recruiting, structure, projects — and established a collaboration with an experimental astrophysics lab on campus.</p>
+      <h3>RPL — the one that scaled</h3>
+      <p>Co-founded the Rocket Propulsion Laboratory, which grew into the largest engineering club at UCSB and is now a sanctioned capstone project option — an institution that will outlast every founding member.</p>
+      <ul>
+        <li>Led design of a methalox engine feed system: system architecture, full CAD model, and part sourcing.</li>
+        <li>Set engineering practices for a volunteer team — design reviews, documentation, and ownership culture borrowed from industry.</li>
+      </ul>
+      <p class="note">Photos and build imagery slots reserved — send favorites and they drop in here.</p>
+    `
+  },
+  "education": {
+    hue: 225, idx: "04 · UC Santa Barbara", title: "Physics, with intent.",
+    sub: "B.S. Physics · engineering emphasis",
+    body: `
+      <p>Bachelor's in Physics with an engineering emphasis from UC Santa Barbara — a top-ranked physics program.</p>
+      <p>The physics degree was a deliberate choice over a standard engineering track: first-principles reasoning as the foundation, then targeted coursework in mechanical design and engineering systems layered on top so the theory could actually ship. The rocket clubs were the proving ground for that combination while still in school.</p>
+      <ul>
+        <li>First-principles modeling habit formed here — the same approach later used to size flight hardware.</li>
+        <li>Supplemented curriculum: mechanical design, engineering systems.</li>
+        <li>Applied immediately through ARC and RPL leadership.</li>
+      </ul>
+    `
+  },
+  "trading": {
+    hue: 150, idx: "05 · Independent work", title: "Systematic trading & dev.",
+    sub: "Research → backtest → execution",
+    body: `
+      <p>Independent systematic trading, run as an engineering discipline: hypothesis-driven strategy research, backtesting infrastructure to test it honestly, and execution tooling to run it live.</p>
+      <ul>
+        <li>Strategy research and validation with self-built backtesting infrastructure.</li>
+        <li>Execution and monitoring tooling — the dev work is mine end to end.</li>
+        <li>Risk framing first: position sizing and drawdown discipline before signal cleverness.</li>
+      </ul>
+      <p class="note">Deliberately light on specifics here — strategy details available in conversation. This section expands as shareable results are selected.</p>
+    `
+  }
+};
+
+/* ================= Starfield with warp ================= */
+(function () {
+  const cv = document.getElementById('space');
+  const ctx = cv.getContext('2d');
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let W, H, CX, CY, SCALE, stars = [];
+
+  function resize() {
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    W = innerWidth; H = innerHeight;
+    cv.width = W * dpr; cv.height = H * dpr;
+    cv.style.width = W + 'px'; cv.style.height = H + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    CX = W / 2; CY = H / 2; SCALE = Math.min(W, H) * 0.9;
+    const n = Math.min(360, Math.round((W * H) / 5200));
+    stars = Array.from({ length: n }, newStar);
+  }
+  function newStar(_, i) {
+    return { x: Math.random() * 2 - 1, y: Math.random() * 2 - 1, z: Math.random() * 0.95 + 0.05, p: Math.random() * 6.28 };
+  }
+
+  let lastY = scrollY, sm = 0, t = 0;
+  function frame() {
+    t += 0.016;
+    const dy = scrollY - lastY; lastY = scrollY;
+    sm += (dy - sm) * 0.12;                       // smoothed scroll velocity
+    const warp = Math.max(-1, Math.min(1, sm / 42)); // signed warp -1..1
+    const zvel = reduced ? 0 : 0.0016 + warp * 0.052; // idle forward drift + warp
+
+    ctx.clearRect(0, 0, W, H);
+    for (const s of stars) {
+      s.z -= zvel;
+      if (s.z <= 0.04) { Object.assign(s, newStar()); s.z = 1; }
+      if (s.z > 1) { Object.assign(s, newStar()); s.z = 0.05; }
+      const sx = CX + (s.x * SCALE) / s.z;
+      const sy = CY + (s.y * SCALE) / s.z;
+      if (sx < -60 || sx > W + 60 || sy < -60 || sy > H + 60) continue;
+
+      const aw = Math.abs(warp);
+      const twinkle = aw < 0.15 ? 0.72 + 0.28 * Math.sin(t * 2.2 + s.p) : 1;
+      const alpha = Math.max(0.12, Math.min(1, (1.15 - s.z))) * twinkle;
+
+      if (aw > 0.06 && !reduced) {
+        // hyperspace streak: line from previous z position
+        const pz = Math.min(1, Math.max(0.045, s.z + zvel * (2.2 + aw * 9)));
+        const px = CX + (s.x * SCALE) / pz;
+        const py = CY + (s.y * SCALE) / pz;
+        ctx.strokeStyle = `hsla(${215 - aw * 25}, ${60 + aw * 30}%, ${86 + aw * 10}%, ${alpha * (0.5 + aw * 0.5)})`;
+        ctx.lineWidth = Math.max(0.6, 1.7 * (1 - s.z));
+        ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(sx, sy); ctx.stroke();
+      } else {
+        ctx.fillStyle = `hsla(215, 55%, 88%, ${alpha})`;
+        const r = Math.max(0.4, 1.5 * (1 - s.z));
+        ctx.beginPath(); ctx.arc(sx, sy, r, 0, 6.29); ctx.fill();
+      }
+    }
+
+    // planet parallax
+    if (!reduced) {
+      for (const el of parallaxEls) {
+        const r = el.getBoundingClientRect();
+        const off = (r.top + r.height / 2 - H / 2) * -0.055;
+        el.style.transform = `translateY(${off.toFixed(1)}px)`;
+      }
+    }
+    if (!document.hidden) requestAnimationFrame(frame);
+  }
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) { lastY = scrollY; requestAnimationFrame(frame); } });
+
+  const parallaxEls = [];
+  addEventListener('resize', resize);
+  resize();
+  document.querySelectorAll('[data-parallax]').forEach(el => parallaxEls.push(el));
+  requestAnimationFrame(frame);
+})();
+
+/* ================= Hero spotlight ================= */
+(function () {
+  const g = document.getElementById('heroGlass'), s = document.getElementById('spot');
+  if (!g || !s) return;
+  g.addEventListener('pointermove', e => {
+    const r = g.getBoundingClientRect();
+    s.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+    s.style.setProperty('--my', (e.clientY - r.top) + 'px');
+  });
+})();
+
+/* ================= Scroll reveals ================= */
+(function () {
+  const io = new IntersectionObserver(es => {
+    es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+})();
+
+/* ================= Nav tighten ================= */
+(function () {
+  const nav = document.querySelector('nav');
+  addEventListener('scroll', () => {
+    nav.style.padding = scrollY > 40 ? '8px 12px 8px 22px' : '11px 12px 11px 22px';
+  }, { passive: true });
+})();
+
+/* ================= Deep view router (#/id) ================= */
+(function () {
+  const deep = document.getElementById('deep');
+  const panel = document.getElementById('deepPanel');
+  const closeBtn = document.getElementById('deepClose');
+
+  function openDeep(id) {
+    const d = DEEP[id];
+    if (!d) return closeDeep();
+    deep.style.setProperty('--dh', d.hue);
+    panel.innerHTML =
+      '<span class="mono idx">' + d.idx + ' · Deep dive</span>' +
+      '<h1>' + d.title + '</h1>' +
+      '<div class="sub">' + d.sub + '</div>' +
+      d.body +
+      '<a class="btn ghost deep-back" href="#" data-close>← Return to map</a>';
+    deep.classList.add('open');
+    document.body.classList.add('locked');
+    deep.scrollTop = 0;
+    closeBtn.focus();
+  }
+  function closeDeep() {
+    deep.classList.remove('open');
+    document.body.classList.remove('locked');
+    if (location.hash.startsWith('#/')) {
+      try { history.replaceState(null, '', location.href.split('#')[0]); }
+      catch (_) { location.hash = ''; }
+    }
+  }
+  function route() {
+    const h = location.hash;
+    if (h.startsWith('#/')) openDeep(h.slice(2));
+    else { deep.classList.remove('open'); document.body.classList.remove('locked'); }
+  }
+  addEventListener('hashchange', route);
+  closeBtn.addEventListener('click', closeDeep);
+  deep.addEventListener('click', e => {
+    if (e.target === deep) closeDeep();
+    const c = e.target.closest('[data-close]');
+    if (c) { e.preventDefault(); closeDeep(); }
+  });
+  addEventListener('keydown', e => { if (e.key === 'Escape' && deep.classList.contains('open')) closeDeep(); });
+  route(); // handles direct deep links on load
+})();
+</script>
+</body>
+</html>
