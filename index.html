@@ -4,9 +4,9 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Leif Hellgren — Generalist Engineer</title>
-<meta name="description" content="Leif Hellgren — physics-trained generalist engineer. Flight-critical cryogenic systems on a lunar lander, rocket club founder, systematic trader. Currently seeking the next mission." />
+<meta name="description" content="Leif Hellgren — physics-trained generalist engineer. Flight-critical cryogenic systems on a lunar lander, rocket club founder, systematic futures trader. Currently seeking the next mission." />
 <meta property="og:title" content="Leif Hellgren — Generalist Engineer" />
-<meta property="og:description" content="Flight hardware, first-principles software, systematic trading. Currently seeking the next mission." />
+<meta property="og:description" content="Flight hardware, first-principles software, systematic futures trading. Fly through the record." />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://leif-hellgren1.github.io/" />
 <link rel="canonical" href="https://leif-hellgren1.github.io/" />
@@ -23,14 +23,11 @@
     --ink-faint: #5c6373;
     --accent: #ff8a4c;
     --accent-soft: #ffb489;
-    --glass-tint: rgba(255,255,255,0.045);
-    --glass-border: rgba(255,255,255,0.12);
-    --radius: 20px;
-    --maxw: 1120px;
+    --glass-tint: rgba(255,255,255,0.05);
+    --glass-border: rgba(255,255,255,0.13);
     --ease: cubic-bezier(0.22, 1, 0.36, 1);
   }
   * { margin:0; padding:0; box-sizing:border-box; }
-  html { scroll-behavior:smooth; }
   body {
     background: var(--bg);
     color: var(--ink);
@@ -42,7 +39,6 @@
   }
   body.locked { overflow: hidden; }
 
-  /* ---------- Space backdrop ---------- */
   .ambient {
     position: fixed; inset: 0; z-index: -4;
     background:
@@ -53,11 +49,10 @@
   }
   #space { position: fixed; inset: 0; z-index: -3; display: block; }
   .grain {
-    position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0.035;
+    position: fixed; inset: 0; z-index: 5; pointer-events: none; opacity: 0.035;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
-  /* ---------- Liquid glass ---------- */
   .glass {
     position: relative;
     background: var(--glass-tint);
@@ -65,7 +60,7 @@
     -webkit-backdrop-filter: blur(14px) saturate(150%);
     backdrop-filter: blur(14px) saturate(150%);
     box-shadow:
-      0 8px 40px rgba(0,0,0,0.4),
+      0 8px 40px rgba(0,0,0,0.45),
       inset 0 1px 0 rgba(255,255,255,0.14),
       inset 0 -1px 0 rgba(255,255,255,0.04);
   }
@@ -75,21 +70,19 @@
     opacity:0.75;
   }
 
-  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
   .mono { font-family:"Space Mono",monospace; font-size:0.72rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--ink-faint); }
 
   /* ---------- Nav ---------- */
   nav {
     position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
-    z-index: 60; width: min(95%, var(--maxw));
+    z-index: 60; width: min(95%, 1120px);
     display: flex; align-items: center; justify-content: space-between;
     padding: 11px 12px 11px 22px; border-radius: 999px;
-    transition: padding 0.4s var(--ease);
   }
-  nav .brand { font-family:"Instrument Serif",serif; font-size:1.3rem; white-space:nowrap; }
+  nav .brand { font-family:"Instrument Serif",serif; font-size:1.3rem; white-space:nowrap; text-decoration:none; color:var(--ink); }
   nav .links { display:flex; gap:20px; align-items:center; }
   nav .links a { color:var(--ink-dim); text-decoration:none; font-size:0.88rem; transition:color 0.3s var(--ease); }
-  nav .links a:hover { color:var(--ink); }
+  nav .links a:hover, nav .links a.active { color:var(--ink); }
   nav .cta {
     font-size:0.84rem; padding:9px 18px; border-radius:999px; color:#1a0f08;
     background: linear-gradient(180deg, var(--accent-soft), var(--accent));
@@ -98,25 +91,67 @@
     transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
   }
   nav .cta:hover { transform:translateY(-1px); box-shadow:0 8px 26px rgba(255,138,76,0.45); }
-
-  /* ---------- Buttons ---------- */
-  .btn {
-    display:inline-flex; align-items:center; gap:9px; text-decoration:none;
-    padding:13px 24px; border-radius:999px; font-size:0.95rem; font-weight:500;
-    transition: transform 0.3s var(--ease), border-color 0.3s var(--ease), box-shadow 0.3s var(--ease);
+  .menu-btn { display:none; background:none; border:0; color:var(--ink); font-size:1.25rem; cursor:pointer; padding:4px 10px; }
+  .mobile-menu {
+    position:fixed; top:74px; left:50%; transform:translateX(-50%) translateY(-10px);
+    width:min(94%,420px); border-radius:20px; padding:10px; z-index:59;
+    opacity:0; pointer-events:none; transition:opacity 0.35s var(--ease), transform 0.35s var(--ease);
   }
-  .btn.primary { background:linear-gradient(180deg,var(--accent-soft),var(--accent)); color:#1a0f08; box-shadow:0 6px 22px rgba(255,138,76,0.35); }
-  .btn.primary:hover { transform:translateY(-2px); box-shadow:0 10px 30px rgba(255,138,76,0.45); }
-  .btn.ghost { color:var(--ink); border:1px solid var(--glass-border); background:rgba(255,255,255,0.03); }
-  .btn.ghost:hover { border-color:var(--ink-dim); transform:translateY(-2px); }
+  .mobile-menu.open { opacity:1; pointer-events:auto; transform:translateX(-50%) translateY(0); }
+  .mobile-menu a { display:block; padding:13px 16px; border-radius:12px; color:var(--ink-dim); text-decoration:none; font-size:1rem; }
+  .mobile-menu a:hover { background:rgba(255,255,255,0.05); color:var(--ink); }
 
-  /* ---------- Hero ---------- */
-  header.hero {
-    position:relative; min-height:100svh;
-    display:flex; flex-direction:column; justify-content:center;
-    padding:130px 0 90px;
+  /* ---------- Progress rail ---------- */
+  .rail { position:fixed; right:22px; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:14px; z-index:55; }
+  .rail a { width:9px; height:9px; border-radius:50%; background:rgba(255,255,255,0.16); transition:background 0.3s var(--ease), box-shadow 0.3s var(--ease); position:relative; }
+  .rail a:hover::after {
+    content:attr(data-label); position:absolute; right:20px; top:50%; transform:translateY(-50%);
+    font-family:"Space Mono",monospace; font-size:0.62rem; letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--ink-dim); white-space:nowrap;
   }
-  .hero-glass { position:relative; border-radius:28px; padding:clamp(32px,6vw,72px); overflow:hidden; }
+  .rail a.active { background:var(--accent); box-shadow:0 0 12px rgba(255,138,76,0.6); }
+  @media (max-width:1100px) { .rail { display:none; } }
+
+  a:focus-visible, button:focus-visible { outline:2px solid var(--accent); outline-offset:3px; border-radius:6px; }
+
+  /* ---------- 3D fly-through ---------- */
+  #travel { position:relative; width:1px; }
+  #viewport { position:fixed; inset:0; perspective:1200px; perspective-origin:50% 46%; overflow:hidden; }
+  #world { position:absolute; inset:0; transform-style:preserve-3d; }
+  .stop {
+    position:absolute; left:50%; top:50%;
+    width:min(92vw, 620px);
+    transform-style:preserve-3d;
+    will-change:transform, opacity;
+    opacity:0; visibility:hidden;
+  }
+  .stop.hero-stop { width:min(94vw, 740px); }
+  .stop .loc-panel { border-radius:24px; padding:clamp(24px,4vw,42px); }
+
+  .loc-panel .idx { color:hsl(var(--p1,25),90%,70%); }
+  .loc-panel h2 {
+    font-family:"Instrument Serif",serif; font-weight:400;
+    font-size:clamp(1.8rem,4.2vw,2.7rem); letter-spacing:-0.01em; line-height:1.08;
+    margin:12px 0 6px;
+  }
+  .loc-panel .sub { color:hsl(var(--p1,25),55%,75%); font-size:0.98rem; margin-bottom:14px; }
+  .loc-panel p.body { color:var(--ink-dim); font-size:0.98rem; max-width:52ch; }
+  .loc-panel ul.points { margin:14px 0 0 0; list-style:none; display:grid; gap:9px; }
+  .loc-panel ul.points li { color:var(--ink-dim); font-size:0.93rem; padding-left:20px; position:relative; }
+  .loc-panel ul.points li::before { content:"◆"; position:absolute; left:0; top:2px; font-size:0.6rem; color:hsl(var(--p1,25),85%,68%); }
+  .deep-link {
+    margin-top:22px; display:inline-flex; align-items:center; gap:10px;
+    color:hsl(var(--p1,25),90%,72%); text-decoration:none; font-size:0.93rem; font-weight:500;
+    border-bottom:1px solid transparent; transition:gap 0.3s var(--ease), border-color 0.3s var(--ease);
+  }
+  .deep-link:hover { gap:16px; border-color:hsl(var(--p1,25),90%,72%); }
+  .status-chips { display:flex; flex-wrap:wrap; gap:9px; margin:14px 0 4px; }
+  .chip { padding:7px 14px; border-radius:999px; border:1px solid var(--glass-border); background:rgba(255,255,255,0.03); font-size:0.82rem; color:var(--ink-dim); }
+  .chip.live { border-color:rgba(120,255,170,0.35); color:#9fe8bd; }
+  .chip.live::before { content:"●"; color:#4ade80; margin-right:8px; font-size:0.6rem; vertical-align:middle; }
+
+  /* Hero card */
+  .hero-glass { border-radius:28px; padding:clamp(30px,5.5vw,64px); overflow:hidden; position:relative; }
   .spotlight {
     position:absolute; width:520px; height:520px; left:0; top:0; margin:-260px 0 0 -260px;
     border-radius:50%; pointer-events:none;
@@ -125,101 +160,78 @@
     transform: translate(var(--mx,50%), var(--my,50%));
   }
   .hero-glass:hover .spotlight { opacity:1; }
-  .hero h1 {
+  .hero-glass h1 {
     font-family:"Instrument Serif",serif; font-weight:400;
-    font-size:clamp(2.7rem,8.5vw,6.2rem); line-height:1.02; letter-spacing:-0.01em;
-    margin-top:20px;
+    font-size:clamp(2.4rem,7vw,4.6rem); line-height:1.03; letter-spacing:-0.01em;
+    margin-top:16px;
   }
-  .hero h1 em { font-style:italic; color:var(--accent-soft); }
-  .hero .tagline { margin-top:26px; max-width:46ch; font-size:clamp(1.02rem,2.2vw,1.3rem); color:var(--ink-dim); }
-  .hero-actions { margin-top:38px; display:flex; gap:14px; flex-wrap:wrap; }
-  .scroll-hint { margin-top:52px; display:flex; align-items:center; gap:12px; color:var(--ink-faint); font-size:0.8rem; }
+  .hero-glass h1 em { font-style:italic; color:var(--accent-soft); }
+  .hero-glass .tagline { margin-top:20px; max-width:48ch; font-size:clamp(0.98rem,2vw,1.15rem); color:var(--ink-dim); }
+  .hero-actions { margin-top:30px; display:flex; gap:13px; flex-wrap:wrap; }
+  .btn {
+    display:inline-flex; align-items:center; gap:9px; text-decoration:none;
+    padding:12px 22px; border-radius:999px; font-size:0.93rem; font-weight:500;
+    transition: transform 0.3s var(--ease), border-color 0.3s var(--ease), box-shadow 0.3s var(--ease);
+  }
+  .btn.primary { background:linear-gradient(180deg,var(--accent-soft),var(--accent)); color:#1a0f08; box-shadow:0 6px 22px rgba(255,138,76,0.35); }
+  .btn.primary:hover { transform:translateY(-2px); box-shadow:0 10px 30px rgba(255,138,76,0.45); }
+  .btn.ghost { color:var(--ink); border:1px solid var(--glass-border); background:rgba(255,255,255,0.03); }
+  .btn.ghost:hover { border-color:var(--ink-dim); transform:translateY(-2px); }
+  .scroll-hint { margin-top:38px; display:flex; align-items:center; gap:12px; color:var(--ink-faint); font-size:0.78rem; }
   .scroll-hint .line { width:52px; height:1px; background:linear-gradient(90deg,var(--accent),transparent); }
 
-  /* ---------- Locations ---------- */
-  section.location { position:relative; min-height:92svh; display:flex; align-items:center; padding:clamp(70px,10vh,120px) 0; }
-  .loc-grid { display:grid; grid-template-columns:1fr 1fr; gap:clamp(28px,5vw,72px); align-items:center; width:100%; }
-  .loc-grid.flip .planet-zone { order:2; }
-
-  .planet-zone { display:flex; justify-content:center; align-items:center; min-height:300px; }
-  .planet { position:relative; width:var(--psize,min(36vw,380px)); height:var(--psize,min(36vw,380px)); will-change:transform; }
-  .sphere {
-    position:absolute; inset:0; border-radius:50%; overflow:hidden;
-    background:
-      radial-gradient(circle at 32% 26%, hsla(var(--p1),85%,78%,0.85), transparent 44%),
-      repeating-linear-gradient(var(--bandang,10deg),
-        hsl(var(--p1),42%,36%) 0 12%,
-        hsl(var(--p2),48%,27%) 12% 26%,
-        hsl(var(--p1),38%,22%) 26% 38%,
-        hsl(var(--p2),44%,31%) 38% 50%),
-      radial-gradient(circle at 50% 50%, hsl(var(--p1),40%,28%), hsl(var(--p2),45%,14%));
+  /* ---------- Planets ---------- */
+  .planet3d {
+    position:absolute; left:50%; top:50%;
+    width:var(--psz, 460px); height:var(--psz, 460px);
+    transform: translate(-50%,-50%) translate3d(var(--px, 0px), var(--py, 0px), var(--pz, -420px));
+    transform-style:preserve-3d; pointer-events:none;
+  }
+  .stop[data-side="r"] .planet3d { --px: min(33vw, 400px); --py: -30px; }
+  .stop[data-side="l"] .planet3d { --px: max(-33vw, -400px); --py: -30px; }
+  .sphere3d {
+    position:absolute; inset:0; border-radius:50%;
+    background-size:200% 100%; background-repeat:repeat-x; background-position:0 0;
+    animation: spin3d linear infinite;
     box-shadow:
-      inset -34px -28px 70px rgba(0,0,0,0.85),
-      inset 10px 8px 34px hsla(var(--p1),80%,80%,0.22),
-      0 0 90px hsla(var(--p1),75%,60%,0.16);
+      inset -60px -42px 110px rgba(0,0,0,0.92),
+      inset 16px 12px 46px rgba(255,255,255,0.15),
+      0 0 70px rgba(0,0,0,0.4);
   }
-  .sphere::after {
+  .sphere3d::before {
     content:""; position:absolute; inset:0; border-radius:50%;
-    background: radial-gradient(circle at 68% 72%, rgba(0,0,0,0.55), transparent 55%);
+    background: radial-gradient(circle at 30% 26%, rgba(255,255,255,0.30), rgba(255,255,255,0) 47%);
   }
-  .ring, .ring-front {
+  .sphere3d::after {
+    content:""; position:absolute; inset:0; border-radius:50%;
+    background: radial-gradient(circle at 73% 77%, rgba(0,0,0,0.66), transparent 57%);
+  }
+  @keyframes spin3d { to { background-position:-200% 0; } }
+  .atmo {
+    position:absolute; inset:-8%; border-radius:50%;
+    background: radial-gradient(circle, transparent 57%, hsla(var(--ph,25),80%,65%,0.13) 66%, hsla(var(--ph,25),85%,72%,0.26) 71%, transparent 79%);
+    filter: blur(2px);
+  }
+  .ring3d {
     position:absolute; width:158%; height:44%; left:-29%; top:34%;
-    border-radius:50%; border:2px solid hsla(var(--p1),65%,80%,0.4);
-    box-shadow: 0 0 24px hsla(var(--p1),70%,70%,0.18), inset 0 0 18px hsla(var(--p1),70%,70%,0.12);
+    border-radius:50%;
+    border:2px solid hsla(var(--ph,25),65%,82%,0.42);
+    box-shadow: 0 0 26px hsla(var(--ph,25),70%,70%,0.20), inset 0 0 20px hsla(var(--ph,25),70%,70%,0.14);
     transform: rotate(-16deg);
   }
-  .ring { z-index:-1; }
-  .ring-front { clip-path: inset(52% 0 0 0); }
-  .moon {
+  .ring3d.front { clip-path: inset(52% 0 0 0); }
+  .moon3d {
     position:absolute; border-radius:50%;
-    background: radial-gradient(circle at 35% 30%, hsl(var(--p2),30%,72%), hsl(var(--p2),25%,34%) 70%);
-    box-shadow: inset -6px -5px 14px rgba(0,0,0,0.7), 0 0 18px hsla(var(--p2),50%,60%,0.2);
+    background-size:220% 110%; background-position:30% 40%;
+    box-shadow: inset -10px -8px 20px rgba(0,0,0,0.88), inset 3px 3px 10px rgba(255,255,255,0.12);
   }
-  .no-ring .ring, .no-ring .ring-front { display:none; }
-
-  .loc-panel { border-radius:var(--radius); padding:clamp(26px,4vw,44px); }
-  .loc-panel .idx { color:hsl(var(--p1),90%,70%); }
-  .loc-panel h2 {
-    font-family:"Instrument Serif",serif; font-weight:400;
-    font-size:clamp(1.9rem,4.2vw,3rem); letter-spacing:-0.01em; line-height:1.08;
-    margin:14px 0 6px;
-  }
-  .loc-panel .sub { color:hsl(var(--p1),55%,75%); font-size:1rem; margin-bottom:16px; }
-  .loc-panel p.body { color:var(--ink-dim); font-size:1rem; max-width:52ch; }
-  .loc-panel ul.points { margin:16px 0 0 0; list-style:none; display:grid; gap:10px; }
-  .loc-panel ul.points li { color:var(--ink-dim); font-size:0.95rem; padding-left:20px; position:relative; }
-  .loc-panel ul.points li::before { content:"◆"; position:absolute; left:0; top:2px; font-size:0.6rem; color:hsl(var(--p1),85%,68%); }
-  .deep-link {
-    margin-top:26px; display:inline-flex; align-items:center; gap:10px;
-    color:hsl(var(--p1),90%,72%); text-decoration:none; font-size:0.95rem; font-weight:500;
-    border-bottom:1px solid transparent; transition:gap 0.3s var(--ease), border-color 0.3s var(--ease);
-  }
-  .deep-link:hover { gap:16px; border-color:hsl(var(--p1),90%,72%); }
-
-  .status-chips { display:flex; flex-wrap:wrap; gap:10px; margin:18px 0 4px; }
-  .chip {
-    padding:8px 15px; border-radius:999px; border:1px solid var(--glass-border);
-    background:rgba(255,255,255,0.03); font-size:0.85rem; color:var(--ink-dim);
-  }
-  .chip.live { border-color:rgba(120,255,170,0.35); color:#9fe8bd; }
-  .chip.live::before { content:"●"; color:#4ade80; margin-right:8px; font-size:0.6rem; vertical-align:middle; }
-
-  /* ---------- Contact ---------- */
-  footer { padding:clamp(80px,14vh,150px) 0 60px; position:relative; }
-  .contact-glass { border-radius:28px; padding:clamp(36px,6vw,68px); text-align:center; }
-  .contact-glass h2 { font-family:"Instrument Serif",serif; font-weight:400; font-size:clamp(2.2rem,6vw,4rem); }
-  .contact-glass p { color:var(--ink-dim); margin:18px auto 32px; max-width:44ch; }
-  .social { display:flex; gap:22px; justify-content:center; flex-wrap:wrap; margin-top:30px; }
-  .social a { color:var(--ink-dim); text-decoration:none; font-size:0.95rem; transition:color 0.3s var(--ease); }
-  .social a:hover { color:var(--ink); }
-  .colophon { text-align:center; margin-top:54px; }
 
   /* ---------- Deep view overlay ---------- */
   #deep {
     position:fixed; inset:0; z-index:100; display:none; overflow-y:auto;
     background:
       radial-gradient(80% 60% at 50% 0%, hsla(var(--dh,25),70%,40%,0.16), transparent 70%),
-      rgba(6,7,10,0.82);
+      rgba(6,7,10,0.85);
     -webkit-backdrop-filter: blur(18px);
     backdrop-filter: blur(18px);
   }
@@ -233,15 +245,14 @@
   }
   .deep-panel .idx { color:hsl(var(--dh,25),90%,70%); }
   .deep-panel .sub { color:hsl(var(--dh,25),60%,75%); margin-bottom:26px; }
-  .deep-panel h3 {
-    font-weight:500; font-size:1.06rem; letter-spacing:0.02em;
-    margin:34px 0 12px; color:hsl(var(--dh,25),85%,74%);
-  }
+  .deep-panel h3 { font-weight:500; font-size:1.06rem; letter-spacing:0.02em; margin:34px 0 12px; color:hsl(var(--dh,25),85%,74%); }
   .deep-panel p { color:var(--ink-dim); font-size:1rem; margin-bottom:14px; max-width:66ch; }
   .deep-panel ul { list-style:none; display:grid; gap:10px; margin:0 0 8px; }
   .deep-panel ul li { color:var(--ink-dim); font-size:0.97rem; padding-left:20px; position:relative; }
   .deep-panel ul li::before { content:"◆"; position:absolute; left:0; top:2px; font-size:0.6rem; color:hsl(var(--dh,25),85%,68%); }
   .deep-panel .note { font-size:0.85rem; color:var(--ink-faint); font-style:italic; }
+  #deep .deep-link { color:hsl(var(--dh,25),90%,72%); }
+  #deep .deep-link:hover { border-color:hsl(var(--dh,25),90%,72%); }
   .deep-close {
     position:fixed; top:20px; right:22px; z-index:110;
     width:46px; height:46px; border-radius:50%; border:1px solid var(--glass-border);
@@ -250,48 +261,6 @@
     transition:transform 0.3s var(--ease), border-color 0.3s var(--ease);
   }
   .deep-close:hover { transform:rotate(90deg); border-color:var(--ink-dim); }
-  .deep-back { margin-top:36px; }
-
-  /* ---------- Reveal ---------- */
-  .reveal { opacity:0; transform:translateY(26px); transition:opacity 0.9s var(--ease), transform 0.9s var(--ease); }
-  .reveal.in { opacity:1; transform:none; }
-
-  .sr-skip { position:absolute; left:-9999px; }
-  .sr-skip:focus { left:16px; top:16px; z-index:200; background:var(--bg); padding:10px 16px; border-radius:8px; }
-
-  /* ---------- v2.1: mobile menu ---------- */
-  .menu-btn { display:none; background:none; border:0; color:var(--ink); font-size:1.25rem; cursor:pointer; padding:4px 10px; }
-  .mobile-menu {
-    position:fixed; top:74px; left:50%; transform:translateX(-50%) translateY(-10px);
-    width:min(94%,420px); border-radius:20px; padding:10px; z-index:59;
-    opacity:0; pointer-events:none; transition:opacity 0.35s var(--ease), transform 0.35s var(--ease);
-  }
-  .mobile-menu.open { opacity:1; pointer-events:auto; transform:translateX(-50%) translateY(0); }
-  .mobile-menu a { display:block; padding:13px 16px; border-radius:12px; color:var(--ink-dim); text-decoration:none; font-size:1rem; }
-  .mobile-menu a:hover { background:rgba(255,255,255,0.05); color:var(--ink); }
-
-  /* ---------- v2.1: progress rail ---------- */
-  .rail { position:fixed; right:22px; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:14px; z-index:55; }
-  .rail a { width:9px; height:9px; border-radius:50%; background:rgba(255,255,255,0.16); transition:background 0.3s var(--ease), box-shadow 0.3s var(--ease); position:relative; }
-  .rail a:hover::after {
-    content:attr(data-label); position:absolute; right:20px; top:50%; transform:translateY(-50%);
-    font-family:"Space Mono",monospace; font-size:0.62rem; letter-spacing:0.14em; text-transform:uppercase;
-    color:var(--ink-dim); white-space:nowrap;
-  }
-  .rail a.active { background:var(--accent); box-shadow:0 0 12px rgba(255,138,76,0.6); }
-  @media (max-width:1100px) { .rail { display:none; } }
-
-  /* ---------- v2.1: nav active + focus ---------- */
-  nav .links a.active { color:var(--ink); }
-  a:focus-visible, button:focus-visible { outline:2px solid var(--accent); outline-offset:3px; border-radius:6px; }
-
-  /* ---------- v2.1: planet band drift ---------- */
-  @media (prefers-reduced-motion: no-preference) {
-    .sphere { animation: bands 90s linear infinite; }
-  }
-  @keyframes bands { to { background-position: 0 0, 340px 0, 0 0; } }
-
-  /* ---------- v2.1: deep page extras ---------- */
   .repo-list { display:grid; gap:12px; margin:6px 0 10px; }
   .repo-list a {
     display:block; padding:16px 18px; border-radius:14px; text-decoration:none;
@@ -305,21 +274,26 @@
     margin-top:34px; padding-top:24px; border-top:1px solid var(--glass-border);
     display:flex; justify-content:space-between; align-items:center; gap:14px; flex-wrap:wrap;
   }
-  #deep .deep-link { color:hsl(var(--dh,25),90%,72%); }
-  #deep .deep-link:hover { border-color:hsl(var(--dh,25),90%,72%); }
+
+  /* Contact card extras */
+  .contact-card { text-align:center; }
+  .contact-card h2 { font-family:"Instrument Serif",serif; font-weight:400; font-size:clamp(2rem,5vw,3.2rem); }
+  .contact-card p { color:var(--ink-dim); margin:14px auto 26px; max-width:44ch; }
+  .social { display:flex; gap:22px; justify-content:center; flex-wrap:wrap; margin-top:26px; }
+  .social a { color:var(--ink-dim); text-decoration:none; font-size:0.92rem; transition:color 0.3s var(--ease); }
+  .social a:hover { color:var(--ink); }
+  .colophon { margin-top:34px; }
+
+  .sr-skip { position:absolute; left:-9999px; }
+  .sr-skip:focus { left:16px; top:16px; z-index:200; background:var(--bg); padding:10px 16px; border-radius:8px; }
 
   @media (max-width: 820px) {
     nav .links { display:none; }
     .menu-btn { display:inline-flex; }
-    .loc-grid { grid-template-columns:1fr; gap:26px; }
-    .loc-grid.flip .planet-zone { order:0; }
-    .planet-zone { min-height:0; }
-    .planet { --psize:min(52vw,240px) !important; }
-    section.location { min-height:0; }
+    .stop[data-side="r"] .planet3d, .stop[data-side="l"] .planet3d { --px:0px; --py:-320px; --psz:270px; --pz:-480px; }
   }
   @media (prefers-reduced-motion: reduce) {
-    html { scroll-behavior:auto; }
-    .reveal { transition:none; opacity:1; transform:none; }
+    .sphere3d { animation:none; }
   }
 </style>
 </head>
@@ -330,7 +304,7 @@
   <div class="grain"></div>
 
   <nav class="glass">
-    <a class="brand" href="#top" style="text-decoration:none;color:var(--ink)">Leif Hellgren</a>
+    <a class="brand" href="#top">Leif Hellgren</a>
     <div class="links">
       <a href="#now">Now</a>
       <a href="#blue-origin">Blue Origin</a>
@@ -360,34 +334,29 @@
     <a href="#contact" data-label="Contact"></a>
   </div>
 
-  <div class="wrap">
-    <!-- ============ HERO / LAUNCH ============ -->
-    <header class="hero" id="top">
-      <div class="hero-glass glass" id="heroGlass">
-        <div class="spotlight" id="spot"></div>
-        <div class="mono">Leif Hellgren · Generalist Engineer</div>
-        <h1>Physics-trained.<br />Flight-proven.<br /><em>Built to ship.</em></h1>
-        <p class="tagline">I've owned flight-critical hardware on a lunar lander, built my own analysis software from first principles, and trade futures systematically. Currently seeking the next mission — scroll to travel through the record.</p>
-        <div class="hero-actions">
-          <a class="btn primary" href="#now">Where I'm headed</a>
-          <a class="btn ghost" href="https://github.com/leif-hellgren1" target="_blank" rel="noopener">GitHub &nearr;</a>
-          <a class="btn ghost" href="Leif-Hellgren-Resume.pdf" download>Resume &darr;</a>
-        </div>
-        <div class="scroll-hint"><span class="line"></span><span class="mono">Scroll to engage warp</span></div>
-      </div>
-    </header>
+  <div id="viewport" aria-hidden="false">
+    <div id="world">
 
-    <!-- ============ 01 · NOW ============ -->
-    <section class="location" id="now" style="--p1:28; --p2:12; --bandang:14deg;">
-      <div class="loc-grid">
-        <div class="planet-zone reveal">
-          <div class="planet" data-parallax>
-            <div class="ring"></div>
-            <div class="sphere"></div>
-            <div class="ring-front"></div>
+      <!-- STOP 0 · HERO -->
+      <div class="stop hero-stop" data-loc="top">
+        <div class="hero-glass glass" id="heroGlass">
+          <div class="spotlight" id="spot"></div>
+          <div class="mono">Leif Hellgren · Generalist Engineer</div>
+          <h1>Physics-trained.<br />Flight-proven.<br /><em>Built to ship.</em></h1>
+          <p class="tagline">I've owned flight-critical hardware on a lunar lander, built my own analysis software from first principles, and trade futures systematically. Currently seeking the next mission.</p>
+          <div class="hero-actions">
+            <a class="btn primary" href="#now">Where I'm headed</a>
+            <a class="btn ghost" href="https://github.com/leif-hellgren1" target="_blank" rel="noopener">GitHub &nearr;</a>
+            <a class="btn ghost" href="Leif-Hellgren-Resume.pdf" download>Resume &darr;</a>
           </div>
+          <div class="scroll-hint"><span class="line"></span><span class="mono">Scroll to engage warp — fly through the record</span></div>
         </div>
-        <div class="loc-panel glass reveal">
+      </div>
+
+      <!-- STOP 1 · NOW -->
+      <div class="stop" data-loc="now" data-side="r" style="--p1:26">
+        <div class="planet-mount"></div>
+        <div class="loc-panel glass">
           <span class="mono idx">01 · Current trajectory</span>
           <h2>Open for the next mission.</h2>
           <div class="status-chips">
@@ -395,130 +364,105 @@
             <span class="chip">Relocation-ready</span>
             <span class="chip">[Move plan — city / timeline]</span>
           </div>
-          <p class="body">I'm a generalist on purpose: a physics foundation, hard aerospace ownership, and self-built software tools mean I ramp fast in any technical domain. I work AI-natively — agents and LLM tooling are part of how I engineer, not a novelty.</p>
+          <p class="body">A generalist on purpose: physics foundation, flight-critical aerospace ownership, and self-built software. I work AI-natively — agents and LLM tooling are part of how I engineer.</p>
           <ul class="points">
-            <li>Propulsion, fluid systems, mechanical, and systems engineering roles</li>
+            <li>Propulsion, fluid systems, mechanical, and systems engineering</li>
             <li>Quant / trading technology and research engineering</li>
             <li>AI-tooling and hard-tech generalist roles where range wins</li>
           </ul>
           <a class="deep-link" href="#/now">Full picture — skills, roles, how I work <span>→</span></a>
         </div>
       </div>
-    </section>
 
-    <!-- ============ 02 · BLUE ORIGIN ============ -->
-    <section class="location" id="blue-origin" style="--p1:210; --p2:190; --bandang:8deg;">
-      <div class="loc-grid flip">
-        <div class="planet-zone reveal">
-          <div class="planet" data-parallax style="--psize:min(38vw,400px)">
-            <div class="ring"></div>
-            <div class="sphere"></div>
-            <div class="ring-front"></div>
-          </div>
-        </div>
-        <div class="loc-panel glass reveal">
+      <!-- STOP 2 · BLUE ORIGIN -->
+      <div class="stop" data-loc="blue-origin" data-side="l" style="--p1:208">
+        <div class="planet-mount"></div>
+        <div class="loc-panel glass">
           <span class="mono idx">02 · Blue Origin — Lunar Program</span>
           <h2>Responsible Engineer, cryogenic pressure management.</h2>
           <div class="sub">Flight-critical subsystem · concept through test readiness</div>
-          <p class="body">Owned a flight-critical propellant-tank pressure-management subsystem on a lunar lander — end to end. Accountable for design, analysis, procurement, integration, and risk.</p>
+          <p class="body">Owned a flight-critical propellant-tank pressure-management subsystem on a lunar lander, end to end — design, analysis, procurement, integration, and risk.</p>
           <ul class="points">
             <li>Built first-principles fluid/thermal tools to size the system before formal analysis</li>
-            <li>Designed a large cryogenic routing assembly through a dense vehicle environment — and cut system mass versus the initial concept</li>
-            <li>Led FMECA and an independent hydrogen hazard assessment; presented the subsystem at PDR, CDR, and TRR</li>
+            <li>Led FMECA and hazard assessments; presented the subsystem at PDR, CDR, and TRR</li>
           </ul>
           <a class="deep-link" href="#/blue-origin">Enter orbit — full scope <span>→</span></a>
         </div>
       </div>
-    </section>
 
-    <!-- ============ 03 · CLUBS ============ -->
-    <section class="location" id="clubs" style="--p1:8; --p2:350; --bandang:20deg;">
-      <div class="loc-grid">
-        <div class="planet-zone reveal">
-          <div class="planet no-ring" data-parallax style="--psize:min(34vw,340px)">
-            <div class="sphere"></div>
-            <div class="moon" style="width:17%; height:17%; top:-4%; right:6%;"></div>
-            <div class="moon" style="width:10%; height:10%; bottom:4%; left:-6%;"></div>
-          </div>
-        </div>
-        <div class="loc-panel glass reveal">
+      <!-- STOP 3 · CLUBS -->
+      <div class="stop" data-loc="clubs" data-side="r" style="--p1:12">
+        <div class="planet-mount"></div>
+        <div class="loc-panel glass">
           <span class="mono idx">03 · UCSB Rocketry</span>
           <h2>Founded one rocket club. Co-founded another.</h2>
-          <div class="sub">ARC · RPL — from zero to the largest engineering club on campus</div>
-          <p class="body">Started UCSB's first rocket club (ARC) as a freshman, collaborating with an experimental astrophysics lab. Then co-founded the Rocket Propulsion Laboratory — now UCSB's largest engineering club and a sanctioned capstone option.</p>
+          <div class="sub">ARC · RPL — now the largest engineering club on campus</div>
+          <p class="body">Started UCSB's first rocket club as a freshman, then co-founded the Rocket Propulsion Laboratory — now UCSB's largest engineering club and a sanctioned capstone option.</p>
           <ul class="points">
-            <li>Led design of a methalox engine feed system — architecture, CAD, part sourcing</li>
-            <li>Built organizations that outlasted me, not just projects</li>
+            <li>Led design of a methalox engine feed system — architecture, CAD, sourcing</li>
           </ul>
           <a class="deep-link" href="#/clubs">Visit both moons <span>→</span></a>
         </div>
       </div>
-    </section>
 
-    <!-- ============ 04 · EDUCATION ============ -->
-    <section class="location" id="education" style="--p1:225; --p2:45; --bandang:6deg;">
-      <div class="loc-grid flip">
-        <div class="planet-zone reveal">
-          <div class="planet" data-parallax style="--psize:min(32vw,320px)">
-            <div class="ring"></div>
-            <div class="sphere"></div>
-            <div class="ring-front"></div>
-          </div>
-        </div>
-        <div class="loc-panel glass reveal">
+      <!-- STOP 4 · EDUCATION -->
+      <div class="stop" data-loc="education" data-side="l" style="--p1:228">
+        <div class="planet-mount"></div>
+        <div class="loc-panel glass">
           <span class="mono idx">04 · UC Santa Barbara</span>
           <h2>B.S. Physics, engineering emphasis.</h2>
           <div class="sub">Top-ranked physics program</div>
-          <p class="body">Physics for the first-principles thinking; deliberately supplemented with mechanical design and engineering systems coursework so the theory could ship. That combination is the root of everything else on this page.</p>
+          <p class="body">Physics for the first-principles thinking, deliberately supplemented with mechanical design and engineering systems coursework so the theory could ship. The root of everything else on this flight path.</p>
           <a class="deep-link" href="#/education">Why physics → engineering <span>→</span></a>
         </div>
       </div>
-    </section>
 
-    <!-- ============ 05 · TRADING ============ -->
-    <section class="location" id="trading" style="--p1:150; --p2:170; --bandang:12deg;">
-      <div class="loc-grid">
-        <div class="planet-zone reveal">
-          <div class="planet" data-parallax style="--psize:min(33vw,330px)">
-            <div class="ring"></div>
-            <div class="sphere"></div>
-            <div class="ring-front"></div>
-          </div>
-        </div>
-        <div class="loc-panel glass reveal">
+      <!-- STOP 5 · TRADING -->
+      <div class="stop" data-loc="trading" data-side="r" style="--p1:152">
+        <div class="planet-mount"></div>
+        <div class="loc-panel glass">
           <span class="mono idx">05 · Independent work</span>
           <h2>Futures trading &amp; the tools around it.</h2>
           <div class="sub">Intraday futures · self-built tool stack</div>
-          <p class="body">Engineer and futures trader — systematic intraday futures backed by a personal stack of tools for alerts, journaling, screening, and automation. The same first-principles habit as the hardware work, pointed at markets.</p>
+          <p class="body">Engineer and futures trader — systematic intraday futures backed by a personal stack of tools for alerts, journaling, screening, and automation.</p>
           <ul class="points">
             <li>Full pipeline ownership: research → backtesting → live execution tooling</li>
-            <li>Tooling is public — six repos on GitHub, linked inside</li>
+            <li>Six public repos on GitHub, linked inside</li>
           </ul>
           <a class="deep-link" href="#/trading">Inspect the approach &amp; code <span>→</span></a>
         </div>
       </div>
-    </section>
-  </div>
 
-  <!-- ============ CONTACT ============ -->
-  <footer id="contact">
-    <div class="wrap">
-      <div class="contact-glass glass reveal">
-        <div class="mono" style="margin-bottom:18px">06 · Final destination</div>
-        <h2>Let's talk.</h2>
-        <p>If you're hiring for hard problems — hardware, software, or somewhere in between — I'd like to hear about them.</p>
-        <a class="btn primary" href="mailto:leif@exelor.com">leif@exelor.com</a>
-        <div class="social">
-          <a href="https://github.com/leif-hellgren1" target="_blank" rel="noopener">GitHub &nearr;</a>
-          <a href="https://www.linkedin.com/" target="_blank" rel="noopener">LinkedIn &nearr;</a>
-          <a href="Leif-Hellgren-Resume.pdf" download>Resume &darr;</a>
+      <!-- STOP 6 · CONTACT -->
+      <div class="stop" data-loc="contact" style="--p1:26">
+        <div class="loc-panel glass contact-card">
+          <div class="mono" style="margin-bottom:14px">06 · Final destination</div>
+          <h2>Let's talk.</h2>
+          <p>If you're hiring for hard problems — hardware, software, or somewhere in between — I'd like to hear about them.</p>
+          <a class="btn primary" href="mailto:leif@exelor.com">leif@exelor.com</a>
+          <div class="social">
+            <a href="https://github.com/leif-hellgren1" target="_blank" rel="noopener">GitHub &nearr;</a>
+            <a href="https://www.linkedin.com/" target="_blank" rel="noopener">LinkedIn &nearr;</a>
+            <a href="Leif-Hellgren-Resume.pdf" download>Resume &darr;</a>
+          </div>
+          <div class="colophon mono">Leif Hellgren · Built AI-natively · © 2026</div>
         </div>
       </div>
-      <div class="colophon mono">Leif Hellgren · Built AI-natively · © 2026</div>
-    </div>
-  </footer>
 
-  <!-- ============ DEEP VIEW ============ -->
+    </div>
+  </div>
+  <div id="travel"></div>
+
+  <noscript>
+    <style>
+      #viewport { position:static; perspective:none; overflow:visible; }
+      #world { position:static; }
+      .stop { position:static; opacity:1 !important; visibility:visible !important; transform:none !important; margin:90px auto; }
+      #travel { display:none; }
+    </style>
+  </noscript>
+
+  <!-- DEEP VIEW -->
   <div id="deep" role="dialog" aria-modal="true" aria-label="Location detail">
     <button class="deep-close" id="deepClose" aria-label="Close">✕</button>
     <div class="deep-inner">
@@ -527,10 +471,305 @@
   </div>
 
 <script>
+/* ================= Seeded noise + planet texture generation ================= */
+function mulberry(seed) {
+  let t = seed >>> 0;
+  return function () {
+    t += 0x6D2B79F5;
+    let r = Math.imul(t ^ (t >>> 15), 1 | t);
+    r ^= r + Math.imul(r ^ (r >>> 7), 61 | r);
+    return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function makeNoise(seed, W, H) {
+  const rand = mulberry(seed), g = new Float32Array(W * H);
+  for (let i = 0; i < W * H; i++) g[i] = rand();
+  function at(x, y) {
+    x = ((x % W) + W) % W;
+    y = Math.max(0, Math.min(H - 1, y));
+    return g[y * W + x];
+  }
+  return function (u, v) {
+    const x = u * W, y = v * H;
+    const x0 = Math.floor(x), y0 = Math.floor(y);
+    const fx = x - x0, fy = y - y0;
+    const sx = fx * fx * (3 - 2 * fx), sy = fy * fy * (3 - 2 * fy);
+    const a = at(x0, y0), b = at(x0 + 1, y0), c = at(x0, y0 + 1), d = at(x0 + 1, y0 + 1);
+    return a + (b - a) * sx + (c - a) * sy + (a - b - c + d) * sx * sy;
+  };
+}
+function fbm(n, u, v, oct) {
+  let s = 0, a = 0.5, f = 1, t = 0;
+  for (let o = 0; o < oct; o++) { s += a * n(u * f, v * f); t += a; a *= 0.5; f *= 2; }
+  return s / t;
+}
+function hsl2rgb(h, s, l) {
+  h = (((h / 360) % 1) + 1) % 1; s /= 100; l /= 100;
+  const q = l < 0.5 ? l * (1 + s) : l + s - l * s, p = 2 * l - q;
+  const f = t => {
+    t = ((t % 1) + 1) % 1;
+    if (t < 1 / 6) return p + (q - p) * 6 * t;
+    if (t < 1 / 2) return q;
+    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+    return p;
+  };
+  return [f(h + 1 / 3) * 255, f(h) * 255, f(h - 1 / 3) * 255];
+}
+function planetTexture(cfg) {
+  const W = 512, H = 256;
+  const cv = document.createElement('canvas');
+  cv.width = W; cv.height = H;
+  const ctx = cv.getContext('2d');
+  const img = ctx.createImageData(W, H);
+  const n = makeNoise(cfg.seed, 128, 64), n2 = makeNoise(cfg.seed + 7, 128, 64);
+  const A = hsl2rgb(cfg.c1[0], cfg.c1[1], cfg.c1[2]);
+  const B = hsl2rgb(cfg.c2[0], cfg.c2[1], cfg.c2[2]);
+  for (let y = 0; y < H; y++) {
+    const v = y / H;
+    const pole = 0.82 + 0.18 * Math.sin(v * Math.PI); // darken poles slightly
+    for (let x = 0; x < W; x++) {
+      const u = x / W;
+      let mix, bright;
+      if (cfg.type === 'rock') {
+        const m = fbm(n, u * 2, v * 2, 5), m2 = fbm(n2, u * 3.5, v * 3.5, 4);
+        mix = Math.max(0, Math.min(1, m * 0.62 + m2 * 0.38));
+        bright = 0.86 + (m2 - 0.5) * 0.5;
+      } else {
+        const warpAmt = cfg.type === 'ice' ? 0.05 : 0.11;
+        const warp = warpAmt * (fbm(n, u * 3, v * 1.6, 4) - 0.5) * 2;
+        const band = v + warp;
+        mix = 0.5 + 0.5 * Math.sin(band * Math.PI * 2 * cfg.bands + fbm(n2, u * 2, band * 2, 3) * 2.4);
+        const speck = fbm(n2, u * 9, v * 9, 3);
+        bright = 0.9 + (speck - 0.5) * 0.35;
+      }
+      const i = (y * W + x) * 4;
+      img.data[i]     = Math.max(0, Math.min(255, (A[0] + (B[0] - A[0]) * mix) * bright * pole));
+      img.data[i + 1] = Math.max(0, Math.min(255, (A[1] + (B[1] - A[1]) * mix) * bright * pole));
+      img.data[i + 2] = Math.max(0, Math.min(255, (A[2] + (B[2] - A[2]) * mix) * bright * pole));
+      img.data[i + 3] = 255;
+    }
+  }
+  ctx.putImageData(img, 0, 0);
+  if (cfg.type === 'rock') {
+    const rand = mulberry(cfg.seed + 99);
+    for (let i = 0; i < 85; i++) {
+      const cx = rand() * W, cy = rand() * H * 0.88 + H * 0.06;
+      const r = 2 + rand() * rand() * 13;
+      for (const ox of [-W, 0, W]) {
+        const g1 = ctx.createRadialGradient(cx + ox, cy, r * 0.2, cx + ox, cy, r);
+        g1.addColorStop(0, 'rgba(0,0,0,0.40)');
+        g1.addColorStop(0.75, 'rgba(0,0,0,0.16)');
+        g1.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = g1;
+        ctx.beginPath(); ctx.arc(cx + ox, cy, r, 0, 6.29); ctx.fill();
+        ctx.strokeStyle = 'rgba(255,255,255,0.10)';
+        ctx.lineWidth = Math.max(0.6, r * 0.12);
+        ctx.beginPath(); ctx.arc(cx + ox, cy, r * 0.82, Math.PI * 1.05, Math.PI * 1.85); ctx.stroke();
+      }
+    }
+  }
+  return cv.toDataURL('image/png');
+}
+function buildPlanet(mount, cfg) {
+  const p = document.createElement('div');
+  p.className = 'planet3d';
+  if (cfg.size) p.style.setProperty('--psz', cfg.size);
+  const glow = document.createElement('div');
+  glow.className = 'atmo';
+  glow.style.setProperty('--ph', cfg.c1[0]);
+  p.appendChild(glow);
+  if (cfg.ring) {
+    const rb = document.createElement('div');
+    rb.className = 'ring3d back';
+    rb.style.setProperty('--ph', cfg.c1[0]);
+    p.appendChild(rb);
+  }
+  const sph = document.createElement('div');
+  sph.className = 'sphere3d';
+  sph.style.backgroundImage = 'url(' + planetTexture(cfg) + ')';
+  sph.style.animationDuration = (cfg.type === 'rock' ? 210 : 130) + 's';
+  p.appendChild(sph);
+  if (cfg.ring) {
+    const rf = document.createElement('div');
+    rf.className = 'ring3d front';
+    rf.style.setProperty('--ph', cfg.c1[0]);
+    p.appendChild(rf);
+  }
+  if (cfg.moons) {
+    for (let i = 0; i < cfg.moons; i++) {
+      const m = document.createElement('div');
+      m.className = 'moon3d';
+      m.style.backgroundImage = 'url(' + planetTexture({ type: 'rock', c1: [cfg.c1[0], 18, 52], c2: [cfg.c1[0], 12, 26], seed: cfg.seed + 31 * (i + 1) }) + ')';
+      m.style.width = m.style.height = (13 + i * 6) + '%';
+      m.style.top = i ? '80%' : '-5%';
+      m.style.left = i ? '-9%' : '73%';
+      p.appendChild(m);
+    }
+  }
+  mount.appendChild(p);
+}
+const PLANETS = {
+  'now':         { type: 'gas',  c1: [26, 58, 46], c2: [12, 48, 24], bands: 5, ring: true,  seed: 11 },
+  'blue-origin': { type: 'ice',  c1: [208, 42, 66], c2: [196, 34, 40], bands: 6, ring: true,  seed: 22 },
+  'clubs':       { type: 'rock', c1: [14, 44, 44], c2: [355, 34, 18], seed: 33, moons: 2 },
+  'education':   { type: 'gas',  c1: [228, 48, 40], c2: [44, 56, 44], bands: 4, ring: true,  seed: 44 },
+  'trading':     { type: 'gas',  c1: [152, 40, 42], c2: [172, 44, 22], bands: 6, ring: true,  seed: 55 }
+};
+document.querySelectorAll('.stop').forEach(st => {
+  const cfg = PLANETS[st.dataset.loc];
+  const mount = st.querySelector('.planet-mount');
+  if (cfg && mount) buildPlanet(mount, cfg);
+});
+
+/* ================= Starfield with warp ================= */
+(function () {
+  const cv = document.getElementById('space');
+  const ctx = cv.getContext('2d');
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let W, H, CX, CY, SCALE, stars = [];
+  function resize() {
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    W = innerWidth; H = innerHeight;
+    cv.width = W * dpr; cv.height = H * dpr;
+    cv.style.width = W + 'px'; cv.style.height = H + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    CX = W / 2; CY = H / 2; SCALE = Math.min(W, H) * 0.9;
+    const n = Math.min(360, Math.round((W * H) / 5200));
+    stars = Array.from({ length: n }, newStar);
+  }
+  function newStar() {
+    return { x: Math.random() * 2 - 1, y: Math.random() * 2 - 1, z: Math.random() * 0.95 + 0.05, p: Math.random() * 6.28 };
+  }
+  let lastY = scrollY, sm = 0, t = 0;
+  function frame() {
+    t += 0.016;
+    const dy = scrollY - lastY; lastY = scrollY;
+    sm += (dy - sm) * 0.12;
+    const warp = Math.max(-1, Math.min(1, sm / 42));
+    const zvel = reduced ? 0 : 0.0016 + warp * 0.052;
+    ctx.clearRect(0, 0, W, H);
+    for (const s of stars) {
+      s.z -= zvel;
+      if (s.z <= 0.04) { Object.assign(s, newStar()); s.z = 1; }
+      if (s.z > 1) { Object.assign(s, newStar()); s.z = 0.05; }
+      const sx = CX + (s.x * SCALE) / s.z;
+      const sy = CY + (s.y * SCALE) / s.z;
+      if (sx < -60 || sx > W + 60 || sy < -60 || sy > H + 60) continue;
+      const aw = Math.abs(warp);
+      const twinkle = aw < 0.15 ? 0.72 + 0.28 * Math.sin(t * 2.2 + s.p) : 1;
+      const alpha = Math.max(0.12, Math.min(1, 1.15 - s.z)) * twinkle;
+      if (aw > 0.06 && !reduced) {
+        const pz = Math.min(1, Math.max(0.045, s.z + zvel * (2.2 + aw * 9)));
+        const px = CX + (s.x * SCALE) / pz;
+        const py = CY + (s.y * SCALE) / pz;
+        ctx.strokeStyle = 'hsla(' + (215 - aw * 25) + ',' + (60 + aw * 30) + '%,' + (86 + aw * 10) + '%,' + (alpha * (0.5 + aw * 0.5)) + ')';
+        ctx.lineWidth = Math.max(0.6, 1.7 * (1 - s.z));
+        ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(sx, sy); ctx.stroke();
+      } else {
+        ctx.fillStyle = 'hsla(215,55%,88%,' + alpha + ')';
+        const r = Math.max(0.4, 1.5 * (1 - s.z));
+        ctx.beginPath(); ctx.arc(sx, sy, r, 0, 6.29); ctx.fill();
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+  addEventListener('resize', resize);
+  resize();
+  requestAnimationFrame(frame);
+})();
+
+/* ================= Z-axis dolly (scroll = fly through space) ================= */
+(function () {
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const SPACING = 1600;
+  const stops = Array.from(document.querySelectorAll('.stop'));
+  const N = stops.length;
+  const travel = document.getElementById('travel');
+  function layout() { travel.style.height = ((N - 1) * SPACING + innerHeight) + 'px'; }
+  layout();
+  addEventListener('resize', layout);
+  const idToIndex = {};
+  stops.forEach((s, i) => { s._z = i * SPACING; if (s.dataset.loc) idToIndex[s.dataset.loc] = i; });
+  function goTo(i, instant) {
+    scrollTo({ top: i * SPACING, behavior: (instant || reduced) ? 'auto' : 'smooth' });
+  }
+  document.addEventListener('click', e => {
+    const a = e.target.closest('a[href^="#"]');
+    if (!a) return;
+    const h = a.getAttribute('href');
+    if (h.startsWith('#/')) return; // deep routes
+    const id = h.slice(1);
+    if (id in idToIndex) { e.preventDefault(); goTo(idToIndex[id]); }
+  });
+  if (location.hash && !location.hash.startsWith('#/')) {
+    const id = location.hash.slice(1);
+    if (id in idToIndex) setTimeout(() => goTo(idToIndex[id], true), 0);
+  }
+  const railLinks = Array.from(document.querySelectorAll('.rail a'));
+  const navLinks = Array.from(document.querySelectorAll('nav .links a'));
+  function setActive(i) {
+    const id = stops[i] && stops[i].dataset.loc;
+    railLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+    navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+  }
+  let cam = 0, lastActive = -1;
+  function frame() {
+    const target = scrollY;
+    cam += (target - cam) * (reduced ? 1 : 0.1);
+    if (Math.abs(target - cam) < 0.03) cam = target;
+    for (let i = 0; i < N; i++) {
+      const st = stops[i];
+      const dz = st._z - cam;
+      let op, vis = 'visible';
+      if (dz < -150) { op = 0; vis = 'hidden'; }
+      else if (dz < 0) { op = 1 + dz / 150; }
+      else if (dz > 3600) { op = 0; vis = 'hidden'; }
+      else if (dz > 2700) { op = (3600 - dz) / 900; }
+      else { op = 1; }
+      st.style.opacity = op.toFixed(3);
+      st.style.visibility = vis;
+      st.style.transform = 'translate(-50%,-50%) translateZ(' + (-dz).toFixed(1) + 'px)';
+      st.style.pointerEvents = Math.abs(dz) < 700 ? 'auto' : 'none';
+    }
+    const act = Math.max(0, Math.min(N - 1, Math.round(cam / SPACING)));
+    if (act !== lastActive) { lastActive = act; setActive(act); }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+
+/* ================= Hero spotlight ================= */
+(function () {
+  const g = document.getElementById('heroGlass'), s = document.getElementById('spot');
+  if (!g || !s) return;
+  g.addEventListener('pointermove', e => {
+    const r = g.getBoundingClientRect();
+    s.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+    s.style.setProperty('--my', (e.clientY - r.top) + 'px');
+  });
+})();
+
+/* ================= Mobile menu ================= */
+(function () {
+  const btn = document.getElementById('menuBtn');
+  const menu = document.getElementById('mobileMenu');
+  if (!btn || !menu) return;
+  btn.addEventListener('click', () => {
+    const open = menu.classList.toggle('open');
+    btn.setAttribute('aria-expanded', String(open));
+    btn.textContent = open ? '✕' : '☰';
+  });
+  menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    menu.classList.remove('open');
+    btn.setAttribute('aria-expanded', 'false');
+    btn.textContent = '☰';
+  }));
+})();
+
 /* ================= Deep-page content ================= */
 const DEEP = {
   "now": {
-    hue: 28, idx: "01 · Current trajectory", title: "Where I'm headed.",
+    hue: 26, idx: "01 · Current trajectory", title: "Where I'm headed.",
     sub: "Roles, skills, and how I actually work",
     body: `
       <h3>Roles I'm targeting</h3>
@@ -540,7 +779,7 @@ const DEEP = {
         <li><strong>AI-tooling &amp; generalist engineering</strong> — teams that need someone who can move across hardware, software, and analysis without a handoff.</li>
       </ul>
       <h3>Why a generalist is the right hire</h3>
-      <p>My track record is a chain of domain jumps that worked: physics degree → responsible engineer on flight-critical cryogenic hardware → self-built first-principles modeling tools → systematic trading. Each jump was faster than the last because the foundation transfers. I don't need the domain handed to me pre-digested.</p>
+      <p>My track record is a chain of domain jumps that worked: physics degree → responsible engineer on flight-critical cryogenic hardware → self-built first-principles modeling tools → systematic futures trading. Each jump was faster than the last because the foundation transfers. I don't need the domain handed to me pre-digested.</p>
       <h3>AI-native by default</h3>
       <p>I use LLM agents and custom automation as core engineering leverage — for analysis tooling, design iteration, and building things like this site. Teams adopting AI seriously get someone who already works that way; teams that aren't get a preview.</p>
       <h3>Working style</h3>
@@ -555,7 +794,7 @@ const DEEP = {
     `
   },
   "blue-origin": {
-    hue: 210, idx: "02 · Blue Origin — Lunar Program", title: "Cryogenic pressure management, owned end to end.",
+    hue: 208, idx: "02 · Blue Origin — Lunar Program", title: "Cryogenic pressure management, owned end to end.",
     sub: "Responsible Engineer · flight-critical subsystem",
     body: `
       <p>Responsible Engineer for a flight-critical propellant-tank pressure-management subsystem on a lunar lander — a thermodynamic venting approach for managing cryogenic tank pressure in microgravity, where conventional venting isn't viable. Owned from early concept through hardware and test readiness.</p>
@@ -602,7 +841,7 @@ const DEEP = {
     `
   },
   "clubs": {
-    hue: 8, idx: "03 · UCSB Rocketry", title: "ARC and RPL.",
+    hue: 12, idx: "03 · UCSB Rocketry", title: "ARC and RPL.",
     sub: "Founder · co-founder · propulsion lead",
     body: `
       <h3>ARC — the first one</h3>
@@ -617,7 +856,7 @@ const DEEP = {
     `
   },
   "education": {
-    hue: 225, idx: "04 · UC Santa Barbara", title: "Physics, with intent.",
+    hue: 228, idx: "04 · UC Santa Barbara", title: "Physics, with intent.",
     sub: "B.S. Physics · engineering emphasis",
     body: `
       <p>Bachelor's in Physics with an engineering emphasis from UC Santa Barbara — a top-ranked physics program.</p>
@@ -630,7 +869,7 @@ const DEEP = {
     `
   },
   "trading": {
-    hue: 150, idx: "05 · Independent work", title: "Futures trading, run like engineering.",
+    hue: 152, idx: "05 · Independent work", title: "Futures trading, run like engineering.",
     sub: "Intraday futures · research → tooling → execution",
     body: `
       <p>Systematic intraday futures trading, run as an engineering discipline: hypothesis-driven research, honest testing, and a self-built tool stack around execution — alerting, journaling, screening, and automation. Every recurring manual step becomes a tool.</p>
@@ -656,115 +895,11 @@ const DEEP = {
   }
 };
 
-/* ================= Starfield with warp ================= */
-(function () {
-  const cv = document.getElementById('space');
-  const ctx = cv.getContext('2d');
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let W, H, CX, CY, SCALE, stars = [];
-
-  function resize() {
-    const dpr = Math.min(devicePixelRatio || 1, 2);
-    W = innerWidth; H = innerHeight;
-    cv.width = W * dpr; cv.height = H * dpr;
-    cv.style.width = W + 'px'; cv.style.height = H + 'px';
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    CX = W / 2; CY = H / 2; SCALE = Math.min(W, H) * 0.9;
-    const n = Math.min(360, Math.round((W * H) / 5200));
-    stars = Array.from({ length: n }, newStar);
-  }
-  function newStar(_, i) {
-    return { x: Math.random() * 2 - 1, y: Math.random() * 2 - 1, z: Math.random() * 0.95 + 0.05, p: Math.random() * 6.28 };
-  }
-
-  let lastY = scrollY, sm = 0, t = 0;
-  function frame() {
-    t += 0.016;
-    const dy = scrollY - lastY; lastY = scrollY;
-    sm += (dy - sm) * 0.12;                       // smoothed scroll velocity
-    const warp = Math.max(-1, Math.min(1, sm / 42)); // signed warp -1..1
-    const zvel = reduced ? 0 : 0.0016 + warp * 0.052; // idle forward drift + warp
-
-    ctx.clearRect(0, 0, W, H);
-    for (const s of stars) {
-      s.z -= zvel;
-      if (s.z <= 0.04) { Object.assign(s, newStar()); s.z = 1; }
-      if (s.z > 1) { Object.assign(s, newStar()); s.z = 0.05; }
-      const sx = CX + (s.x * SCALE) / s.z;
-      const sy = CY + (s.y * SCALE) / s.z;
-      if (sx < -60 || sx > W + 60 || sy < -60 || sy > H + 60) continue;
-
-      const aw = Math.abs(warp);
-      const twinkle = aw < 0.15 ? 0.72 + 0.28 * Math.sin(t * 2.2 + s.p) : 1;
-      const alpha = Math.max(0.12, Math.min(1, (1.15 - s.z))) * twinkle;
-
-      if (aw > 0.06 && !reduced) {
-        // hyperspace streak: line from previous z position
-        const pz = Math.min(1, Math.max(0.045, s.z + zvel * (2.2 + aw * 9)));
-        const px = CX + (s.x * SCALE) / pz;
-        const py = CY + (s.y * SCALE) / pz;
-        ctx.strokeStyle = `hsla(${215 - aw * 25}, ${60 + aw * 30}%, ${86 + aw * 10}%, ${alpha * (0.5 + aw * 0.5)})`;
-        ctx.lineWidth = Math.max(0.6, 1.7 * (1 - s.z));
-        ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(sx, sy); ctx.stroke();
-      } else {
-        ctx.fillStyle = `hsla(215, 55%, 88%, ${alpha})`;
-        const r = Math.max(0.4, 1.5 * (1 - s.z));
-        ctx.beginPath(); ctx.arc(sx, sy, r, 0, 6.29); ctx.fill();
-      }
-    }
-
-    // planet parallax
-    if (!reduced) {
-      for (const el of parallaxEls) {
-        const r = el.getBoundingClientRect();
-        const off = (r.top + r.height / 2 - H / 2) * -0.055;
-        el.style.transform = `translateY(${off.toFixed(1)}px)`;
-      }
-    }
-    if (!document.hidden) requestAnimationFrame(frame);
-  }
-  document.addEventListener('visibilitychange', () => { if (!document.hidden) { lastY = scrollY; requestAnimationFrame(frame); } });
-
-  const parallaxEls = [];
-  addEventListener('resize', resize);
-  resize();
-  document.querySelectorAll('[data-parallax]').forEach(el => parallaxEls.push(el));
-  requestAnimationFrame(frame);
-})();
-
-/* ================= Hero spotlight ================= */
-(function () {
-  const g = document.getElementById('heroGlass'), s = document.getElementById('spot');
-  if (!g || !s) return;
-  g.addEventListener('pointermove', e => {
-    const r = g.getBoundingClientRect();
-    s.style.setProperty('--mx', (e.clientX - r.left) + 'px');
-    s.style.setProperty('--my', (e.clientY - r.top) + 'px');
-  });
-})();
-
-/* ================= Scroll reveals ================= */
-(function () {
-  const io = new IntersectionObserver(es => {
-    es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
-  }, { threshold: 0.12 });
-  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
-})();
-
-/* ================= Nav tighten ================= */
-(function () {
-  const nav = document.querySelector('nav');
-  addEventListener('scroll', () => {
-    nav.style.padding = scrollY > 40 ? '8px 12px 8px 22px' : '11px 12px 11px 22px';
-  }, { passive: true });
-})();
-
 /* ================= Deep view router (#/id) ================= */
 (function () {
   const deep = document.getElementById('deep');
   const panel = document.getElementById('deepPanel');
   const closeBtn = document.getElementById('deepClose');
-
   const ORDER = ['now', 'blue-origin', 'clubs', 'education', 'trading'];
   const LABEL = { 'now': 'Current trajectory', 'blue-origin': 'Blue Origin', 'clubs': 'UCSB Rocketry', 'education': 'UC Santa Barbara', 'trading': 'Trading & dev' };
   function openDeep(id) {
@@ -807,37 +942,7 @@ const DEEP = {
     if (c) { e.preventDefault(); closeDeep(); }
   });
   addEventListener('keydown', e => { if (e.key === 'Escape' && deep.classList.contains('open')) closeDeep(); });
-  route(); // handles direct deep links on load
-})();
-
-/* ================= Scrollspy + rail + mobile menu ================= */
-(function () {
-  const ids = ['now', 'blue-origin', 'clubs', 'education', 'trading', 'contact'];
-  const railLinks = Array.from(document.querySelectorAll('.rail a'));
-  const navLinks = Array.from(document.querySelectorAll('nav .links a'));
-  function setActive(id) {
-    railLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
-    navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
-  }
-  const spy = new IntersectionObserver(es => {
-    es.forEach(e => { if (e.isIntersecting) setActive(e.target.id); });
-  }, { rootMargin: '-45% 0px -45% 0px' });
-  ids.forEach(id => { const el = document.getElementById(id); if (el) spy.observe(el); });
-
-  const btn = document.getElementById('menuBtn');
-  const menu = document.getElementById('mobileMenu');
-  if (btn && menu) {
-    btn.addEventListener('click', () => {
-      const open = menu.classList.toggle('open');
-      btn.setAttribute('aria-expanded', String(open));
-      btn.textContent = open ? '✕' : '☰';
-    });
-    menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
-      menu.classList.remove('open');
-      btn.setAttribute('aria-expanded', 'false');
-      btn.textContent = '☰';
-    }));
-  }
+  route();
 })();
 </script>
 </body>
