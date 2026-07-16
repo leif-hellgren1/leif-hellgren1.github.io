@@ -23,8 +23,8 @@
     --ink-faint: #5c6373;
     --accent: #ff8a4c;
     --accent-soft: #ffb489;
-    --glass-tint: rgba(255,255,255,0.05);
-    --glass-border: rgba(255,255,255,0.13);
+    --glass-tint: rgba(20,23,32,0.58);
+    --glass-border: rgba(255,255,255,0.14);
     --ease: cubic-bezier(0.22, 1, 0.36, 1);
   }
   * { margin:0; padding:0; box-sizing:border-box; }
@@ -57,8 +57,8 @@
     position: relative;
     background: var(--glass-tint);
     border: 1px solid var(--glass-border);
-    -webkit-backdrop-filter: blur(14px) saturate(150%);
-    backdrop-filter: blur(14px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    backdrop-filter: blur(20px) saturate(150%);
     box-shadow:
       0 8px 40px rgba(0,0,0,0.45),
       inset 0 1px 0 rgba(255,255,255,0.14),
@@ -194,24 +194,38 @@
     background-size:200% 100%; background-repeat:repeat-x; background-position:0 0;
     animation: spin3d linear infinite;
     box-shadow:
-      inset -60px -42px 110px rgba(0,0,0,0.92),
-      inset 16px 12px 46px rgba(255,255,255,0.15),
-      0 0 70px rgba(0,0,0,0.4);
+      inset -46px -30px 90px rgba(0,0,0,0.85),
+      inset 10px 8px 34px rgba(255,255,255,0.08),
+      0 0 60px rgba(0,0,0,0.45);
   }
+  /* soft sunlit side (subtle — real planets are matte) */
   .sphere3d::before {
     content:""; position:absolute; inset:0; border-radius:50%;
-    background: radial-gradient(circle at 30% 26%, rgba(255,255,255,0.30), rgba(255,255,255,0) 47%);
+    background: radial-gradient(circle at 32% 30%, rgba(255,255,255,0.14), rgba(255,255,255,0) 52%);
   }
+  /* night side terminator + limb darkening */
   .sphere3d::after {
     content:""; position:absolute; inset:0; border-radius:50%;
-    background: radial-gradient(circle at 73% 77%, rgba(0,0,0,0.66), transparent 57%);
+    background:
+      radial-gradient(circle at 78% 72%, rgba(0,0,0,0.78), rgba(0,0,0,0.30) 42%, transparent 62%),
+      radial-gradient(circle at 50% 50%, transparent 58%, rgba(0,0,0,0.34) 96%);
   }
   @keyframes spin3d { to { background-position:-200% 0; } }
+  /* thin crisp atmospheric limb, brighter on the sunlit side */
   .atmo {
-    position:absolute; inset:-8%; border-radius:50%;
-    background: radial-gradient(circle, transparent 57%, hsla(var(--ph,25),80%,65%,0.13) 66%, hsla(var(--ph,25),85%,72%,0.26) 71%, transparent 79%);
-    filter: blur(2px);
+    position:absolute; inset:-4.5%; border-radius:50%;
+    background:
+      radial-gradient(circle, transparent 60%, hsla(var(--ph,25),75%,70%,0.10) 68%, hsla(var(--ph,25),85%,78%,0.22) 72%, transparent 76.5%),
+      radial-gradient(circle at 30% 28%, hsla(var(--ph,25),90%,85%,0.12), transparent 55%);
+    filter: blur(1.5px);
   }
+  /* landmark ships parked near planets */
+  .ship-lm { position:absolute; pointer-events:none; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.55)); }
+  .ship-lm svg { width:100%; height:auto; display:block; }
+  @media (prefers-reduced-motion: no-preference) {
+    .ship-lm { animation: lmfloat 16s ease-in-out infinite alternate; }
+  }
+  @keyframes lmfloat { from { transform:translateY(-5px); } to { transform:translateY(6px); } }
   .ring3d {
     position:absolute; width:158%; height:44%; left:-29%; top:34%;
     border-radius:50%;
@@ -526,30 +540,75 @@ function planetTexture(cfg) {
   const B = hsl2rgb(cfg.c2[0], cfg.c2[1], cfg.c2[2]);
   for (let y = 0; y < H; y++) {
     const v = y / H;
-    const pole = 0.82 + 0.18 * Math.sin(v * Math.PI); // darken poles slightly
+    const pole = 0.84 + 0.16 * Math.sin(v * Math.PI); // darken poles slightly
     for (let x = 0; x < W; x++) {
       const u = x / W;
-      let mix, bright;
-      if (cfg.type === 'rock') {
-        const m = fbm(n, u * 2, v * 2, 5), m2 = fbm(n2, u * 3.5, v * 3.5, 4);
-        mix = Math.max(0, Math.min(1, m * 0.62 + m2 * 0.38));
-        bright = 0.86 + (m2 - 0.5) * 0.5;
-      } else {
-        const warpAmt = cfg.type === 'ice' ? 0.05 : 0.11;
-        const warp = warpAmt * (fbm(n, u * 3, v * 1.6, 4) - 0.5) * 2;
-        const band = v + warp;
-        mix = 0.5 + 0.5 * Math.sin(band * Math.PI * 2 * cfg.bands + fbm(n2, u * 2, band * 2, 3) * 2.4);
-        const speck = fbm(n2, u * 9, v * 9, 3);
-        bright = 0.9 + (speck - 0.5) * 0.35;
-      }
       const i = (y * W + x) * 4;
-      img.data[i]     = Math.max(0, Math.min(255, (A[0] + (B[0] - A[0]) * mix) * bright * pole));
-      img.data[i + 1] = Math.max(0, Math.min(255, (A[1] + (B[1] - A[1]) * mix) * bright * pole));
-      img.data[i + 2] = Math.max(0, Math.min(255, (A[2] + (B[2] - A[2]) * mix) * bright * pole));
+      let R, G, Bl;
+      if (cfg.type === 'terra') {
+        // earth-like: oceans, continents, coasts, ice caps, clouds
+        const e = fbm(n, u * 2.2, v * 2.2, 6);
+        const capEdge = 0.085 + (fbm(n2, u * 5, v < 0.5 ? 0.06 : 0.94, 3) - 0.5) * 0.07;
+        const isCap = v < capEdge || v > 1 - capEdge;
+        if (isCap) { R = 226; G = 235; Bl = 243; }
+        else if (e < 0.50) { // ocean with depth shading
+          const d = (0.50 - e) / 0.50;
+          R = 16 + 30 * (1 - d); G = 48 + 58 * (1 - d); Bl = 96 + 82 * (1 - d);
+        }
+        else if (e < 0.525) { R = 196; G = 180; Bl = 132; } // coastline sand
+        else { // land: lowland green -> highland brown -> peaks
+          const h = Math.min(1, (e - 0.525) / 0.4);
+          R = 58 + 92 * h; G = 108 - 16 * h; Bl = 52 + 26 * h;
+          if (e > 0.86) { R = 208; G = 208; Bl = 212; } // snowy peaks
+        }
+        const cl = fbm(n2, u * 3 + 9, v * 3, 5);
+        if (cl > 0.60) { const ca = Math.min(0.85, (cl - 0.60) * 4.5); R = R * (1 - ca) + 252 * ca; G = G * (1 - ca) + 252 * ca; Bl = Bl * (1 - ca) + 254 * ca; }
+        R *= pole; G *= pole; Bl *= pole;
+      } else {
+        let mix, bright;
+        if (cfg.type === 'rock') {
+          const m = fbm(n, u * 2, v * 2, 5), m2 = fbm(n2, u * 3.5, v * 3.5, 4);
+          mix = Math.max(0, Math.min(1, m * 0.62 + m2 * 0.38));
+          bright = 0.86 + (m2 - 0.5) * 0.5;
+        } else {
+          const warpAmt = cfg.type === 'ice' ? 0.05 : 0.11;
+          const warp = warpAmt * (fbm(n, u * 3, v * 1.6, 4) - 0.5) * 2;
+          const band = v + warp;
+          mix = 0.5 + 0.5 * Math.sin(band * Math.PI * 2 * cfg.bands + fbm(n2, u * 2, band * 2, 3) * 2.4);
+          const speck = fbm(n2, u * 9, v * 9, 3);
+          bright = 0.9 + (speck - 0.5) * 0.35;
+        }
+        R = (A[0] + (B[0] - A[0]) * mix) * bright * pole;
+        G = (A[1] + (B[1] - A[1]) * mix) * bright * pole;
+        Bl = (A[2] + (B[2] - A[2]) * mix) * bright * pole;
+      }
+      img.data[i]     = Math.max(0, Math.min(255, R));
+      img.data[i + 1] = Math.max(0, Math.min(255, G));
+      img.data[i + 2] = Math.max(0, Math.min(255, Bl));
       img.data[i + 3] = 255;
     }
   }
   ctx.putImageData(img, 0, 0);
+  if (cfg.type === 'gas') {
+    // storm vortices (wrapped), like Jovian ovals
+    const rand = mulberry(cfg.seed + 55);
+    const ns = 2 + Math.floor(rand() * 3);
+    for (let k = 0; k < ns; k++) {
+      const cx = rand() * W, cy = H * (0.28 + rand() * 0.44);
+      const rx = 10 + rand() * 24, ry = rx * (0.42 + rand() * 0.22);
+      for (const ox of [-W, 0, W]) {
+        const g1 = ctx.createRadialGradient(cx + ox, cy, ry * 0.15, cx + ox, cy, rx);
+        g1.addColorStop(0, 'rgba(255,246,230,0.30)');
+        g1.addColorStop(0.55, 'rgba(120,90,60,0.14)');
+        g1.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = g1;
+        ctx.beginPath(); ctx.ellipse(cx + ox, cy, rx, ry, 0, 0, 6.29); ctx.fill();
+        ctx.strokeStyle = 'rgba(40,30,22,0.22)';
+        ctx.lineWidth = 1.1;
+        ctx.beginPath(); ctx.ellipse(cx + ox, cy, rx * 0.8, ry * 0.8, 0, 0, 6.29); ctx.stroke();
+      }
+    }
+  }
   if (cfg.type === 'rock') {
     const rand = mulberry(cfg.seed + 99);
     for (let i = 0; i < 85; i++) {
@@ -570,6 +629,44 @@ function planetTexture(cfg) {
   }
   return cv.toDataURL('image/png');
 }
+/* Landmark ships — simplified vector homages, small but detailed */
+const SHIP_SVGS = {
+  iss: '<svg viewBox="0 0 240 120" xmlns="http://www.w3.org/2000/svg">' +
+    '<rect x="8" y="57" width="224" height="6" fill="#aeb9c9" stroke="#7f8aa0" stroke-width="1"/>' +
+    '<g fill="#b98f2e" stroke="#7a5d1c" stroke-width="1">' +
+    '<rect x="12" y="20" width="30" height="34"/><rect x="12" y="66" width="30" height="34"/>' +
+    '<rect x="48" y="20" width="30" height="34"/><rect x="48" y="66" width="30" height="34"/>' +
+    '<rect x="162" y="20" width="30" height="34"/><rect x="162" y="66" width="30" height="34"/>' +
+    '<rect x="198" y="20" width="30" height="34"/><rect x="198" y="66" width="30" height="34"/></g>' +
+    '<g stroke="#8a6f2f" stroke-width="0.8" opacity="0.7">' +
+    '<line x1="27" y1="20" x2="27" y2="100"/><line x1="63" y1="20" x2="63" y2="100"/>' +
+    '<line x1="177" y1="20" x2="177" y2="100"/><line x1="213" y1="20" x2="213" y2="100"/></g>' +
+    '<g fill="#e7ebf1" stroke="#98a3b3" stroke-width="1">' +
+    '<rect x="106" y="34" width="16" height="52" rx="7"/>' +
+    '<rect x="94" y="50" width="52" height="14" rx="7"/>' +
+    '<circle cx="120" cy="42" r="5" fill="#cdd5e0"/></g>' +
+    '<g fill="#c2cbd8"><rect x="128" y="56" width="20" height="3"/><rect x="92" y="56" width="12" height="3"/></g>' +
+    '</svg>',
+  odyssey: '<svg viewBox="0 0 260 64" xmlns="http://www.w3.org/2000/svg">' +
+    '<circle cx="34" cy="32" r="24" fill="#e3e8ee" stroke="#a9b2c0" stroke-width="1.5"/>' +
+    '<circle cx="26" cy="26" r="4.5" fill="#b7c0cd"/>' +
+    '<rect x="58" y="29" width="132" height="6" fill="#c6cdd7" stroke="#99a3b2" stroke-width="0.8"/>' +
+    '<g fill="#d4dae2" stroke="#9aa4b3" stroke-width="0.8">' +
+    '<rect x="74" y="24" width="12" height="16" rx="2"/><rect x="104" y="24" width="12" height="16" rx="2"/>' +
+    '<rect x="134" y="24" width="12" height="16" rx="2"/><rect x="164" y="24" width="12" height="16" rx="2"/></g>' +
+    '<rect x="190" y="18" width="46" height="28" rx="5" fill="#cfd6df" stroke="#9aa4b3"/>' +
+    '<g fill="#8f99a8"><circle cx="240" cy="24" r="4"/><circle cx="240" cy="32" r="4"/><circle cx="240" cy="40" r="4"/></g>' +
+    '</svg>',
+  alien: '<svg viewBox="0 0 240 130" xmlns="http://www.w3.org/2000/svg">' +
+    '<g stroke="#2f4a36" stroke-width="1.2">' +
+    '<ellipse cx="120" cy="34" rx="16" ry="10" fill="#6d9b77"/>' +
+    '<rect x="114" y="42" width="12" height="18" fill="#5c8766"/>' +
+    '<path d="M120 56 L96 66 L84 92 L100 84 L114 96 L120 78 L126 96 L140 84 L156 92 L144 66 Z" fill="#54815f"/>' +
+    '<path d="M96 66 L18 108 L44 112 L104 78 Z" fill="#4a7455"/>' +
+    '<path d="M144 66 L222 108 L196 112 L136 78 Z" fill="#4a7455"/></g>' +
+    '<g fill="#9fe8a9"><circle cx="120" cy="34" r="3.5"/><circle cx="30" cy="108" r="3"/><circle cx="210" cy="108" r="3"/></g>' +
+    '</svg>'
+};
 function buildPlanet(mount, cfg) {
   const p = document.createElement('div');
   p.className = 'planet3d';
@@ -606,14 +703,26 @@ function buildPlanet(mount, cfg) {
       p.appendChild(m);
     }
   }
+  if (cfg.landmark && SHIP_SVGS[cfg.landmark]) {
+    const lm = document.createElement('div');
+    lm.className = 'ship-lm';
+    lm.innerHTML = SHIP_SVGS[cfg.landmark];
+    lm.style.width = (cfg.lm && cfg.lm.w) || '38%';
+    lm.style.top = (cfg.lm && cfg.lm.top) || '-6%';
+    lm.style.left = (cfg.lm && cfg.lm.left) || '68%';
+    p.appendChild(lm);
+  }
   mount.appendChild(p);
 }
 const PLANETS = {
-  'now':         { type: 'gas',  c1: [26, 58, 46], c2: [12, 48, 24], bands: 5, ring: true,  seed: 11 },
-  'blue-origin': { type: 'ice',  c1: [208, 42, 66], c2: [196, 34, 40], bands: 6, ring: true,  seed: 22 },
-  'clubs':       { type: 'rock', c1: [14, 44, 44], c2: [355, 34, 18], seed: 33, moons: 2 },
-  'education':   { type: 'gas',  c1: [228, 48, 40], c2: [44, 56, 44], bands: 4, ring: true,  seed: 44 },
-  'trading':     { type: 'gas',  c1: [152, 40, 42], c2: [172, 44, 22], bands: 6, ring: true,  seed: 55 }
+  'now':         { type: 'gas',   c1: [26, 58, 46], c2: [12, 48, 24], bands: 5, ring: true, seed: 11 },
+  'blue-origin': { type: 'ice',   c1: [208, 42, 66], c2: [196, 34, 40], bands: 6, ring: true, seed: 22,
+                   landmark: 'iss', lm: { w: '44%', top: '-4%', left: '64%' } },
+  'clubs':       { type: 'rock',  c1: [14, 44, 44], c2: [355, 34, 18], seed: 33, moons: 2,
+                   landmark: 'odyssey', lm: { w: '48%', top: '10%', left: '-24%' } },
+  'education':   { type: 'terra', c1: [210, 60, 34], c2: [110, 30, 32], seed: 44 },
+  'trading':     { type: 'gas',   c1: [152, 40, 42], c2: [172, 44, 22], bands: 6, ring: true, seed: 55,
+                   landmark: 'alien', lm: { w: '40%', top: '-10%', left: '-14%' } }
 };
 document.querySelectorAll('.stop').forEach(st => {
   const cfg = PLANETS[st.dataset.loc];
@@ -639,6 +748,43 @@ document.querySelectorAll('.stop').forEach(st => {
   }
   function newStar() {
     return { x: Math.random() * 2 - 1, y: Math.random() * 2 - 1, z: Math.random() * 0.95 + 0.05, p: Math.random() * 6.28 };
+  }
+  /* --- rare passing spaceships (live in the same z-space as the stars) --- */
+  const ships = [];
+  function newShip() {
+    return {
+      x: (Math.random() < 0.5 ? -1 : 1) * (0.3 + Math.random() * 0.55), // keep off card center
+      y: (Math.random() * 2 - 1) * 0.5,
+      z: 0.98,
+      vx: (Math.random() - 0.5) * 0.0006,
+      vy: (Math.random() - 0.5) * 0.0004,
+      vz: (0.0005 + Math.random() * 0.0011) * (Math.random() < 0.65 ? 1 : -0.4), // self-propulsion
+      roll: Math.random() * 6.28,
+      vr: (Math.random() - 0.5) * 0.003
+    };
+  }
+  function drawShip(c, x, y, r, roll, tt) {
+    c.save(); c.translate(x, y); c.rotate(roll);
+    const g = c.createRadialGradient(0, r * 0.55, 0, 0, r * 0.55, r * 0.95);
+    g.addColorStop(0, 'rgba(140,215,255,' + (0.45 + 0.25 * Math.sin(tt * 7)) + ')');
+    g.addColorStop(1, 'rgba(140,215,255,0)');
+    c.fillStyle = g;
+    c.beginPath(); c.arc(0, r * 0.55, r * 0.95, 0, 6.29); c.fill();
+    c.fillStyle = 'rgba(205,214,234,0.92)';
+    c.beginPath();
+    c.moveTo(0, -r);
+    c.lineTo(r * 0.62, r * 0.52);
+    c.lineTo(r * 0.2, r * 0.3);
+    c.lineTo(0, r * 0.5);
+    c.lineTo(-r * 0.2, r * 0.3);
+    c.lineTo(-r * 0.62, r * 0.52);
+    c.closePath(); c.fill();
+    c.fillStyle = 'rgba(96,160,255,0.9)';
+    c.beginPath(); c.ellipse(0, -r * 0.22, r * 0.13, r * 0.3, 0, 0, 6.29); c.fill();
+    c.strokeStyle = 'rgba(18,24,38,0.55)';
+    c.lineWidth = Math.max(0.5, r * 0.05);
+    c.beginPath(); c.moveTo(0, -r); c.lineTo(0, r * 0.5); c.stroke();
+    c.restore();
   }
   let lastY = scrollY, sm = 0, t = 0;
   function frame() {
@@ -671,6 +817,24 @@ document.querySelectorAll('.stop').forEach(st => {
         ctx.beginPath(); ctx.arc(sx, sy, r, 0, 6.29); ctx.fill();
       }
     }
+    /* ships: rare, small, riding world speed + their own thrust */
+    if (!reduced) {
+      if (ships.length < 2 && Math.random() < 0.0022) ships.push(newShip());
+      for (let i = ships.length - 1; i >= 0; i--) {
+        const sh = ships[i];
+        sh.z -= zvel * 0.92 + sh.vz * 0.06;
+        sh.x += sh.vx; sh.y += sh.vy; sh.roll += sh.vr;
+        if (sh.z <= 0.05 || sh.z > 1.05 || Math.abs(sh.x) > 1.7) { ships.splice(i, 1); continue; }
+        const sx = CX + (sh.x * SCALE) / sh.z;
+        const sy = CY + (sh.y * SCALE) / sh.z;
+        if (sx < -90 || sx > W + 90 || sy < -90 || sy > H + 90) continue;
+        const r = Math.min(46, 6 / sh.z);
+        const a = Math.max(0, Math.min(1, (1.08 - sh.z) * 1.7)) * Math.max(0, Math.min(1, (sh.z - 0.06) * 9));
+        ctx.globalAlpha = a;
+        drawShip(ctx, sx, sy, r, sh.roll, t);
+        ctx.globalAlpha = 1;
+      }
+    }
     requestAnimationFrame(frame);
   }
   addEventListener('resize', resize);
@@ -685,11 +849,22 @@ document.querySelectorAll('.stop').forEach(st => {
   const stops = Array.from(document.querySelectorAll('.stop'));
   const N = stops.length;
   const travel = document.getElementById('travel');
-  function layout() { travel.style.height = ((N - 1) * SPACING + innerHeight) + 'px'; }
+  let OFF = 0;
+  function layout() {
+    travel.style.height = ((N - 1) * SPACING + innerHeight) + 'px';
+    OFF = innerWidth > 820 ? Math.min(innerWidth * 0.13, 175) : 0;
+  }
   layout();
   addEventListener('resize', layout);
   const idToIndex = {};
-  stops.forEach((s, i) => { s._z = i * SPACING; if (s.dataset.loc) idToIndex[s.dataset.loc] = i; });
+  stops.forEach((s, i) => {
+    s._z = i * SPACING;
+    if (s.dataset.loc) idToIndex[s.dataset.loc] = i;
+    // card staggers to the side OPPOSITE its planet
+    s._dir = s.dataset.side === 'r' ? -1 : s.dataset.side === 'l' ? 1 : 0;
+    s._panel = s.querySelector('.loc-panel, .hero-glass');
+    s._planet = s.querySelector('.planet3d');
+  });
   function goTo(i, instant) {
     scrollTo({ top: i * SPACING, behavior: (instant || reduced) ? 'auto' : 'smooth' });
   }
@@ -723,13 +898,20 @@ document.querySelectorAll('.stop').forEach(st => {
       let op, vis = 'visible';
       if (dz < -150) { op = 0; vis = 'hidden'; }
       else if (dz < 0) { op = 1 + dz / 150; }
-      else if (dz > 3600) { op = 0; vis = 'hidden'; }
-      else if (dz > 2700) { op = (3600 - dz) / 900; }
+      else if (dz > 2400) { op = 0; vis = 'hidden'; }      // anything beyond the NEXT stop stays invisible
+      else if (dz > 1000) { op = (2400 - dz) / 1400; }     // next stop materializes small → big as you fly in
       else { op = 1; }
+      // depth haze: the approaching card stays a soft glow until you're nearly there
+      const hz = dz <= 500 ? 0 : Math.min(1, (dz - 500) / 1400);
+      op *= (1 - hz * 0.4);
+      const filt = hz > 0.02 ? 'blur(' + (hz * 8).toFixed(1) + 'px) brightness(' + (1 - hz * 0.38).toFixed(2) + ')' : '';
+      if (st._panel && st._panelF !== filt) { st._panel.style.filter = filt; st._panelF = filt; }
+      if (st._planet && st._planetF !== filt) { st._planet.style.filter = filt; st._planetF = filt; }
+      const xoff = st._dir * OFF;
       st.style.opacity = op.toFixed(3);
       st.style.visibility = vis;
-      st.style.transform = 'translate(-50%,-50%) translateZ(' + (-dz).toFixed(1) + 'px)';
-      st.style.pointerEvents = Math.abs(dz) < 700 ? 'auto' : 'none';
+      st.style.transform = 'translate(calc(-50% + ' + xoff + 'px),-50%) translateZ(' + (-dz).toFixed(1) + 'px)';
+      st.style.pointerEvents = (Math.abs(dz) < 700) ? 'auto' : 'none';
     }
     const act = Math.max(0, Math.min(N - 1, Math.round(cam / SPACING)));
     if (act !== lastActive) { lastActive = act; setActive(act); }
