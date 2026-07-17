@@ -154,19 +154,14 @@
   .hero-glass { border-radius:28px; padding:clamp(30px,5.5vw,64px); overflow:hidden; position:relative; }
   /* spacetime cursor canvas — sits above content, below deep view */
   #warp { position:fixed; inset:0; z-index:90; pointer-events:none; }
-  /* reference imagery: planet scenes feathered into our space */
+  /* reference imagery: pre-cut with baked feathered alpha — just place and scale */
   .scene-planet {
-    position:absolute; inset:-26%;
-    background-size:cover; background-position:center;
-    -webkit-mask-image: radial-gradient(ellipse 58% 54% at 50% 50%, #000 46%, transparent 74%);
-    mask-image: radial-gradient(ellipse 58% 54% at 50% 50%, #000 46%, transparent 74%);
+    position:absolute; inset:-24%;
+    background-size:contain; background-position:center; background-repeat:no-repeat;
   }
-  /* photographic satellite, feathered to isolate the craft */
   .sat-photo {
-    width:100%; aspect-ratio:13/10;
-    background-size:cover; background-position:50% 24%;
-    -webkit-mask-image: radial-gradient(ellipse 52% 48% at 50% 40%, #000 36%, transparent 70%);
-    mask-image: radial-gradient(ellipse 52% 48% at 50% 40%, #000 36%, transparent 70%);
+    width:106%; aspect-ratio:100/61;
+    background-size:contain; background-position:center; background-repeat:no-repeat;
   }
   .hero-glass h1 {
     font-family:"Instrument Serif",serif; font-weight:400;
@@ -981,7 +976,7 @@ probeImage('sat-hero', src => {
     if (cx < -999) { cx = mx; cy = my; }
   }, { passive: true });
   document.documentElement.addEventListener('mouseleave', () => { mx = -9999; my = -9999; });
-  const GAP = 18, R = 115, SIG = 42, AMP = 22, STEP = 10;
+  const GAP = 12, R = 58, SIG = 21, AMP = 12, STEP = 6;
   function warp(x, y) {
     const dx = x - cx, dy = y - cy;
     const r = Math.hypot(dx, dy) + 0.0001;
