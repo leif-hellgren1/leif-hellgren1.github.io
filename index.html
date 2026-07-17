@@ -14,7 +14,7 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🪐</text></svg>" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <style>
   :root {
     --bg: #0a0b0f;
@@ -31,7 +31,7 @@
   body {
     background: var(--bg);
     color: var(--ink);
-    font-family: "Space Grotesk", system-ui, sans-serif;
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
     font-weight: 300;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
@@ -70,7 +70,7 @@
     opacity:0.75;
   }
 
-  .mono { font-family:"Space Mono",monospace; font-size:0.72rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--ink-faint); }
+  .mono { font-family:"IBM Plex Mono",monospace; font-size:0.72rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--ink-faint); }
 
   /* ---------- Nav ---------- */
   nav {
@@ -106,7 +106,7 @@
   .rail a { width:9px; height:9px; border-radius:50%; background:rgba(233,238,250,0.55); box-shadow:0 0 6px rgba(233,238,250,0.22); transition:background 0.3s var(--ease), box-shadow 0.3s var(--ease); position:relative; }
   .rail a:hover::after {
     content:attr(data-label); position:absolute; right:20px; top:50%; transform:translateY(-50%);
-    font-family:"Space Mono",monospace; font-size:0.62rem; letter-spacing:0.14em; text-transform:uppercase;
+    font-family:"IBM Plex Mono",monospace; font-size:0.62rem; letter-spacing:0.14em; text-transform:uppercase;
     color:var(--ink-dim); white-space:nowrap;
   }
   .rail a.active { background:var(--accent); box-shadow:0 0 12px rgba(255,138,76,0.6); }
@@ -156,7 +156,7 @@
   #warp { position:fixed; inset:0; z-index:90; pointer-events:none; }
   /* reference imagery: pre-cut with baked feathered alpha — just place and scale */
   .scene-planet {
-    position:absolute; inset:-24%;
+    position:absolute; inset:0;
     background-size:contain; background-position:center; background-repeat:no-repeat;
   }
   .sat-photo {
@@ -186,12 +186,13 @@
   /* ---------- Planets ---------- */
   .planet3d {
     position:absolute; left:50%; top:50%;
-    width:var(--psz, 460px); height:var(--psz, 460px);
-    transform: translate(-50%,-50%) translate3d(var(--px, 0px), var(--py, 0px), var(--pz, -420px));
+    width:var(--psz, 720px); height:var(--psz, 720px);
+    transform: translate(-50%,-50%) translate3d(var(--px, 0px), var(--py, 0px), var(--pz, -460px));
     transform-style:preserve-3d; pointer-events:none;
   }
-  .stop[data-side="r"] .planet3d { --px: min(33vw, 400px); --py: -30px; }
-  .stop[data-side="l"] .planet3d { --px: max(-33vw, -400px); --py: -30px; }
+  /* planets sit centered on screen; cards stagger around them (offset applied in JS) */
+  .stop[data-side="r"] .planet3d { --px: 0px; --py: 0px; }
+  .stop[data-side="l"] .planet3d { --px: 0px; --py: 0px; }
   .sphere3d {
     position:absolute; inset:0; border-radius:50%;
     background-size:200% 100%; background-repeat:repeat-x; background-position:0 0;
@@ -294,7 +295,7 @@
     transition:border-color 0.3s var(--ease), transform 0.3s var(--ease);
   }
   .repo-list a:hover { border-color:hsl(var(--dh,25),60%,60%); transform:translateY(-2px); }
-  .repo-list .rname { font-family:"Space Mono",monospace; font-size:0.85rem; color:hsl(var(--dh,25),85%,74%); }
+  .repo-list .rname { font-family:"IBM Plex Mono",monospace; font-size:0.85rem; color:hsl(var(--dh,25),85%,74%); }
   .repo-list .rdesc { color:var(--ink-dim); font-size:0.92rem; margin-top:4px; }
   .next-stop {
     margin-top:34px; padding-top:24px; border-top:1px solid var(--glass-border);
@@ -453,14 +454,14 @@
         </div>
         <div class="hero-glass glass" id="heroGlass">
           <div class="mono">Leif Hellgren · Generalist Engineer</div>
-          <h1>Physics-trained.<br />Flight-proven.<br /><em>Built to ship.</em></h1>
-          <p class="tagline">I've owned flight-critical hardware on a lunar lander, built my own analysis software from first principles, and trade futures systematically. Currently seeking the next mission.</p>
+          <h1>Generalist engineer.<br />Physics to flight hardware<br /><em>to trading systems.</em></h1>
+          <p class="tagline">I've owned flight-critical hardware on a lunar lander, built my own analysis software from first principles, and trade futures systematically. Currently open to new roles.</p>
           <div class="hero-actions">
-            <a class="btn primary" href="#now">Where I'm headed</a>
+            <a class="btn primary" href="#now">What I'm looking for</a>
             <a class="btn ghost" href="https://github.com/leif-hellgren1" target="_blank" rel="noopener">GitHub &nearr;</a>
             <a class="btn ghost" href="Leif-Hellgren-Resume.pdf" download>Resume &darr;</a>
           </div>
-          <div class="scroll-hint"><span class="line"></span><span class="mono">Scroll to engage warp — fly through the record</span></div>
+          <div class="scroll-hint"><span class="line"></span><span class="mono">Scroll to explore</span></div>
         </div>
       </div>
 
@@ -481,7 +482,7 @@
             <li>Quant / trading technology and research engineering</li>
             <li>AI-tooling and hard-tech generalist roles where range wins</li>
           </ul>
-          <a class="deep-link" href="#/now">Full picture — skills, roles, how I work <span>→</span></a>
+          <a class="deep-link" href="#/now">Read more <span>→</span></a>
         </div>
       </div>
 
@@ -497,7 +498,7 @@
             <li>Built first-principles fluid/thermal tools to size the system before formal analysis</li>
             <li>Led FMECA and hazard assessments; presented the subsystem at PDR, CDR, and TRR</li>
           </ul>
-          <a class="deep-link" href="#/blue-origin">Enter orbit — full scope <span>→</span></a>
+          <a class="deep-link" href="#/blue-origin">Read more <span>→</span></a>
         </div>
       </div>
 
@@ -512,7 +513,7 @@
           <ul class="points">
             <li>Led design of a methalox engine feed system — architecture, CAD, sourcing</li>
           </ul>
-          <a class="deep-link" href="#/clubs">Visit both moons <span>→</span></a>
+          <a class="deep-link" href="#/clubs">Read more <span>→</span></a>
         </div>
       </div>
 
@@ -524,7 +525,7 @@
           <h2>B.S. Physics, engineering emphasis.</h2>
           <div class="sub">Top-ranked physics program</div>
           <p class="body">Physics for the first-principles thinking, deliberately supplemented with mechanical design and engineering systems coursework so the theory could ship. The root of everything else on this flight path.</p>
-          <a class="deep-link" href="#/education">Why physics → engineering <span>→</span></a>
+          <a class="deep-link" href="#/education">Read more <span>→</span></a>
         </div>
       </div>
 
@@ -540,7 +541,7 @@
             <li>Full pipeline ownership: research → backtesting → live execution tooling</li>
             <li>Six public repos on GitHub, linked inside</li>
           </ul>
-          <a class="deep-link" href="#/trading">Inspect the approach &amp; code <span>→</span></a>
+          <a class="deep-link" href="#/trading">Read more <span>→</span></a>
         </div>
       </div>
 
@@ -796,27 +797,18 @@ function buildPlanet(mount, cfg) {
     () => buildProc(mount, cfg));
 }
 const PLANETS = {
-  'now':         { type: 'gas',   c1: [26, 58, 46], c2: [12, 48, 24], bands: 5, ring: true, seed: 11, img: 'planet-now' },
-  'blue-origin': { type: 'ice',   c1: [208, 42, 66], c2: [196, 34, 40], bands: 6, ring: true, seed: 22, img: 'planet-blueorigin', size: 'min(40vw,500px)' },
-  'clubs':       { type: 'rock',  c1: [14, 44, 44], c2: [355, 34, 18], seed: 33, moons: 2, img: 'planet-clubs' },
-  'education':   { type: 'terra', c1: [210, 60, 34], c2: [110, 30, 32], seed: 44, img: 'planet-education' },
-  'trading':     { type: 'gas',   c1: [152, 40, 42], c2: [172, 44, 22], bands: 6, ring: true, seed: 55, img: 'planet-trading' }
+  'now':         { type: 'gas',   c1: [26, 58, 46], c2: [12, 48, 24], bands: 5, ring: true, seed: 11, img: 'planet-now',        size: 'min(66vw,720px)' },
+  'blue-origin': { type: 'ice',   c1: [208, 42, 66], c2: [196, 34, 40], bands: 6, ring: true, seed: 22, img: 'planet-blueorigin', size: 'min(72vw,780px)' },
+  'clubs':       { type: 'rock',  c1: [14, 44, 44], c2: [355, 34, 18], seed: 33, moons: 2, img: 'planet-clubs',      size: 'min(60vw,660px)' },
+  'education':   { type: 'terra', c1: [210, 60, 34], c2: [110, 30, 32], seed: 44, img: 'planet-education',  size: 'min(54vw,580px)' },
+  'trading':     { type: 'gas',   c1: [152, 40, 42], c2: [172, 44, 22], bands: 6, ring: true, seed: 55, img: 'planet-trading',    size: 'min(50vw,540px)' }
 };
 document.querySelectorAll('.stop').forEach(st => {
   const cfg = PLANETS[st.dataset.loc];
   const mount = st.querySelector('.planet-mount');
   if (cfg && mount) buildPlanet(mount, cfg);
 });
-/* photographic satellite replaces the vector one when sat-hero.* exists in the repo */
-probeImage('sat-hero', src => {
-  const ship = document.querySelector('.big-ship');
-  if (!ship) return;
-  ship.innerHTML = '';
-  const ph = document.createElement('div');
-  ph.className = 'sat-photo';
-  ph.style.backgroundImage = 'url(' + src + ')';
-  ship.appendChild(ph);
-}, function () {});
+/* satellite is the hand-rendered vector craft (transparent bg, consistent with our space) */
 
 /* ================= Starfield with warp ================= */
 (function () {
@@ -885,7 +877,8 @@ probeImage('sat-hero', src => {
   let OFF = 0;
   function layout() {
     travel.style.height = ((N - 1) * SPACING + innerHeight) + 'px';
-    OFF = innerWidth > 820 ? Math.min(innerWidth * 0.13, 175) : 0;
+    OFF = innerWidth > 820 ? Math.min(innerWidth * 0.16, 220) : 0;
+    stops.forEach(s => { if (s._panel) s._panel.style.transform = s._dir ? 'translateX(' + (s._dir * OFF).toFixed(0) + 'px)' : ''; });
   }
   layout();
   addEventListener('resize', layout);
@@ -898,6 +891,7 @@ probeImage('sat-hero', src => {
     s._panel = s.querySelector('.loc-panel, .hero-glass');
     s._planet = s.querySelector('.planet3d');
   });
+  layout(); // now that _panel/_dir exist, apply card stagger offsets
   function goTo(i, instant) {
     scrollTo({ top: i * SPACING, behavior: (instant || reduced) ? 'auto' : 'smooth' });
   }
@@ -940,10 +934,9 @@ probeImage('sat-hero', src => {
       const filt = hz > 0.02 ? 'blur(' + (hz * 8).toFixed(1) + 'px) brightness(' + (1 - hz * 0.38).toFixed(2) + ')' : '';
       if (st._panel && st._panelF !== filt) { st._panel.style.filter = filt; st._panelF = filt; }
       if (st._planet && st._planetF !== filt) { st._planet.style.filter = filt; st._planetF = filt; }
-      const xoff = st._dir * OFF;
       st.style.opacity = op.toFixed(3);
       st.style.visibility = vis;
-      st.style.transform = 'translate(calc(-50% + ' + xoff + 'px),-50%) translateZ(' + (-dz).toFixed(1) + 'px)';
+      st.style.transform = 'translate(-50%,-50%) translateZ(' + (-dz).toFixed(1) + 'px)';
       st.style.pointerEvents = (Math.abs(dz) < 700) ? 'auto' : 'none';
     }
     const act = Math.max(0, Math.min(N - 1, Math.round(cam / SPACING)));
