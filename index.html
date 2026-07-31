@@ -225,7 +225,9 @@
      card holds no duplicate links; the thing that was always pinned simply comes to meet you.
      Scrolling away reverses it. */
   .quick-links.hailed {
-    left:50%; bottom:clamp(120px, 22vh, 260px);
+    /* --hail-bottom is measured from the contact card so the bar sits a fixed gap beneath it
+       at any viewport; the clamp is the pre-JS fallback */
+    left:50%; bottom:var(--hail-bottom, clamp(120px, 22vh, 260px));
     transform:translateX(-50%);
     padding:15px 30px; gap:clamp(18px, 3.2vw, 30px);
     border-color:color-mix(in srgb, var(--accent) 45%, transparent);
@@ -527,8 +529,13 @@
 
   /* Contact card extras */
   .contact-card { text-align:center; }
-  /* no h2 override: the contact headline uses the standard .loc-panel h2 rule */
-  .contact-card p { color:var(--ink-dim); margin:var(--space-4) auto var(--space-5); max-width:44ch; }
+  /* The closing beat carries no card: the question stands on its own in space and the pinned
+     bar rises to meet it. No glass, so no padding either, or the heading would sit off-centre
+     from the bar below it. */
+  /* scoped to beat .stop .loc-panel's padding, so the panel box is exactly the heading and
+     HAIL_GAP below measures from the text itself rather than from invisible padding */
+  .stop .loc-panel.contact-card { padding:0; border-radius:0; }
+  .contact-card h2 { margin:0; }
 
   .sr-skip { position:absolute; left:-9999px; }
   .sr-skip:focus { left:16px; top:16px; z-index:200; background:var(--bg); padding:10px 16px; border-radius:8px; } /* 8px: interaction micro-radius, below the radius scale */
@@ -696,9 +703,8 @@
 
       <!-- STOP 6 · CONTACT -->
       <div class="stop" data-loc="contact" style="--p1:26">
-        <div class="loc-panel glass contact-card">
+        <div class="loc-panel contact-card">
           <h2>Looking to connect?</h2>
-          <p>Resume, email, GitHub, and LinkedIn, all below.</p>
         </div>
       </div>
 
@@ -1068,7 +1074,7 @@ const PLANETS = {
     SHIP_Y = (0.40 - 0.46) * innerHeight / SHIP_F;  // reads at 40vh; perspective-origin sits at 46vh
   }
   layout();
-  addEventListener('resize', layout);
+  addEventListener('resize', () => { layout(); measureHail(); });
   const idToIndex = {};
   stops.forEach((s, i) => {
     s._z = i * SPACING;
@@ -1105,6 +1111,27 @@ const PLANETS = {
   const menuLinks = Array.from(document.querySelectorAll('.mobile-menu a'));
   const worldEl = document.getElementById('world');
   const quickLinks = document.querySelector('.quick-links');
+  /* Park the hailed cluster a fixed gap under the contact card. Both are centred on the same
+     50% line, so this needs the two layout heights and no live rects: the card sits mid
+     fly-through under a 3D transform, which getBoundingClientRect would report mid-flight.
+     The hailed height is measured with transitions off so the first frame is already right. */
+  const HAIL_GAP = 72;   // heading baseline to bar, measured from the text box itself
+  function measureHail() {
+    const card = document.querySelector('[data-loc="contact"] .loc-panel');
+    if (!card || !quickLinks) return;
+    const wasHailed = quickLinks.classList.contains('hailed');
+    quickLinks.style.transition = 'none';
+    quickLinks.classList.add('hailed');
+    const islandH = quickLinks.offsetHeight;
+    if (!wasHailed) quickLinks.classList.remove('hailed');
+    void quickLinks.offsetHeight;               // flush before transitions come back
+    quickLinks.style.transition = '';
+    const b = Math.round(innerHeight / 2 - card.offsetHeight / 2 - HAIL_GAP - islandH);
+    quickLinks.style.setProperty('--hail-bottom', Math.max(24, b) + 'px');
+  }
+  measureHail();
+  // the heading's height depends on the display face, so re-measure once it has loaded
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(measureHail);
   function setActive(i) {
     const id = stops[i] && stops[i].dataset.loc;
     railLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
