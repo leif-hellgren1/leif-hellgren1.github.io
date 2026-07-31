@@ -3,11 +3,24 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Leif Hellgren · Generalist Engineer</title>
-<meta name="description" content="Leif Hellgren: physics-trained generalist engineer. Flight-critical cryogenic hardware on a lunar lander, rocket club founder, systematic futures trader. Open to full-time roles now." />
-<meta property="og:title" content="Leif Hellgren · Generalist Engineer" />
-<meta property="og:description" content="Flight-critical hardware on a lunar lander. Self-built analysis software. Systematic futures trading. Open to full-time roles now." />
+<title>Leif Hellgren · Software Engineer</title>
+<meta name="description" content="Physics-trained engineer. Owned a flight-critical subsystem end to end on Blue Origin's first lunar lander, then built Python and LLM systems solo. Moving to NYC, September 2026." />
+<meta name="author" content="Leif Hellgren" />
+<meta property="og:title" content="Leif Hellgren · Software Engineer" />
+<meta property="og:description" content="Physics at UCSB and founded its first rocket club. Flight-critical subsystem on Blue Origin's first lunar lander. Python and LLM systems built solo. Moving to NYC, September 2026." />
 <meta property="og:type" content="website" />
+<meta property="og:site_name" content="Leif Hellgren" />
+<meta property="og:locale" content="en_US" />
+<!-- Without an og:image every share of this link (LinkedIn, Slack, iMessage) renders as a
+     blank card. Generated from the site's own type and palette by tools/make-og.py. -->
+<meta property="og:image" content="https://leif-hellgren1.github.io/og-card.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="Leif Hellgren, software engineer. Physics, rockets, LLM development, GTM." />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Leif Hellgren · Software Engineer" />
+<meta name="twitter:description" content="Flight-critical subsystem on Blue Origin's first lunar lander. Python and LLM systems built solo. Moving to NYC, September 2026." />
+<meta name="twitter:image" content="https://leif-hellgren1.github.io/og-card.png" />
 <!-- Canonical points at the address the site actually serves from. When leif.exelor.com is
      pointed at Pages (see DEPLOY.md), change both of these back to https://leif.exelor.com/ -->
 <meta property="og:url" content="https://leif-hellgren1.github.io/" />
@@ -22,8 +35,27 @@
 <!-- Cabin is the web fallback for the name mark: Gill Sans is a licensed Monotype face with no
      free web version, so we use the system copy where it exists (macOS, Windows with Office)
      and fall back to Cabin, which is drawn in the same Johnston/Gill humanist lineage. -->
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400&family=Cabin:wght@500;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400&family=Cabin:wght@500&display=swap" rel="stylesheet" />
 <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@700,800&display=swap" rel="stylesheet" />
+<!-- Person schema: lets Google tie the name, the roles, and the profile links to one entity,
+     which is what surfaces a knowledge-panel-style result when someone searches the name. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Leif Hellgren",
+  "url": "https://leif-hellgren1.github.io/",
+  "email": "mailto:leif@exelor.com",
+  "jobTitle": "Software Engineer",
+  "description": "Physics-trained engineer. Owned a flight-critical cryogenic subsystem end to end on Blue Origin's first lunar lander, then built Python and LLM systems independently.",
+  "alumniOf": { "@type": "CollegeOrUniversity", "name": "University of California, Santa Barbara" },
+  "knowsAbout": ["Python", "TypeScript", "Next.js", "LLM systems", "Systems engineering", "Fluid and thermal analysis", "Go-to-market engineering"],
+  "sameAs": [
+    "https://github.com/leif-hellgren1",
+    "https://www.linkedin.com/in/leif-hellgren-a1177216a/"
+  ]
+}
+</script>
 <style>
   /* Registered so the mirrored --p1 can transition (halo hue eases between stops)
      and so all three hue channels are typed numbers. Browsers without @property
@@ -153,24 +185,12 @@
        faces diverge mostly in the lowercase. */
     font-family: "Gill Sans", "Gill Sans MT", "Cabin", "IBM Plex Sans", sans-serif;
     font-weight: 500; text-transform: uppercase;
-    font-size: clamp(0.95rem, 1.55vw, 1.32rem); letter-spacing: 0.2em; line-height: 1;
+    font-size: clamp(0.95rem, 1.55vw, 1.32rem); letter-spacing: 0.22em; line-height: 1;
     color: var(--ink);
-    --rule-ink: color-mix(in srgb, var(--ink) 30%, transparent);
   }
-  /* Datum scale, not an underline: a hairline rule carrying descending tick marks with a
-     single accent tick at the origin, the way a scale bar reads on an engineering drawing.
-     Three stacked gradients, no assets: accent origin tick, the rule, then the ticks. */
-  .name-mark::after {
-    content:""; display:block; margin-top:13px; height:9px;
-    background-image:
-      linear-gradient(var(--accent), var(--accent)),
-      linear-gradient(var(--rule-ink), var(--rule-ink)),
-      repeating-linear-gradient(90deg, var(--rule-ink) 0 1px, transparent 1px 12px);
-    background-size: 2px 9px, 100% 1px, 100% 5px;
-    background-position: 0 0, 0 0, 0 0;
-    background-repeat: no-repeat;
-  }
-  @media (max-width:480px) { .name-mark { font-size:0.9rem; letter-spacing:0.16em; } }
+  /* No rule, underline, or ornament under the name on purpose. The caps-and-tracking
+     treatment is the mark; anything added below it was decoration that needed explaining. */
+  @media (max-width:480px) { .name-mark { font-size:0.9rem; letter-spacing:0.18em; } }
 
   /* ---------- Progress rail ---------- */
   .rail { position:fixed; right:22px; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:14px; z-index:55; }
@@ -306,7 +326,7 @@
   .btn.ghost:hover { border-color:var(--ink-dim); transform:translateY(-2px); }
   /* wordless scroll cue: a faint descent path with a bright segment riding down it */
   .scroll-cue {
-    position:relative; width:1px; height:40px; margin:var(--space-6) auto 0; overflow:hidden;
+    position:relative; width:1px; height:40px; margin:var(--space-5) auto 0; overflow:hidden;
     background:color-mix(in srgb, var(--ink) 18%, transparent);
     transition:opacity 0.8s var(--ease);
   }
@@ -529,7 +549,7 @@
 
   <!-- Persistent contact cluster: the one path to resume/contact that is never more than
        one click away, on every stop and every deep-dive page. -->
-  <div class="quick-links glass" aria-label="Resume and contact">
+  <div class="quick-links glass" role="group" aria-label="Resume and contact">
     <a class="ql-resume" href="Leif-Hellgren-Resume.pdf" download>Resume &darr;</a>
     <button type="button" data-email="leif@exelor.com">Email</button>
     <a href="https://github.com/leif-hellgren1" target="_blank" rel="noopener">GitHub &nearr;</a>
@@ -553,14 +573,16 @@
             <p>Studied physics at UCSB and founded its first rocket club.</p>
             <p>Delivered a flight-critical subsystem on a first-generation lunar lander at Blue Origin.</p>
             <p>Built custom stock market analysis software.</p>
-            <p>Helping startups build out infrastructure and scale.</p>
+            <p>Shipped production features and built the outbound system at an early-stage startup.</p>
           </div>
           <p class="status-line"><span class="pulse-dot" aria-hidden="true"></span>Looking for my next role in NYC.</p>
           <div class="hero-actions">
             <a class="btn primary" href="#/now">Hiring?</a>
           </div>
-          <div class="scroll-cue" id="scrollCue" aria-hidden="true"></div>
         </div>
+        <!-- outside the card: it belongs to the page, and keeping it out of the card's flow
+             is what lets the hero's top and bottom padding stay symmetrical -->
+        <div class="scroll-cue" id="scrollCue" aria-hidden="true"></div>
       </div>
 
       <!-- STOP 1 · NOW -->
@@ -571,12 +593,12 @@
             <span class="chip live">Actively seeking</span>
             <span class="chip moving">Moving to NYC Sept 2026</span>
           </div>
-          <p class="body">Most recently, a contract at an early-stage startup split between product engineering and sales: shipped Next.js features, stood up the CRM, and built an outbound system that booked qualified meetings. I work AI-natively, with agents and LLM tooling in the loop.</p>
+          <p class="body">Most recently a contract at Launchpoint, split between product engineering and sales: shipped features into a live Next.js codebase, stood up the CRM, built an outbound system that booked qualified meetings. I build with agents and LLM tooling by default.</p>
           <ul class="points">
-            <li>GTM engineering, solutions engineering, and technical sales, my current focus</li>
-            <li>AI tooling and systems development, building the automation rather than just using it</li>
-            <li>Quant and trading technology, from backtesting to execution software</li>
-            <li>Propulsion, fluid systems, mechanical, and systems engineering</li>
+            <li>GTM and solutions engineering, technical sales</li>
+            <li>AI tooling and automation systems</li>
+            <li>Quant and trading technology, backtesting through execution</li>
+            <li>Propulsion, fluid systems, and systems engineering</li>
           </ul>
           <a class="deep-link" href="#/now">Read more <span>→</span></a>
         </div>
@@ -585,7 +607,7 @@
       <!-- STOP 2 · BLUE ORIGIN -->
       <div class="stop" data-loc="blue-origin" data-side="l" style="--p1:20">
         <div class="loc-panel glass">
-          <span class="mono idx">Blue Origin · Lunar Permanence Program · Fluids</span>
+          <span class="mono idx">Blue Origin · Lunar Permanence Program · 2022-2024</span>
           <h2>Responsible Engineer, Thermodynamic Vent System</h2>
           <div class="sub">Mk-1 Lunar Lander flight-critical subsystem</div>
           <p class="body">Owned a propellant-tank pressure-management system end to end.</p>
@@ -601,7 +623,7 @@
       <!-- STOP 3 · CLUBS / LEADERSHIP -->
       <div class="stop" data-loc="clubs" data-side="r" style="--p1:6">
         <div class="loc-panel glass">
-          <span class="mono idx">UCSB Aerospace Research Cooperative &amp; Rocket Propulsion Laboratory</span>
+          <span class="mono idx">UCSB Aerospace Research Cooperative &amp; Rocket Propulsion Laboratory · 2017-2021</span>
           <h2>Founded UC Santa Barbara's first rocket club. Co-founded its largest engineering club.</h2>
           <p class="body">Started UCSB's first rocket club as a freshman, then co-founded the Rocket Propulsion Laboratory, now UCSB's largest engineering club and a sanctioned capstone option.</p>
           <ul class="points">
@@ -615,7 +637,7 @@
       <!-- STOP 4 · EDUCATION (card only; no deep dive) -->
       <div class="stop" data-loc="education" data-side="l" style="--p1:190">
         <div class="loc-panel glass">
-          <span class="mono idx">University of California, Santa Barbara</span>
+          <span class="mono idx">University of California, Santa Barbara · 2017-2021</span>
           <h2>Bachelor's in Physics</h2>
           <div class="sub">Top-ranked physics program</div>
           <p class="body">Physics for the fundamentals. Supplemented the quantum coursework with mechanical design and engineering classes so I could build better rockets.</p>
@@ -625,13 +647,14 @@
       <!-- STOP 5 · TRADING / DEV -->
       <div class="stop" data-loc="trading" data-side="r" style="--p1:152">
         <div class="loc-panel glass">
-          <span class="mono idx">Independent Systems Development</span>
-          <h2>Building software for analytical stock trading.</h2>
-          <div class="sub">Python &amp; Pine Script</div>
-          <p class="body">I set out to build complete software systems on my own and chose the stock market as the domain. The focus was development more than trading.</p>
+          <span class="mono idx">Independent Development · 2024-2026</span>
+          <h2>Building complete software systems on my own</h2>
+          <div class="sub">Python · Pandas · Streamlit · TypeScript</div>
+          <p class="body">Eighteen months building Python and LLM-driven systems solo, most of it around market analysis: a Streamlit analytics app over Pandas, a scanner that filters thousands of tickers against defined criteria, and a staged alerting pipeline with webhook delivery.</p>
           <ul class="points">
-            <li>Every tool built end to end: concept, Python or Pine Script implementation, testing, then daily use</li>
-            <li>All projects are public repos on GitHub</li>
+            <li>A job-board monitor integrating three ATS APIs across 27 companies, with relevance tiering, deduplication, and scheduled runs</li>
+            <li>Wrote a 26-section technical spec and an 8-phase validation plan before any of it went into daily use</li>
+            <li>Every project is a public repo on GitHub</li>
           </ul>
           <a class="deep-link" href="#/trading">Read more <span>→</span></a>
         </div>
@@ -641,7 +664,6 @@
       <div class="stop" data-loc="contact" style="--p1:26">
         <div class="loc-panel glass contact-card">
           <h2>Looking to connect?</h2>
-          <p>Hiring for engineering, software, or sales? Reach out below.</p>
           <button class="btn primary copy-email" id="copyEmail" type="button" data-email="leif@exelor.com" title="Copy email address" aria-label="Copy email address leif@exelor.com">leif@exelor.com</button>
           <span id="texCredit" hidden>Planet maps © Solar System Scope (CC BY 4.0)</span>
         </div>
@@ -661,7 +683,9 @@
   </noscript>
 
   <!-- DEEP VIEW -->
-  <div id="deep" role="dialog" aria-modal="true" aria-label="Location detail">
+  <!-- role=dialog without aria-modal: the contact cluster sits above this overlay and stays
+       reachable on purpose, so claiming a strict modal would misdescribe the page. -->
+  <div id="deep" role="dialog" aria-label="Detail">
     <button class="deep-close" id="deepClose" aria-label="Close">✕</button>
     <div class="deep-inner">
       <div class="deep-panel glass" id="deepPanel"></div>
@@ -1185,18 +1209,18 @@ const PLANETS = {
    with trading handing off to the contact section on the main page. */
 const DEEP = {
   "now": {
-    hue: 42, title: "What I'm looking for.",
+    hue: 42, title: "What I'm looking for",
     next: { href: "#/blue-origin", label: "Blue Origin" },
     body: `
       <h3>Roles I'm targeting</h3>
       <ul>
-        <li><strong>Propulsion, fluid systems, mechanical, and systems engineering</strong>, where my flight-hardware ownership applies directly.</li>
+        <li><strong>GTM engineering, solutions engineering, and technical sales</strong>: I can go as deep as a customer's engineers, and the sales half of my Launchpoint contract showed me I genuinely enjoy the work.</li>
+        <li><strong>AI tooling and systems development</strong>, for teams that want someone who builds the automation rather than just using it.</li>
         <li><strong>Quant and trading technology</strong>: research tooling, backtesting infrastructure, and execution software.</li>
-        <li><strong>AI tooling and generalist engineering</strong>, for teams that need someone who can move across hardware, software, and analysis.</li>
-        <li><strong>Tech sales and GTM</strong>: I can go as deep as a customer's engineers, and my sales work at Launchpoint showed me I genuinely enjoy the job.</li>
+        <li><strong>Propulsion, fluid systems, mechanical, and systems engineering</strong>, where my flight-hardware ownership applies directly.</li>
       </ul>
-      <h3>My Path</h3>
-      <p>Physics degree. Responsible Engineer on flight-critical cryogenic hardware. Self-built modeling tools and trading software. Most recently, growth and sales at an early-stage startup. Each jump came faster than the last because the fundamentals transfer, and I ramp up new domains on my own.</p>
+      <h3>My path</h3>
+      <p>Physics degree. Responsible Engineer on flight-critical cryogenic hardware at Blue Origin. Eighteen months building Python and LLM systems on my own. Most recently, product engineering and sales at an early-stage startup. Each jump came faster than the last because the fundamentals transfer, and I ramp up new domains on my own.</p>
       <p>I use LLM agents and custom automation in everything: analysis tooling, design iteration, building this site. Teams taking AI seriously get someone who already works that way. Teams that aren't get a preview.</p>
       <h3>Working style</h3>
       <ul>
@@ -1260,7 +1284,7 @@ const DEEP = {
     `
   },
   "clubs": {
-    hue: 6, title: "ARC and RPL.",
+    hue: 6, title: "ARC and RPL",
     next: { href: "#/trading", label: "Software" },
     body: `
       <h3>Aerospace Research Cooperative</h3>
@@ -1284,11 +1308,17 @@ const DEEP = {
     `
   },
   "trading": {
-    hue: 152, title: "Applying engineering to stock trading.",
+    hue: 152, title: "Python and LLM systems, built solo",
     next: { href: "#contact", label: "Contact" },
     body: `
-      <p>Systematic intraday futures trading run as an engineering discipline. Hypothesis-driven research, honest testing, and a self-built stack for alerting, journaling, screening, and automation. Every recurring manual step becomes a tool.</p>
-      <h3>Tools I built</h3>
+      <p>Eighteen months building software on my own, run as an engineering discipline rather than a hobby. The largest piece is a stock-analysis stack: a Streamlit analytics application over Pandas tracking performance and risk metrics in real time, a scanner filtering thousands of tickers against defined criteria, and a staged alerting pipeline with webhook-based delivery.</p>
+      <p>I wrote a 26-section technical specification and an 8-phase validation plan before any of it went into daily use, and used LLM agents throughout for design, debugging, and iteration.</p>
+      <h3>Also built</h3>
+      <ul>
+        <li>A job-board monitor integrating three ATS APIs (Ashby, Greenhouse, Lever) across 27 companies, with tiered relevance classification, deduplication against a persistent state store, and scheduled automation.</li>
+        <li>An automated resume-tailoring pipeline with headless Chrome PDF rendering, built by reverse-engineering an undocumented HTML export format, including a fix for an escaping bug that would have silently corrupted output.</li>
+      </ul>
+      <h3>Public repos</h3>
       <div class="repo-list">
         <a href="https://github.com/leif-hellgren1/trade-tracker" target="_blank" rel="noopener"><span class="rname">trade-tracker</span><div class="rdesc">Desktop app for logging trades on a calendar and tracking stats, with Google Sheets sync.</div></a>
         <a href="https://github.com/leif-hellgren1/tradingview-scripts" target="_blank" rel="noopener"><span class="rname">tradingview-scripts</span><div class="rdesc">Pine Script indicators for intraday futures trading.</div></a>
@@ -1309,10 +1339,24 @@ const DEEP = {
   const deep = document.getElementById('deep');
   const panel = document.getElementById('deepPanel');
   const closeBtn = document.getElementById('deepClose');
+  /* Everything the overlay covers gets inert while it is open. Without this, tabbing out of
+     the deep page walks into the nav and into the fly-through cards behind it, which are
+     invisible but still focusable. The contact cluster is deliberately left out: it floats
+     above the overlay and stays usable, which is the point of it. */
+  const BEHIND = ['#viewport', 'nav', '.rail', '.name-mark', '#travel'];
+  function setBehindInert(on) {
+    BEHIND.forEach(sel => {
+      const el = document.querySelector(sel);
+      if (!el) return;
+      if (on) el.setAttribute('inert', ''); else el.removeAttribute('inert');
+    });
+  }
   function openDeep(id) {
     const d = DEEP[id];
     if (!d) return closeDeep();
     deep.style.setProperty('--dh', d.hue);
+    deep.setAttribute('aria-label', d.title);   // beats the generic "Location detail"
+    setBehindInert(true);
     panel.innerHTML =
       '<h1>' + d.title + '</h1>' +
       d.body +
@@ -1328,6 +1372,7 @@ const DEEP = {
   function closeDeep() {
     deep.classList.remove('open');
     document.body.classList.remove('locked');
+    setBehindInert(false);
     if (location.hash.startsWith('#/')) {
       try { history.replaceState(null, '', location.href.split('#')[0]); }
       catch (_) { location.hash = ''; }
@@ -1338,7 +1383,7 @@ const DEEP = {
   function route() {
     const h = location.hash;
     if (h.startsWith('#/')) openDeep(h.slice(2));
-    else { deep.classList.remove('open'); document.body.classList.remove('locked'); }
+    else { deep.classList.remove('open'); document.body.classList.remove('locked'); setBehindInert(false); }
   }
   addEventListener('hashchange', route);
   closeBtn.addEventListener('click', closeDeep);
