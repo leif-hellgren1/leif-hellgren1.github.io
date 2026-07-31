@@ -42,7 +42,7 @@ TEMPLATE = """
   <div class="wrap">
     <div class="name">Leif Hellgren</div>
     <div>
-      <h1>Physics. Rockets.<br>LLM Dev. GTM.</h1>
+      <h1>Physics. Rockets.<br>AI. GTM.</h1>
       <p>Flight-critical subsystem on Blue Origin's first lunar lander. Python and LLM systems built solo.</p>
     </div>
     <div class="foot"><span class="dot"></span>Looking for my next role in NYC</div>
