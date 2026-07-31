@@ -19,7 +19,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="preconnect" href="https://api.fontshare.com" />
 <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet" />
+<!-- Cabin is the web fallback for the name mark: Gill Sans is a licensed Monotype face with no
+     free web version, so we use the system copy where it exists (macOS, Windows with Office)
+     and fall back to Cabin, which is drawn in the same Johnston/Gill humanist lineage. -->
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400&family=Cabin:wght@500;600&display=swap" rel="stylesheet" />
 <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@700,800&display=swap" rel="stylesheet" />
 <style>
   /* Registered so the mirrored --p1 can transition (halo hue eases between stops)
@@ -41,6 +44,8 @@
     --glass-border: rgba(255,255,255,0.14);
     --glass-fill: rgba(255,255,255,0.03);   /* faint raised fill: chips, ghost buttons, repo cards */
     --hover-wash: rgba(255,255,255,0.05);   /* hover/active wash: mobile-menu states, deep-close */
+    /* the one content column: nav pill, hero card, and every content card share it exactly */
+    --col: min(92vw, 620px);
     /* spacing scale (8px base): vertical rhythm inside cards, hero, deep pages, contact.
        Component paddings and world/scene geometry (SPACING=1600 etc.) are not on this scale. */
     --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
@@ -106,11 +111,12 @@
      scroll away with the page. */
   nav.glass {
     position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
-    z-index: 60; width: fit-content; max-width: min(92vw, 620px);
+    z-index: 60; width: var(--col);
     display: flex; align-items: center; justify-content: center;
     padding: 11px 22px; border-radius: var(--r-pill);
   }
-  nav .links { display:flex; gap:20px; align-items:center; }
+  /* fills the bar and spreads the links evenly across it */
+  nav .links { display:flex; flex:1; justify-content:space-between; align-items:center; gap:12px; }
   nav .links a { color:var(--ink-dim); text-decoration:none; font-size:0.88rem; white-space:nowrap; transition:color 0.3s var(--ease); }
   nav .links a:hover, nav .links a.active { color:var(--ink); }
   .menu-btn { display:none; background:none; border:0; color:var(--ink); font-size:1.25rem; cursor:pointer; padding:4px 10px; }
@@ -142,16 +148,29 @@
   .name-mark {
     position: fixed; top: clamp(32px, 4.5vh, 48px); left: clamp(32px, 3.5vw, 48px);
     z-index: 58; pointer-events: none;
-    font-family: "Cabinet Grotesk", "IBM Plex Sans", sans-serif; font-weight: 800;
-    font-size: clamp(1.9rem, 3vw, 2.75rem); letter-spacing: -0.02em; line-height: 1;
+    /* Gill Sans, set as 2001's title cards were: caps, regular weight, wide tracking.
+       Caps also make the Cabin fallback nearly indistinguishable, since humanist sans
+       faces diverge mostly in the lowercase. */
+    font-family: "Gill Sans", "Gill Sans MT", "Cabin", "IBM Plex Sans", sans-serif;
+    font-weight: 500; text-transform: uppercase;
+    font-size: clamp(0.95rem, 1.55vw, 1.32rem); letter-spacing: 0.2em; line-height: 1;
     color: var(--ink);
+    --rule-ink: color-mix(in srgb, var(--ink) 30%, transparent);
   }
+  /* Datum scale, not an underline: a hairline rule carrying descending tick marks with a
+     single accent tick at the origin, the way a scale bar reads on an engineering drawing.
+     Three stacked gradients, no assets: accent origin tick, the rule, then the ticks. */
   .name-mark::after {
-    content:""; display:block; margin-top:9px; width:56px; height:2px;
-    background: linear-gradient(90deg, var(--accent), transparent);
+    content:""; display:block; margin-top:13px; height:9px;
+    background-image:
+      linear-gradient(var(--accent), var(--accent)),
+      linear-gradient(var(--rule-ink), var(--rule-ink)),
+      repeating-linear-gradient(90deg, var(--rule-ink) 0 1px, transparent 1px 12px);
+    background-size: 2px 9px, 100% 1px, 100% 5px;
+    background-position: 0 0, 0 0, 0 0;
+    background-repeat: no-repeat;
   }
-  @media (max-width:480px) { .name-mark { font-size:1.5rem; } }
-  @media (max-width:380px) { .name-mark { font-size:1.35rem; } }
+  @media (max-width:480px) { .name-mark { font-size:0.9rem; letter-spacing:0.16em; } }
 
   /* ---------- Progress rail ---------- */
   .rail { position:fixed; right:22px; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:14px; z-index:55; }
@@ -204,12 +223,13 @@
   #world { position:absolute; inset:0; transform-style:preserve-3d; transition: --p1 0.6s var(--ease); }
   .stop {
     position:absolute; left:50%; top:50%;
-    width:min(92vw, 620px);
+    width:var(--col);
     transform-style:preserve-3d;
     will-change:transform, opacity;
     opacity:0; visibility:hidden;
   }
-  .stop.hero-stop { width:min(94vw, 740px); }
+  /* hero used to run wider (740px); it shares the column now so nav and cards edge-align */
+  .stop.hero-stop { width:var(--col); }
   .stop .loc-panel { border-radius:var(--r-md); padding:clamp(24px,4vw,42px); }
 
   .loc-panel .idx { color:hsl(var(--p1,25),90%,70%); }
@@ -218,6 +238,8 @@
     font-size:clamp(1.7rem,4vw,2.5rem); letter-spacing:-0.02em; line-height:1.1;
     margin:var(--space-3) 0 var(--space-2);
   }
+  /* cards with no eyebrow start at the card's own padding, not below a phantom one */
+  .loc-panel h2:first-child { margin-top:0; }
   .loc-panel .sub { color:hsl(var(--p1,25),55%,75%); font-size:0.98rem; margin-bottom:var(--space-4); }
   .loc-panel p.body { color:var(--ink-body); font-size:0.98rem; max-width:52ch; }
   .loc-panel ul.points { margin:var(--space-4) 0 0 0; list-style:none; display:grid; gap:var(--space-2); }
@@ -234,6 +256,13 @@
   /* status greens: one-off live-state palette (border/text/dot), used only on this chip */
   .chip.live { border-color:rgba(120,255,170,0.35); color:#9fe8bd; }
   .chip.live::before { content:"●"; color:#4ade80; margin-right:8px; font-size:0.6rem; vertical-align:middle; }
+  /* the move is the time-sensitive fact on this card, so its dot breathes like the hero status */
+  .chip.moving { border-color:color-mix(in srgb, var(--accent) 35%, transparent); color:var(--accent-soft); }
+  .chip.moving::before {
+    content:"●"; color:var(--accent); margin-right:8px; font-size:0.6rem;
+    display:inline-block; vertical-align:middle;
+    animation:pulseDot 2.2s ease-in-out infinite;
+  }
 
   /* Hero card */
   .hero-glass { border-radius:var(--r-lg); padding:clamp(30px,5.5vw,64px); overflow:hidden; position:relative; }
@@ -246,11 +275,14 @@
   }
   .hero-glass h1 {
     font-family:"Cabinet Grotesk","IBM Plex Sans",sans-serif; font-weight:800;
-    font-size:clamp(2.1rem,5.6vw,3.9rem); line-height:1.06; letter-spacing:-0.02em;
+    /* sized so the longer line ("Physics. Rockets.") fits the column without wrapping at
+       every width; .hline below forbids wrapping, so this has to fit outright */
+    font-size:clamp(1.5rem,9.5vw,3.9rem); line-height:1.06; letter-spacing:-0.02em;
   }
   /* one line when it fits; the only permitted break is between these two halves */
   .hero-glass h1 .hline { white-space:nowrap; }
-  .hero-glass .tagline { margin-top:var(--space-5); max-width:48ch; font-size:clamp(0.98rem,2vw,1.15rem); color:var(--ink-dim); }
+  /* one claim per line, so the four read as a scannable list rather than a paragraph */
+  .hero-glass .tagline { margin-top:var(--space-5); max-width:48ch; font-size:clamp(0.98rem,2vw,1.15rem); color:var(--ink-dim); display:grid; gap:var(--space-3); }
   .status-line {
     margin-top:var(--space-4); display:flex; align-items:center; gap:10px;
     font-size:clamp(1.04rem,2.1vw,1.22rem); font-weight:500; color:var(--ink);
@@ -261,7 +293,7 @@
     animation:pulseDot 2.2s ease-in-out infinite;
   }
   @keyframes pulseDot { 0%,100% { transform:scale(1); opacity:1; } 50% { transform:scale(0.7); opacity:0.55; } }
-  @media (prefers-reduced-motion: reduce) { .pulse-dot { animation:none; } }
+  @media (prefers-reduced-motion: reduce) { .pulse-dot, .chip.moving::before { animation:none; } }
   .hero-actions { margin-top:var(--space-6); display:flex; gap:var(--space-3); flex-wrap:wrap; }
   .btn {
     display:inline-flex; align-items:center; gap:9px; text-decoration:none;
@@ -443,9 +475,6 @@
   /* no h2 override: the contact headline uses the standard .loc-panel h2 rule */
   .contact-card p { color:var(--ink-dim); margin:var(--space-4) auto var(--space-5); max-width:44ch; }
   .copy-email { border:0; cursor:pointer; font-family:inherit; min-width:200px; justify-content:center; }
-  .mail-fallback { margin-top:var(--space-3); }
-  .mail-fallback a { color:var(--ink-faint); font-size:0.82rem; text-decoration:underline; text-underline-offset:3px; transition:color 0.3s var(--ease); }
-  .mail-fallback a:hover { color:var(--ink-dim); }
 
   .sr-skip { position:absolute; left:-9999px; }
   .sr-skip:focus { left:16px; top:16px; z-index:200; background:var(--bg); padding:10px 16px; border-radius:8px; } /* 8px: interaction micro-radius, below the radius scale */
@@ -523,8 +552,13 @@
       <!-- STOP 0 · HERO -->
       <div class="stop hero-stop" data-loc="top">
         <div class="hero-glass glass" id="heroGlass">
-          <h1><span class="hline">Physics. Aerospace.</span> <span class="hline">Software. Sales.</span></h1>
-          <p class="tagline">Studied physics at UCSB and founded its first rocket club. Owned and delivered a flight-critical subsystem on a first-gen lunar lander at Blue Origin. Built my own stock analysis software.</p>
+          <h1><span class="hline">Physics. Rockets.</span> <span class="hline">LLM Dev. GTM.</span></h1>
+          <div class="tagline">
+            <p>Studied physics at UCSB and founded its first rocket club.</p>
+            <p>Delivered a flight-critical subsystem on a first-generation lunar lander at Blue Origin.</p>
+            <p>Built custom stock market analysis software.</p>
+            <p>Helping startups build out infrastructure and scale.</p>
+          </div>
           <p class="status-line"><span class="pulse-dot" aria-hidden="true"></span>Looking for my next role in NYC.</p>
           <div class="hero-actions">
             <a class="btn primary" href="#/now">Hiring?</a>
@@ -536,19 +570,19 @@
       <!-- STOP 1 · NOW -->
       <div class="stop" data-loc="now" data-side="r" style="--p1:42">
         <div class="loc-panel glass">
-          <span class="mono idx">Current trajectory</span>
-          <h2>What I'm looking for.</h2>
+          <h2>What I'm looking for</h2>
           <div class="status-chips">
             <span class="chip live">Actively seeking</span>
-            <span class="chip">Moving to NYC · Sept 2026</span>
+            <span class="chip moving">Moving to NYC Sept 2026</span>
           </div>
-          <p class="body">Generalist with a physics base: flight hardware at Blue Origin, then self-built trading software. I work AI-natively, with agents and LLM tooling in the loop. Most recently a growth and engineering stint at an early-stage startup, where I shipped Next.js features, set up the CRM, and ran brand outreach. That put tech sales on the table for my next role.</p>
+          <p class="body">Most recently, a contract at an early-stage startup split between product engineering and sales: shipped Next.js features, stood up the CRM, and built an outbound system that booked qualified meetings. I work AI-natively, with agents and LLM tooling in the loop.</p>
           <ul class="points">
-            <li>Propulsion, fluid systems, mechanical, and systems engineering</li>
-            <li>Quant and trading technology: software built around markets, from backtesting to execution tools</li>
+            <li>GTM engineering, solutions engineering, and technical sales, my current focus</li>
             <li>AI tooling and systems development, building the automation rather than just using it</li>
-            <li>Tech sales and GTM, currently at the top of my list</li>
+            <li>Quant and trading technology, from backtesting to execution software</li>
+            <li>Propulsion, fluid systems, mechanical, and systems engineering</li>
           </ul>
+          <a class="deep-link" href="#/now">Read more <span>→</span></a>
         </div>
       </div>
 
@@ -612,8 +646,7 @@
         <div class="loc-panel glass contact-card">
           <h2>Looking to connect?</h2>
           <p>Hiring for engineering, software, or sales? Reach out below.</p>
-          <button class="btn primary copy-email" id="copyEmail" type="button" data-email="leif@exelor.com">leif@exelor.com</button>
-          <div class="mail-fallback"><a href="mailto:leif@exelor.com">open in mail app</a></div>
+          <button class="btn primary copy-email" id="copyEmail" type="button" data-email="leif@exelor.com" title="Copy email address" aria-label="Copy email address leif@exelor.com">leif@exelor.com</button>
           <span id="texCredit" hidden>Planet maps © Solar System Scope (CC BY 4.0)</span>
         </div>
       </div>
