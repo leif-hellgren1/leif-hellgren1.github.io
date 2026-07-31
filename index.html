@@ -214,7 +214,23 @@
     z-index:105;
     display:flex; align-items:center; gap:clamp(12px, 2.5vw, 18px);
     padding:10px 18px; border-radius:var(--r-pill);
+    transform-origin:left bottom;
+    transition:transform 0.5s var(--ease), box-shadow 0.5s var(--ease), border-color 0.5s var(--ease);
   }
+  /* At the contact stop the card asks "looking to connect?" and this is the answer, so it
+     stops reading as ambient chrome: warms to the accent, brightens, and lifts. Nothing is
+     duplicated into the card; the thing that was always there simply steps forward. */
+  .quick-links.hailed {
+    border-color:color-mix(in srgb, var(--accent) 45%, transparent);
+    box-shadow:
+      0 10px 44px rgba(0,0,0,0.5),
+      0 0 30px color-mix(in srgb, var(--accent) 20%, transparent),
+      inset 0 1px 0 var(--glass-border),
+      inset 0 -1px 0 rgba(255,255,255,0.04);
+    transform:scale(1.07);
+  }
+  .quick-links.hailed a, .quick-links.hailed button { color:var(--ink); }
+  .quick-links.hailed .ql-resume { color:var(--accent-soft); }
   .quick-links a, .quick-links button {
     font-family:"IBM Plex Mono",monospace; font-size:0.63rem; letter-spacing:0.12em;
     text-transform:uppercase; color:var(--ink-dim); text-decoration:none; white-space:nowrap;
@@ -233,6 +249,12 @@
       border-radius:0; border-left:0; border-right:0; border-bottom:0;
       padding:12px 16px;
     }
+    /* docked edge to edge here, so it brightens in place rather than scaling */
+    .quick-links.hailed { transform:none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .quick-links { transition:none; }
+    .quick-links.hailed { transform:none; }
   }
 
   a:focus-visible, button:focus-visible { outline:2px solid var(--accent); outline-offset:3px; border-radius:6px; } /* 6px: interaction micro-radius, below the radius scale */
@@ -497,6 +519,9 @@
   /* no h2 override: the contact headline uses the standard .loc-panel h2 rule */
   .contact-card p { color:var(--ink-dim); margin:var(--space-4) auto var(--space-5); max-width:44ch; }
   .copy-email { border:0; cursor:pointer; font-family:inherit; min-width:200px; justify-content:center; }
+  /* wayfinding, not a second contact list: says where the pinned cluster is, since on desktop
+     it sits far from where the eye is when this card arrives */
+  .contact-card p.contact-hint { margin:var(--space-4) auto 0; font-size:0.82rem; color:var(--ink-faint); }
 
   .sr-skip { position:absolute; left:-9999px; }
   .sr-skip:focus { left:16px; top:16px; z-index:200; background:var(--bg); padding:10px 16px; border-radius:8px; } /* 8px: interaction micro-radius, below the radius scale */
@@ -667,6 +692,7 @@
         <div class="loc-panel glass contact-card">
           <h2>Looking to connect?</h2>
           <button class="btn primary copy-email" id="copyEmail" type="button" data-email="leif@exelor.com" title="Copy email address" aria-label="Copy email address leif@exelor.com">leif@exelor.com</button>
+          <p class="contact-hint">Resume, GitHub, and LinkedIn are pinned below.</p>
         </div>
       </div>
 
@@ -1072,11 +1098,14 @@ const PLANETS = {
   const navLinks = Array.from(document.querySelectorAll('nav .links a'));
   const menuLinks = Array.from(document.querySelectorAll('.mobile-menu a'));
   const worldEl = document.getElementById('world');
+  const quickLinks = document.querySelector('.quick-links');
   function setActive(i) {
     const id = stops[i] && stops[i].dataset.loc;
     railLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
     navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
     menuLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+    // the contact card's answer is the cluster, so it steps forward when that stop is active
+    if (quickLinks) quickLinks.classList.toggle('hailed', id === 'contact');
     // mirror the active stop's hue onto #world so its planet's halo picks it up
     // (the hero declares none; use the first planet's hue, which is the visible one)
     const hue = (stops[i] && stops[i].style.getPropertyValue('--p1')) || '42';
