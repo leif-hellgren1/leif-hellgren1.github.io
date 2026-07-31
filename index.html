@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Leif Hellgren · Software Engineer</title>
-<meta name="description" content="Physics-trained engineer. Owned a flight-critical subsystem end to end on Blue Origin's first lunar lander, then built Python and LLM systems solo. Moving to NYC, September 2026." />
+<title>Leif Hellgren · Solutions Engineer</title>
+<meta name="description" content="Solutions and forward-deployed engineering. Owned a flight-critical subsystem on Blue Origin's first lunar lander, ships production Python and TypeScript, and builds the GTM machinery too. Moving to NYC, September 2026." />
 <meta name="author" content="Leif Hellgren" />
-<meta property="og:title" content="Leif Hellgren · Software Engineer" />
-<meta property="og:description" content="Physics at UCSB and founded its first rocket club. Flight-critical subsystem on Blue Origin's first lunar lander. Python and LLM systems built solo. Moving to NYC, September 2026." />
+<meta property="og:title" content="Leif Hellgren · Solutions Engineer" />
+<meta property="og:description" content="The solutions engineer who built the hardware. Flight-critical subsystem on Blue Origin's first lunar lander, production Python and TypeScript, and the outbound system at a startup. Moving to NYC, September 2026." />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="Leif Hellgren" />
 <meta property="og:locale" content="en_US" />
@@ -46,10 +46,10 @@
   "name": "Leif Hellgren",
   "url": "https://leif-hellgren1.github.io/",
   "email": "mailto:leif@exelor.com",
-  "jobTitle": "Software Engineer",
-  "description": "Physics-trained engineer. Owned a flight-critical cryogenic subsystem end to end on Blue Origin's first lunar lander, then built Python and LLM systems independently.",
+  "jobTitle": "Solutions Engineer",
+  "description": "Solutions and forward-deployed engineer. Owned a flight-critical cryogenic subsystem end to end on Blue Origin's first lunar lander, then built Python and LLM systems independently.",
   "alumniOf": { "@type": "CollegeOrUniversity", "name": "University of California, Santa Barbara" },
-  "knowsAbout": ["Python", "TypeScript", "Next.js", "LLM systems", "Systems engineering", "Fluid and thermal analysis", "Go-to-market engineering"],
+  "knowsAbout": ["Solutions engineering", "Forward-deployed engineering", "Python", "TypeScript", "Next.js", "LLM systems", "Systems engineering", "Go-to-market engineering"],
   "sameAs": [
     "https://github.com/leif-hellgren1",
     "https://www.linkedin.com/in/leif-hellgren-a1177216a/"
@@ -295,11 +295,14 @@
     /* seat the disk into the dark: soft dark base + faint accent halo (scene shading, not UI color) */
     filter: drop-shadow(0 0 34px rgba(0,0,0,0.55)) drop-shadow(0 0 60px hsla(var(--p1,210),60%,55%,0.14));
   }
+  /* the trajectory, kept as a kicker: it shows range without competing with the headline
+     for what the role actually is */
+  .hero-glass .arc { color:var(--ink-dim); margin-bottom:var(--space-4); }
   .hero-glass h1 {
     font-family:"Cabinet Grotesk","IBM Plex Sans",sans-serif; font-weight:800;
-    /* sized so the longer line ("Physics. Rockets.") fits the column without wrapping at
-       every width; .hline below forbids wrapping, so this has to fit outright */
-    font-size:clamp(1.5rem,9.5vw,3.9rem); line-height:1.06; letter-spacing:-0.02em;
+    /* sized so the longer line ("who built the hardware.") fits the column without wrapping
+       at every width; .hline below forbids wrapping, so this has to fit outright */
+    font-size:clamp(1.2rem,7.2vw,2.95rem); line-height:1.06; letter-spacing:-0.02em;
   }
   /* one line when it fits; the only permitted break is between these two halves */
   .hero-glass h1 .hline { white-space:nowrap; }
@@ -570,7 +573,8 @@
       <!-- STOP 0 · HERO -->
       <div class="stop hero-stop" data-loc="top">
         <div class="hero-glass glass" id="heroGlass">
-          <h1><span class="hline">Physics. Rockets.</span> <span class="hline">LLM Dev. GTM.</span></h1>
+          <div class="mono arc">Physics &rarr; Rockets &rarr; LLM Dev &rarr; GTM</div>
+          <h1><span class="hline">The solutions engineer</span> <span class="hline">who built the hardware.</span></h1>
           <div class="tagline">
             <p>Studied physics at UCSB and founded its first rocket club.</p>
             <p>Delivered a flight-critical subsystem on a first-generation lunar lander at Blue Origin.</p>
@@ -595,12 +599,12 @@
             <span class="chip live">Actively seeking</span>
             <span class="chip moving">Moving to NYC Sept 2026</span>
           </div>
-          <p class="body">Most recently a contract at Launchpoint, split between product engineering and sales: shipped features into a live Next.js codebase, stood up the CRM, built an outbound system that booked qualified meetings. I build with agents and LLM tooling by default.</p>
+          <p class="body">Solutions and forward-deployed engineering, or GTM engineering: the roles where one person has to know the product deeply, build what the customer needs, and be credible in the room. Most recently a contract at Launchpoint split between product engineering and sales: shipped features into a live Next.js codebase, stood up the CRM, built an outbound system that booked qualified meetings.</p>
           <ul class="points">
-            <li>GTM and solutions engineering, technical sales</li>
-            <li>AI tooling and automation systems</li>
-            <li>Quant and trading technology, backtesting through execution</li>
-            <li>Propulsion, fluid systems, and systems engineering</li>
+            <li>Deep enough to debug alongside a customer's engineers</li>
+            <li>Ships production code in Python and TypeScript</li>
+            <li>Builds the GTM machinery too: CRM, outbound, scoring models</li>
+            <li>At home when the domain is hard, from cryogenics to market data</li>
           </ul>
           <a class="deep-link" href="#/now">Read more <span>→</span></a>
         </div>
@@ -1215,7 +1219,8 @@ const DEEP = {
     body: `
       <h3>Roles I'm targeting</h3>
       <ul>
-        <li><strong>GTM engineering, solutions engineering, and technical sales</strong>: I can go as deep as a customer's engineers, and the sales half of my Launchpoint contract showed me I genuinely enjoy the work.</li>
+        <li><strong>Solutions and forward-deployed engineering</strong>: I can go as deep as a customer's engineers, and the sales half of my Launchpoint contract showed me I genuinely enjoy the work.</li>
+        <li><strong>GTM engineering and technical sales</strong>, where the same person builds the tooling and runs the motion.</li>
         <li><strong>AI tooling and systems development</strong>, for teams that want someone who builds the automation rather than just using it.</li>
         <li><strong>Quant and trading technology</strong>: research tooling, backtesting infrastructure, and execution software.</li>
         <li><strong>Propulsion, fluid systems, mechanical, and systems engineering</strong>, where my flight-hardware ownership applies directly.</li>
