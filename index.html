@@ -245,6 +245,12 @@
     background:none; border:0; padding:0; cursor:pointer; line-height:1;
     transition:color 0.3s var(--ease), font-size 0.6s var(--ease);
   }
+  /* The email label swaps to "Copied" on click, and while hailed it reads as the full address.
+     Reserve the widest string each state can hold so the control, and therefore the whole bar,
+     never changes width mid-interaction. The labels are monospace, so ch is exact: n characters
+     measure n*(1ch + the 0.12em tracking). "Copied" is 6, "leif@exelor.com" is 15. */
+  .quick-links [data-email] { min-width:calc(6ch + 0.72em); text-align:center; }
+  .quick-links.hailed [data-email] { min-width:calc(15ch + 1.8em); }
   /* resume is the highest-value link here: one step brighter, no extra color introduced */
   .quick-links .ql-resume { color:var(--ink); }
   .quick-links a:hover, .quick-links button:hover { color:var(--ink); }
@@ -535,7 +541,9 @@
   /* scoped to beat .stop .loc-panel's padding, so the panel box is exactly the heading and
      HAIL_GAP below measures from the text itself rather than from invisible padding */
   .stop .loc-panel.contact-card { padding:0; border-radius:0; }
-  .contact-card h2 { margin:0; }
+  /* sized up from the card-heading scale: with no panel around it this is a full-screen
+     closing line, not a heading sitting on top of a block of card copy */
+  .contact-card h2 { margin:0; font-size:clamp(2rem, 4.6vw, 3.25rem); }
 
   .sr-skip { position:absolute; left:-9999px; }
   .sr-skip:focus { left:16px; top:16px; z-index:200; background:var(--bg); padding:10px 16px; border-radius:8px; } /* 8px: interaction micro-radius, below the radius scale */
@@ -648,9 +656,9 @@
       <!-- STOP 2 · BLUE ORIGIN -->
       <div class="stop" data-loc="blue-origin" data-side="l" style="--p1:20">
         <div class="loc-panel glass">
-          <span class="mono idx">Blue Origin · Lunar Permanence Program · 2022-2024</span>
+          <span class="mono idx">Blue Origin · Lunar Permanence Program ·&nbsp;2022-2024</span>
           <h2>Responsible Engineer, Thermodynamic Vent System</h2>
-          <div class="sub">Mk-1 Lunar Lander flight-critical subsystem</div>
+          <div class="sub">Mk1 Lunar Lander flight-critical subsystem</div>
           <p class="body">Owned a propellant-tank pressure-management system end to end.</p>
           <ul class="points">
             <li>Design, analysis, procurement and manufacturing, integration, and risk, including the full subsystem CAD model</li>
@@ -664,7 +672,7 @@
       <!-- STOP 3 · CLUBS / LEADERSHIP -->
       <div class="stop" data-loc="clubs" data-side="r" style="--p1:6">
         <div class="loc-panel glass">
-          <span class="mono idx">UCSB Aerospace Research Cooperative &amp; Rocket Propulsion Laboratory · 2017-2021</span>
+          <span class="mono idx">UCSB Aerospace Research Cooperative &amp; Rocket Propulsion Laboratory ·&nbsp;2017-2021</span>
           <h2>Founded UC Santa Barbara's first rocket club. Co-founded its largest engineering club.</h2>
           <p class="body">Started UCSB's first rocket club as a freshman, then co-founded the Rocket Propulsion Laboratory, now UCSB's largest engineering club and a sanctioned capstone option.</p>
           <ul class="points">
@@ -678,7 +686,7 @@
       <!-- STOP 4 · EDUCATION (card only; no deep dive) -->
       <div class="stop" data-loc="education" data-side="l" style="--p1:190">
         <div class="loc-panel glass">
-          <span class="mono idx">University of California, Santa Barbara · 2017-2021</span>
+          <span class="mono idx">University of California, Santa Barbara ·&nbsp;2017-2021</span>
           <h2>Bachelor's in Physics</h2>
           <div class="sub">Top-ranked physics program</div>
           <p class="body">Physics for the fundamentals. Supplemented the quantum coursework with mechanical design and engineering classes so I could build better rockets.</p>
@@ -688,7 +696,7 @@
       <!-- STOP 5 · TRADING / DEV -->
       <div class="stop" data-loc="trading" data-side="r" style="--p1:152">
         <div class="loc-panel glass">
-          <span class="mono idx">Independent Development · 2024-2026</span>
+          <span class="mono idx">Independent Development ·&nbsp;2024-2026</span>
           <h2>Building complete software systems on my own</h2>
           <div class="sub">Python · Pandas · Streamlit · TypeScript</div>
           <p class="body">Eighteen months building Python and LLM-driven systems solo, most of it around market analysis: a Streamlit analytics app over Pandas, a scanner that filters thousands of tickers against defined criteria, and a staged alerting pipeline with webhook delivery.</p>
