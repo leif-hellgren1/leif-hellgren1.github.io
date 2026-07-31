@@ -214,28 +214,34 @@
     z-index:105;
     display:flex; align-items:center; gap:clamp(12px, 2.5vw, 18px);
     padding:10px 18px; border-radius:var(--r-pill);
-    transform-origin:left bottom;
-    transition:transform 0.5s var(--ease), box-shadow 0.5s var(--ease), border-color 0.5s var(--ease);
+    transform:translateX(0);
+    transition:
+      left 0.6s var(--ease), bottom 0.6s var(--ease), transform 0.6s var(--ease),
+      padding 0.6s var(--ease), gap 0.6s var(--ease),
+      box-shadow 0.6s var(--ease), border-color 0.6s var(--ease);
   }
-  /* At the contact stop the card asks "looking to connect?" and this is the answer, so it
-     stops reading as ambient chrome: warms to the accent, brightens, and lifts. Nothing is
-     duplicated into the card; the thing that was always there simply steps forward. */
+  /* The contact card asks "looking to connect?" and this is the answer, so at that stop it
+     leaves the corner: rises to centre under the card, grows, and warms to the accent. The
+     card holds no duplicate links; the thing that was always pinned simply comes to meet you.
+     Scrolling away reverses it. */
   .quick-links.hailed {
+    left:50%; bottom:clamp(120px, 22vh, 260px);
+    transform:translateX(-50%);
+    padding:15px 30px; gap:clamp(18px, 3.2vw, 30px);
     border-color:color-mix(in srgb, var(--accent) 45%, transparent);
     box-shadow:
-      0 10px 44px rgba(0,0,0,0.5),
-      0 0 30px color-mix(in srgb, var(--accent) 20%, transparent),
+      0 14px 50px rgba(0,0,0,0.55),
+      0 0 34px color-mix(in srgb, var(--accent) 20%, transparent),
       inset 0 1px 0 var(--glass-border),
       inset 0 -1px 0 rgba(255,255,255,0.04);
-    transform:scale(1.07);
   }
-  .quick-links.hailed a, .quick-links.hailed button { color:var(--ink); }
+  .quick-links.hailed a, .quick-links.hailed button { color:var(--ink); font-size:0.8rem; }
   .quick-links.hailed .ql-resume { color:var(--accent-soft); }
   .quick-links a, .quick-links button {
     font-family:"IBM Plex Mono",monospace; font-size:0.63rem; letter-spacing:0.12em;
     text-transform:uppercase; color:var(--ink-dim); text-decoration:none; white-space:nowrap;
     background:none; border:0; padding:0; cursor:pointer; line-height:1;
-    transition:color 0.3s var(--ease);
+    transition:color 0.3s var(--ease), font-size 0.6s var(--ease);
   }
   /* resume is the highest-value link here: one step brighter, no extra color introduced */
   .quick-links .ql-resume { color:var(--ink); }
@@ -249,12 +255,17 @@
       border-radius:0; border-left:0; border-right:0; border-bottom:0;
       padding:12px 16px;
     }
-    /* docked edge to edge here, so it brightens in place rather than scaling */
-    .quick-links.hailed { transform:none; }
+    /* already docked directly beneath the card here, so there is nowhere useful to rise to:
+       it stays put and brightens instead of flying across a small screen */
+    .quick-links.hailed {
+      left:0; bottom:0; transform:none;
+      padding:14px 16px; gap:clamp(12px, 2.5vw, 18px);
+    }
+    .quick-links.hailed a, .quick-links.hailed button { font-size:0.7rem; }
   }
+  /* the move still happens, it just happens instantly instead of gliding */
   @media (prefers-reduced-motion: reduce) {
-    .quick-links { transition:none; }
-    .quick-links.hailed { transform:none; }
+    .quick-links, .quick-links a, .quick-links button { transition:none; }
   }
 
   a:focus-visible, button:focus-visible { outline:2px solid var(--accent); outline-offset:3px; border-radius:6px; } /* 6px: interaction micro-radius, below the radius scale */
@@ -518,10 +529,6 @@
   .contact-card { text-align:center; }
   /* no h2 override: the contact headline uses the standard .loc-panel h2 rule */
   .contact-card p { color:var(--ink-dim); margin:var(--space-4) auto var(--space-5); max-width:44ch; }
-  .copy-email { border:0; cursor:pointer; font-family:inherit; min-width:200px; justify-content:center; }
-  /* wayfinding, not a second contact list: says where the pinned cluster is, since on desktop
-     it sits far from where the eye is when this card arrives */
-  .contact-card p.contact-hint { margin:var(--space-4) auto 0; font-size:0.82rem; color:var(--ink-faint); }
 
   .sr-skip { position:absolute; left:-9999px; }
   .sr-skip:focus { left:16px; top:16px; z-index:200; background:var(--bg); padding:10px 16px; border-radius:8px; } /* 8px: interaction micro-radius, below the radius scale */
@@ -578,7 +585,7 @@
        one click away, on every stop and every deep-dive page. -->
   <div class="quick-links glass" role="group" aria-label="Resume and contact">
     <a class="ql-resume" href="Leif-Hellgren-Resume.pdf" download>Resume &darr;</a>
-    <button type="button" data-email="leif@exelor.com">Email</button>
+    <button type="button" data-email="leif@exelor.com" data-rest="Email" title="Copy email address" aria-label="Copy email address leif@exelor.com">Email</button>
     <a href="https://github.com/leif-hellgren1" target="_blank" rel="noopener">GitHub &nearr;</a>
     <a href="https://www.linkedin.com/in/leif-hellgren-a1177216a/" target="_blank" rel="noopener">LinkedIn &nearr;</a>
   </div>
@@ -691,8 +698,7 @@
       <div class="stop" data-loc="contact" style="--p1:26">
         <div class="loc-panel glass contact-card">
           <h2>Looking to connect?</h2>
-          <button class="btn primary copy-email" id="copyEmail" type="button" data-email="leif@exelor.com" title="Copy email address" aria-label="Copy email address leif@exelor.com">leif@exelor.com</button>
-          <p class="contact-hint">Resume, GitHub, and LinkedIn are pinned below.</p>
+          <p>Resume, email, GitHub, and LinkedIn, all below.</p>
         </div>
       </div>
 
@@ -1104,8 +1110,17 @@ const PLANETS = {
     railLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
     navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
     menuLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
-    // the contact card's answer is the cluster, so it steps forward when that stop is active
-    if (quickLinks) quickLinks.classList.toggle('hailed', id === 'contact');
+    // the contact card's answer is the cluster, so it comes forward at that stop and the
+    // email control spells the address out, since the card no longer carries it
+    if (quickLinks) {
+      const on = id === 'contact';
+      quickLinks.classList.toggle('hailed', on);
+      const eb = quickLinks.querySelector('[data-email]');
+      if (eb) {
+        eb.dataset.rest = on ? eb.dataset.email : 'Email';
+        if (eb.textContent !== 'Copied') eb.textContent = eb.dataset.rest;
+      }
+    }
     // mirror the active stop's hue onto #world so its planet's halo picks it up
     // (the hero declares none; use the first planet's hue, which is the visible one)
     const hue = (stops[i] && stops[i].style.getPropertyValue('--p1')) || '42';
@@ -1204,7 +1219,8 @@ const PLANETS = {
     function copied() {
       btn.textContent = 'Copied';
       clearTimeout(timer);
-      timer = setTimeout(() => { btn.textContent = label; }, 1500);
+      // data-rest tracks the current resting label, which changes when the cluster is hailed
+      timer = setTimeout(() => { btn.textContent = btn.dataset.rest || label; }, 1500);
     }
     function legacyCopy() {
       const ta = document.createElement('textarea');
