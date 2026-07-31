@@ -14,7 +14,7 @@ TEMPLATE = """
 <!DOCTYPE html><html><head><meta charset="utf-8">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;500&family=IBM+Plex+Mono:wght@400&family=Cabin:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;500&family=Cabin:wght@500&display=swap" rel="stylesheet">
 <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800&display=swap" rel="stylesheet">
 <style>
   :root { --bg:#0a0b0f; --ink:#eef1f7; --ink-dim:#9aa3b2; --accent:#ff8a4c; }
@@ -32,9 +32,7 @@ TEMPLATE = """
   .name { font-family:"Gill Sans","Gill Sans MT","Cabin",sans-serif; font-weight:500;
           text-transform:uppercase; letter-spacing:0.22em; font-size:23px; color:var(--ink); }
   h1 { font-family:"Cabinet Grotesk","IBM Plex Sans",sans-serif; font-weight:800;
-       font-size:64px; line-height:1.05; letter-spacing:-0.02em; color:var(--ink); }
-  .arc { font-family:"IBM Plex Mono",monospace; font-size:17px; letter-spacing:0.12em;
-         text-transform:uppercase; color:var(--ink-dim); margin-bottom:20px; }
+       font-size:76px; line-height:1.05; letter-spacing:-0.02em; color:var(--ink); }
   p  { margin-top:26px; font-size:25px; line-height:1.5; color:var(--ink-dim); max-width:44ch; font-weight:300; }
   .foot { display:flex; align-items:center; gap:12px; font-size:22px; color:var(--ink); font-weight:500; }
   .dot { width:10px; height:10px; border-radius:50%; background:var(--accent);
@@ -44,9 +42,8 @@ TEMPLATE = """
   <div class="wrap">
     <div class="name">Leif Hellgren</div>
     <div>
-      <div class="arc">Physics &rarr; Rockets &rarr; LLM Dev &rarr; GTM</div>
-      <h1>The solutions engineer<br>who built the hardware.</h1>
-      <p>Flight-critical subsystem on Blue Origin's first lunar lander. Ships production Python and TypeScript.</p>
+      <h1>Physics. Rockets.<br>LLM Dev. GTM.</h1>
+      <p>Flight-critical subsystem on Blue Origin's first lunar lander. Python and LLM systems built solo.</p>
     </div>
     <div class="foot"><span class="dot"></span>Looking for my next role in NYC</div>
   </div>
