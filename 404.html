@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Not found · Leif Hellgren</title>
+<meta name="robots" content="noindex" />
+<meta name="theme-color" content="#0a0b0f" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🪐</text></svg>" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;500&family=Cabin:wght@500&display=swap" rel="stylesheet" />
+<style>
+  :root { --bg:#0a0b0f; --ink:#eef1f7; --ink-dim:#9aa3b2; --accent:#ff8a4c; --accent-soft:#ffb489;
+          --ease:cubic-bezier(0.22,1,0.36,1); }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    min-height:100vh; background:var(--bg); color:var(--ink);
+    font-family:"IBM Plex Sans",system-ui,sans-serif; font-weight:300; line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:32px; gap:22px;
+  }
+  /* same ambient wash as the site, so this reads as the same place */
+  .amb { position:fixed; inset:0; z-index:-1;
+    background:
+      radial-gradient(55% 45% at 78% 12%, rgba(88,120,255,0.10), transparent 70%),
+      radial-gradient(60% 55% at 15% 85%, rgba(150,80,220,0.08), transparent 70%),
+      linear-gradient(180deg,#0a0b0f 0%,#0b0d14 55%,#0a0b0f 100%); }
+  .name { font-family:"Gill Sans","Gill Sans MT","Cabin",sans-serif; font-weight:500;
+          text-transform:uppercase; letter-spacing:0.22em; font-size:1rem; }
+  h1 { font-size:clamp(1.3rem,4vw,1.9rem); font-weight:500; letter-spacing:-0.01em; line-height:1.2; }
+  p { color:var(--ink-dim); max-width:44ch; }
+  a.home {
+    display:inline-flex; align-items:center; gap:9px; text-decoration:none;
+    padding:12px 22px; border-radius:999px; font-size:0.93rem; font-weight:500;
+    background:linear-gradient(180deg,var(--accent-soft),var(--accent)); color:#1a0f08;
+    box-shadow:0 6px 22px rgba(255,138,76,0.35);
+    transition:transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
+  }
+  a.home:hover { transform:translateY(-2px); box-shadow:0 10px 30px rgba(255,138,76,0.45); }
+  a:focus-visible { outline:2px solid var(--accent); outline-offset:3px; border-radius:6px; }
+  @media (prefers-reduced-motion: reduce) { a.home { transition:none; } }
+</style>
+</head>
+<body>
+  <div class="amb"></div>
+  <div class="name">Leif Hellgren</div>
+  <h1>That page isn't here</h1>
+  <p>The link may be out of date, or the address slightly off.</p>
+  <a class="home" href="/">Back to the site</a>
+</body>
+</html>

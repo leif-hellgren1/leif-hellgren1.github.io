@@ -154,7 +154,9 @@
   .menu-btn { display:none; background:none; border:0; color:var(--ink); font-size:1.25rem; cursor:pointer; padding:4px 10px; }
   /* collapse to a corner hamburger early enough that the pill never reaches the name mark */
   @media (max-width:960px) {
-    nav.glass { left:auto; right:16px; transform:none; padding:8px 10px; }
+    /* width must drop back to fit-content here: the column width is for the links row, and
+       leaving it on left a full-width pill holding one hamburger, sitting over the name mark */
+    nav.glass { left:auto; right:16px; transform:none; padding:8px 10px; width:fit-content; }
     nav .links { display:none; }
     .menu-btn { display:inline-flex; }
   }
@@ -665,7 +667,6 @@
         <div class="loc-panel glass contact-card">
           <h2>Looking to connect?</h2>
           <button class="btn primary copy-email" id="copyEmail" type="button" data-email="leif@exelor.com" title="Copy email address" aria-label="Copy email address leif@exelor.com">leif@exelor.com</button>
-          <span id="texCredit" hidden>Planet maps © Solar System Scope (CC BY 4.0)</span>
         </div>
       </div>
 
@@ -1275,7 +1276,7 @@ const DEEP = {
         <li>Oversaw vendor development, acceptance, and qualification testing. Ran heater power and functional testing, plus adhesive strength testing with a thermal-conductivity trade study.</li>
       </ul>
       <h3>Environment</h3>
-      <p>Hands-on with cryogenic propellants, liquid hydrogen and liquid oxygen, with liquid nitrogen as a test surrogate. Day-to-day coordination across thermal, GNC, structures, manufacturing, integration, systems, test, and safety.</p>
+      <p>Hands-on with cryogenic propellants, liquid hydrogen and liquid oxygen, with liquid nitrogen as a test surrogate. Day-to-day coordination across seven teams: thermal, GNC, structures, manufacturing, integration, test, and safety.</p>
       <p class="note">Details are kept at the scope-and-ownership level on purpose. Specifics available in conversation where appropriate.</p>
       <figure class="deep-figure">
         <img src="blue-origin-mk1.jpg" alt="Blue Origin Mk1 lunar lander in a test stand" loading="lazy" width="440" height="454" />
@@ -1296,13 +1297,13 @@ const DEEP = {
         <li>Set engineering practices for a volunteer team: design reviews, documentation, and an ownership culture borrowed from industry.</li>
       </ul>
       <div class="photo-row">
-        <img src="arc-balloon-led-build.jpg" alt="Wiring a high-power LED payload before a balloon launch" loading="lazy" />
-        <img src="arc-balloon-team.jpg" alt="ARC team holding a weather balloon before a night launch" loading="lazy" />
-        <img src="arc-balloon-dawn.jpg" alt="Weather balloon silhouetted at dawn before release" loading="lazy" />
+        <img src="arc-balloon-led-build.webp" alt="Wiring a high-power LED payload before a balloon launch" loading="lazy" width="700" height="933" />
+        <img src="arc-balloon-team.webp" alt="ARC team holding a weather balloon before a night launch" loading="lazy" width="1050" height="700" />
+        <img src="arc-balloon-dawn.webp" alt="Weather balloon silhouetted at dawn before release" loading="lazy" width="700" height="933" />
       </div>
       <p class="img-caption">High-altitude balloon launch that flew a record-setting high-power LED for the Experimental Cosmology Lab.</p>
       <figure class="deep-figure wide">
-        <img src="arc-team.jpg" alt="ARC team group photo at UCSB" loading="lazy" />
+        <img src="arc-team.webp" alt="ARC team group photo at UCSB" loading="lazy" width="960" height="720" />
         <figcaption class="img-caption">ARC team</figcaption>
       </figure>
     `
