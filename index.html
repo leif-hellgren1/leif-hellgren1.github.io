@@ -81,7 +81,7 @@
     /* spacing scale (8px base): vertical rhythm inside cards, hero, deep pages, contact.
        Component paddings and world/scene geometry (SPACING=1600 etc.) are not on this scale. */
     --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
-    --space-5: 24px; --space-6: 32px; --space-7: 48px; --space-8: 64px;
+    --space-5: 24px; --space-6: 32px;
     /* radius scale; 50% circles and sub-scale interaction radii (focus ring, skip link) stay literal */
     --r-pill: 999px; --r-lg: 28px; --r-md: 24px; --r-sm: 14px;
     /* starfield color, read by the canvas JS so DOM and canvas can never drift */
@@ -467,7 +467,7 @@
     font-size:clamp(2rem,5vw,3.2rem); line-height:1.08; letter-spacing:-0.02em;
     margin:0 0 var(--space-4);
   }
-  .deep-panel h3 { font-weight:500; font-size:1.06rem; letter-spacing:0.02em; margin:var(--space-6) 0 var(--space-3); color:hsl(var(--dh,25),85%,74%); }
+  .deep-panel h2 { font-weight:500; font-size:1.06rem; letter-spacing:0.02em; margin:var(--space-6) 0 var(--space-3); color:hsl(var(--dh,25),85%,74%); }
   .deep-panel p { color:var(--ink-dim); font-size:1rem; margin-bottom:var(--space-4); max-width:66ch; }
   .deep-panel ul { list-style:none; display:grid; gap:var(--space-3); margin:0 0 var(--space-2); }
   .deep-panel ul li { color:var(--ink-dim); font-size:0.97rem; padding-left:20px; position:relative; }
@@ -1242,23 +1242,23 @@ const DEEP = {
     hue: 42, title: "What I'm looking for",
     next: { href: "#/blue-origin", label: "Blue Origin" },
     body: `
-      <h3>Roles I'm targeting</h3>
+      <h2>Roles I'm targeting</h2>
       <ul>
         <li><strong>GTM engineering, solutions engineering, and technical sales</strong>: I can go as deep as a customer's engineers, and the sales half of my Launchpoint contract showed me I genuinely enjoy the work.</li>
         <li><strong>AI tooling and systems development</strong>, for teams that want someone who builds the automation rather than just using it.</li>
         <li><strong>Quant and trading technology</strong>: research tooling, backtesting infrastructure, and execution software.</li>
         <li><strong>Propulsion, fluid systems, mechanical, and systems engineering</strong>, where my flight-hardware ownership applies directly.</li>
       </ul>
-      <h3>My path</h3>
+      <h2>My path</h2>
       <p>Physics degree. Responsible Engineer on flight-critical cryogenic hardware at Blue Origin. Eighteen months building Python and LLM systems on my own. Most recently, product engineering and sales at an early-stage startup. Each jump came faster than the last because the fundamentals transfer, and I ramp up new domains on my own.</p>
       <p>I use LLM agents and custom automation in everything: analysis tooling, design iteration, building this site. Teams taking AI seriously get someone who already works that way. Teams that aren't get a preview.</p>
-      <h3>Working style</h3>
+      <h2>Working style</h2>
       <ul>
         <li>First-principles models before formal tools. Iterate fast, then add rigor.</li>
         <li>Bias toward end-to-end ownership, from concept through delivery.</li>
         <li>Collaborative by default. Comfortable communicating with engineers, vendors, and customers alike.</li>
       </ul>
-      <h3>Logistics</h3>
+      <h2>Logistics</h2>
       <p>Moving to NYC, ready to start September 2026.</p>
     `
   },
@@ -1267,44 +1267,44 @@ const DEEP = {
     next: { href: "#/clubs", label: "Leadership" },
     body: `
       <p>Responsible Engineer for a flight-critical propellant-tank pressure-management subsystem on a lunar lander. The system uses a thermodynamic venting approach to manage cryogenic tank pressure in microgravity, where conventional venting doesn't work. I owned it from early concept through hardware and test readiness.</p>
-      <h3>Ownership</h3>
+      <h2>Ownership</h2>
       <ul>
         <li>Accountable for subsystem delivery, performance, and risk across design, analysis, procurement, integration, and test.</li>
         <li>Owned drawings, releases, revisions, BOMs, and the subsystem P&amp;ID within the vehicle fluids architecture.</li>
         <li>Selected vendors, wrote specs, reviewed quotes, and managed fabrication and inspection for all subsystem hardware.</li>
         <li>Presented the subsystem in its entirety at PDR, CDR, and TRR.</li>
       </ul>
-      <h3>What I built</h3>
+      <h2>What I built</h2>
       <ul>
         <li>A first-principles fluid and thermal modeling tool linking flow, geometry, and cooling performance. Used it to size the system and drive design decisions ahead of formal analysis.</li>
         <li>A flow-restriction assembly with integrated heating to prevent cryogenic blockage, packaged with a custom interface fitting for standard aerospace fluid systems.</li>
         <li>A large cryogenic routing assembly of tubing, fittings, and supports, designed in CAD around dense neighboring subsystems, with manufacturability, weld and bend feasibility, harness routing, assembly sequence, and wrench access built in from the start.</li>
         <li>The overboard venting interface, coordinated with GNC so venting behavior stayed compatible with vehicle control and stability.</li>
       </ul>
-      <h3>Hard problems</h3>
+      <h2>Hard problems</h2>
       <ul>
         <li>Routing through a tightly constrained vehicle while meeting flow, structural, and thermal requirements at once, including a cooling redesign after updated thermal data landed mid-design.</li>
         <li>Cutting system mass versus the initial concept without giving up flow, structural, or thermal performance.</li>
         <li>Preventing cryogenic freezing at the flow restriction, solved with an integrated heater sized within vehicle power constraints.</li>
       </ul>
-      <h3>Engineering tradeoffs I owned</h3>
+      <h2>Engineering tradeoffs I owned</h2>
       <ul>
         <li><strong>Thermal contact vs. pressure drop:</strong> more tank contact improved heat extraction but cost flow performance. Settled it with the sizing model instead of intuition.</li>
         <li><strong>Bonded vs. welded attachment:</strong> welding offered conductivity but carried thermal-stress and tank-safety risk. A high-conductivity bonded approach met the heat-transfer requirement with far less risk, validated by test.</li>
         <li><strong>Extended cooling concept:</strong> evaluated routing residual cooling capacity further into the structure and killed it. The added complexity and mass outweighed the benefit. Knowing when not to build is part of the job.</li>
       </ul>
-      <h3>Risk leadership</h3>
+      <h2>Risk leadership</h2>
       <ul>
         <li>Led the subsystem FMECA: failure modes, risk assessment, and mitigations driven back into the design.</li>
         <li>Led an independent hazard assessment of hydrogen accumulation and ignition under off-nominal conditions. Modeled the scenarios and presented findings showing the design's mitigation.</li>
       </ul>
-      <h3>Test</h3>
+      <h2>Test</h2>
       <ul>
         <li>Defined component and system-level test requirements, procedures, and success criteria.</li>
         <li>Designed test rigs for vibration, thermal cycling and shock, and pressure and flow testing.</li>
         <li>Oversaw vendor development, acceptance, and qualification testing. Ran heater power and functional testing, plus adhesive strength testing with a thermal-conductivity trade study.</li>
       </ul>
-      <h3>Environment</h3>
+      <h2>Environment</h2>
       <p>Hands-on with cryogenic propellants, liquid hydrogen and liquid oxygen, with liquid nitrogen as a test surrogate. Day-to-day coordination across seven teams: thermal, GNC, structures, manufacturing, integration, test, and safety.</p>
       <p class="note">Details are kept at the scope-and-ownership level on purpose. Specifics available in conversation where appropriate.</p>
       <figure class="deep-figure">
@@ -1317,9 +1317,9 @@ const DEEP = {
     hue: 6, title: "ARC and RPL",
     next: { href: "#/trading", label: "Software" },
     body: `
-      <h3>Aerospace Research Cooperative</h3>
+      <h2>Aerospace Research Cooperative</h2>
       <p>Founded UCSB's first rocket club as a freshman and built it from nothing: recruiting, structure, projects. We partnered with Dr. Philip Lubin's Experimental Cosmology Lab, built a drone from scratch, flew H-motor rockets for high-power certifications, and ran high-altitude balloon launches for the lab.</p>
-      <h3>Rocket Propulsion Laboratory</h3>
+      <h2>Rocket Propulsion Laboratory</h2>
       <p>Co-founded the Rocket Propulsion Laboratory. It grew into the largest engineering club at UCSB and is now a sanctioned capstone project option.</p>
       <ul>
         <li>Led design and manufacturing of the methalox engine feed system: architecture, full CAD model, part sourcing, specced to 45,000 ft for the FAR Mars competition.</li>
@@ -1343,12 +1343,12 @@ const DEEP = {
     body: `
       <p>Eighteen months building software on my own, run as an engineering discipline rather than a hobby. The largest piece is a stock-analysis stack: a Streamlit analytics application over Pandas tracking performance and risk metrics in real time, a scanner filtering thousands of tickers against defined criteria, and a staged alerting pipeline with webhook-based delivery.</p>
       <p>I wrote a 26-section technical specification and an 8-phase validation plan before any of it went into daily use, and used LLM agents throughout for design, debugging, and iteration.</p>
-      <h3>Also built</h3>
+      <h2>Also built</h2>
       <ul>
         <li>A job-board monitor integrating three ATS APIs (Ashby, Greenhouse, Lever) across 27 companies, with tiered relevance classification, deduplication against a persistent state store, and scheduled automation.</li>
         <li>An automated resume-tailoring pipeline with headless Chrome PDF rendering, built by reverse-engineering an undocumented HTML export format, including a fix for an escaping bug that would have silently corrupted output.</li>
       </ul>
-      <h3>Public repos</h3>
+      <h2>Public repos</h2>
       <div class="repo-list">
         <a href="https://github.com/leif-hellgren1/trade-tracker" target="_blank" rel="noopener"><span class="rname">trade-tracker</span><div class="rdesc">Desktop app for logging trades on a calendar and tracking stats, with Google Sheets sync.</div></a>
         <a href="https://github.com/leif-hellgren1/tradingview-scripts" target="_blank" rel="noopener"><span class="rname">tradingview-scripts</span><div class="rdesc">Pine Script indicators for intraday futures trading.</div></a>
@@ -1356,7 +1356,7 @@ const DEEP = {
         <a href="https://github.com/leif-hellgren1/arc-alert-bot" target="_blank" rel="noopener"><span class="rname">arc-alert-bot</span><div class="rdesc">Routes TradingView alerts to Discord, sorted by signal strength.</div></a>
         <a href="https://github.com/leif-hellgren1/chartsnap" target="_blank" rel="noopener"><span class="rname">chartsnap</span><div class="rdesc">One keypress to screenshot several TradingView charts into one combined image.</div></a>
       </div>
-      <h3>Beyond markets</h3>
+      <h2>Beyond markets</h2>
       <div class="repo-list">
         <a href="https://github.com/leif-hellgren1/subscriptio" target="_blank" rel="noopener"><span class="rname">subscriptio</span><div class="rdesc">Tracks subscriptions and negotiates retention discounts automatically, without ever cancelling.</div></a>
       </div>
