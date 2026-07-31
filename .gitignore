@@ -1,0 +1,15 @@
+# Local verification output (regenerate with tools/shoot.py)
+screenshots/
+__pycache__/
+node_modules/
+
+# Working notes and process docs: kept local on purpose. This repo is public and
+# doubles as the site itself, so it stays limited to what actually ships.
+CLAUDE.md
+PROJECT-BRIEF.md
+CLAUDE-CODE-HANDOFF.md
+GO-LIVE.md
+DEPLOY.md
+design-tokens.md
+design-restyle-prompt.md
+.claude/

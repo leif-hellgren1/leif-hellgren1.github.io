@@ -3,28 +3,50 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Leif Hellgren — Generalist Engineer</title>
-<meta name="description" content="Leif Hellgren — physics-trained generalist engineer. Flight-critical cryogenic systems on a lunar lander, rocket club founder, systematic futures trader. Currently seeking the next mission." />
-<meta property="og:title" content="Leif Hellgren — Generalist Engineer" />
-<meta property="og:description" content="Flight hardware, first-principles software, systematic futures trading. Fly through the record." />
+<title>Leif Hellgren · Generalist Engineer</title>
+<meta name="description" content="Leif Hellgren: physics-trained generalist engineer. Flight-critical cryogenic hardware on a lunar lander, rocket club founder, systematic futures trader. Open to full-time roles now." />
+<meta property="og:title" content="Leif Hellgren · Generalist Engineer" />
+<meta property="og:description" content="Flight-critical hardware on a lunar lander. Self-built analysis software. Systematic futures trading. Open to full-time roles now." />
 <meta property="og:type" content="website" />
-<meta property="og:url" content="https://leif-hellgren1.github.io/" />
-<link rel="canonical" href="https://leif-hellgren1.github.io/" />
+<meta property="og:url" content="https://leif.exelor.com/" />
+<link rel="canonical" href="https://leif.exelor.com/" />
+<!-- literal --bg: HTML meta attributes cannot reference CSS custom properties -->
 <meta name="theme-color" content="#0a0b0f" />
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🪐</text></svg>" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="preconnect" href="https://api.fontshare.com" />
+<link rel="preconnect" href="https://cdn.fontshare.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet" />
+<link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@700,800&display=swap" rel="stylesheet" />
 <style>
+  /* Registered so the mirrored --p1 can transition (halo hue eases between stops)
+     and so all three hue channels are typed numbers. Browsers without @property
+     simply snap instead of easing. Initial 42 = the first planet's hue, which is
+     the one on screen while the hero is active. */
+  @property --p1 { syntax: '<number>'; inherits: true; initial-value: 42; }
+  @property --dh { syntax: '<number>'; inherits: true; initial-value: 25; }
+  @property --ph { syntax: '<number>'; inherits: true; initial-value: 25; }
   :root {
     --bg: #0a0b0f;
     --ink: #eef1f7;
     --ink-dim: #9aa3b2;
-    --ink-faint: #5c6373;
+    --ink-body: #c4cad6;   /* card body copy: brighter than --ink-dim so it holds up over a planet */
+    --ink-faint: #777f92;   /* same hue/sat as the old #5c6373, lightness raised 41->52% for AA 4.5:1 */
     --accent: #ff8a4c;
     --accent-soft: #ffb489;
     --glass-tint: rgba(20,23,32,0.58);
     --glass-border: rgba(255,255,255,0.14);
+    --glass-fill: rgba(255,255,255,0.03);   /* faint raised fill: chips, ghost buttons, repo cards */
+    --hover-wash: rgba(255,255,255,0.05);   /* hover/active wash: mobile-menu states, deep-close */
+    /* spacing scale (8px base): vertical rhythm inside cards, hero, deep pages, contact.
+       Component paddings and world/scene geometry (SPACING=1600 etc.) are not on this scale. */
+    --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+    --space-5: 24px; --space-6: 32px; --space-7: 48px; --space-8: 64px;
+    /* radius scale; 50% circles and sub-scale interaction radii (focus ring, skip link) stay literal */
+    --r-pill: 999px; --r-lg: 28px; --r-md: 24px; --r-sm: 14px;
+    /* starfield color, read by the canvas JS so DOM and canvas can never drift */
+    --star-h: 215; --star-s: 55%; --star-l: 88%;
     --ease: cubic-bezier(0.22, 1, 0.36, 1);
   }
   * { margin:0; padding:0; box-sizing:border-box; }
@@ -41,11 +63,12 @@
 
   .ambient {
     position: fixed; inset: 0; z-index: -4;
+    /* nebula blues/purple and the #0b0d14 midpoint are one-off scene washes, not UI colors */
     background:
       radial-gradient(55% 45% at 78% 12%, rgba(88,120,255,0.10), transparent 70%),
       radial-gradient(60% 55% at 15% 85%, rgba(150,80,220,0.08), transparent 70%),
-      radial-gradient(40% 35% at 30% 20%, rgba(255,138,76,0.05), transparent 70%),
-      linear-gradient(180deg, #0a0b0f 0%, #0b0d14 55%, #0a0b0f 100%);
+      radial-gradient(40% 35% at 30% 20%, color-mix(in srgb, var(--accent) 5%, transparent), transparent 70%),
+      linear-gradient(180deg, var(--bg) 0%, #0b0d14 55%, var(--bg) 100%);
   }
   #space { position: fixed; inset: 0; z-index: -3; display: block; }
   .grain {
@@ -59,65 +82,124 @@
     border: 1px solid var(--glass-border);
     -webkit-backdrop-filter: blur(20px) saturate(150%);
     backdrop-filter: blur(20px) saturate(150%);
+    /* drop shadow black and the 0.04 lower inner edge are part of the glass recipe, single-use */
     box-shadow:
       0 8px 40px rgba(0,0,0,0.45),
-      inset 0 1px 0 rgba(255,255,255,0.14),
+      inset 0 1px 0 var(--glass-border),
       inset 0 -1px 0 rgba(255,255,255,0.04);
   }
   .glass::before {
     content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+    /* 0.13 sheen: glass recipe, single-use */
     background: linear-gradient(120deg, rgba(255,255,255,0.13), transparent 42%);
     opacity:0.75;
   }
 
-  .mono { font-family:"IBM Plex Mono",monospace; font-size:0.72rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--ink-faint); }
+  .mono { font-family:"IBM Plex Mono",monospace; font-size:0.63rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink-faint); }
 
   /* ---------- Nav ---------- */
-  nav {
+  /* links only, capped at the card column width so the bar reads as part of it.
+     Selector is nav.glass on purpose: .glass declares position:relative and a bare
+     `nav` element selector loses to it, which silently un-fixed the bar and let it
+     scroll away with the page. */
+  nav.glass {
     position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
-    z-index: 60; width: min(95%, 1120px);
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 11px 12px 11px 22px; border-radius: 999px;
+    z-index: 60; width: fit-content; max-width: min(92vw, 620px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 11px 22px; border-radius: var(--r-pill);
   }
-  nav .brand { font-family:"Instrument Serif",serif; font-size:1.3rem; white-space:nowrap; text-decoration:none; color:var(--ink); }
   nav .links { display:flex; gap:20px; align-items:center; }
-  nav .links a { color:var(--ink-dim); text-decoration:none; font-size:0.88rem; transition:color 0.3s var(--ease); }
+  nav .links a { color:var(--ink-dim); text-decoration:none; font-size:0.88rem; white-space:nowrap; transition:color 0.3s var(--ease); }
   nav .links a:hover, nav .links a.active { color:var(--ink); }
-  nav .cta {
-    font-size:0.84rem; padding:9px 18px; border-radius:999px; color:#1a0f08;
-    background: linear-gradient(180deg, var(--accent-soft), var(--accent));
-    text-decoration:none; font-weight:500; white-space:nowrap;
-    box-shadow: 0 4px 18px rgba(255,138,76,0.35);
-    transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
-  }
-  nav .cta:hover { transform:translateY(-1px); box-shadow:0 8px 26px rgba(255,138,76,0.45); }
   .menu-btn { display:none; background:none; border:0; color:var(--ink); font-size:1.25rem; cursor:pointer; padding:4px 10px; }
-  .mobile-menu {
-    position:fixed; top:74px; left:50%; transform:translateX(-50%) translateY(-10px);
-    width:min(94%,420px); border-radius:20px; padding:10px; z-index:59;
-    opacity:0; pointer-events:none; transition:opacity 0.35s var(--ease), transform 0.35s var(--ease);
+  /* collapse to a corner hamburger early enough that the pill never reaches the name mark */
+  @media (max-width:960px) {
+    nav.glass { left:auto; right:16px; transform:none; padding:8px 10px; }
+    nav .links { display:none; }
+    .menu-btn { display:inline-flex; }
   }
-  .mobile-menu.open { opacity:1; pointer-events:auto; transform:translateX(-50%) translateY(0); }
-  .mobile-menu a { display:block; padding:13px 16px; border-radius:12px; color:var(--ink-dim); text-decoration:none; font-size:1rem; }
-  .mobile-menu a:hover { background:rgba(255,255,255,0.05); color:var(--ink); }
+  .mobile-menu {
+    /* --nav-clearance is measured from the real nav by JS; 74px is the no-JS fallback */
+    position:fixed; top:var(--nav-clearance, 74px); left:50%; transform:translateX(-50%) translateY(-10px);
+    width:min(94%,420px); border-radius:var(--r-md); padding:10px; z-index:59;
+    opacity:0; pointer-events:none; visibility:hidden;
+    transition:opacity 0.35s var(--ease), transform 0.35s var(--ease), visibility 0s 0.35s;
+  }
+  .mobile-menu.open {
+    opacity:1; pointer-events:auto; visibility:visible; transform:translateX(-50%) translateY(0);
+    transition:opacity 0.35s var(--ease), transform 0.35s var(--ease), visibility 0s 0s;
+  }
+  .mobile-menu a { display:block; padding:13px 16px; border-radius:var(--r-sm); color:var(--ink-dim); text-decoration:none; font-size:1rem; }
+  .mobile-menu a:hover { background:var(--hover-wash); color:var(--ink); }
+  /* small-screen stand-in for the hidden rail: the current stop reads highlighted in the menu */
+  .mobile-menu a.active { background:var(--hover-wash); color:var(--ink); }
+
+  /* ---------- Name mark ---------- */
+  /* Lives at the top-left of the viewport but belongs to the hero: the dolly slaves its
+     opacity to the hero stop, so it departs with the hero card as you fly in. */
+  .name-mark {
+    position: fixed; top: clamp(32px, 4.5vh, 48px); left: clamp(32px, 3.5vw, 48px);
+    z-index: 58; pointer-events: none;
+    font-family: "Cabinet Grotesk", "IBM Plex Sans", sans-serif; font-weight: 800;
+    font-size: clamp(1.9rem, 3vw, 2.75rem); letter-spacing: -0.02em; line-height: 1;
+    color: var(--ink);
+  }
+  .name-mark::after {
+    content:""; display:block; margin-top:9px; width:56px; height:2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+  }
+  @media (max-width:480px) { .name-mark { font-size:1.5rem; } }
+  @media (max-width:380px) { .name-mark { font-size:1.35rem; } }
 
   /* ---------- Progress rail ---------- */
   .rail { position:fixed; right:22px; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:14px; z-index:55; }
-  .rail a { width:9px; height:9px; border-radius:50%; background:rgba(233,238,250,0.55); box-shadow:0 0 6px rgba(233,238,250,0.22); transition:background 0.3s var(--ease), box-shadow 0.3s var(--ease); position:relative; }
+  .rail a { width:9px; height:9px; border-radius:50%; background:color-mix(in srgb, var(--ink) 55%, transparent); box-shadow:0 0 6px color-mix(in srgb, var(--ink) 22%, transparent); transition:background 0.3s var(--ease), box-shadow 0.3s var(--ease); position:relative; }
   .rail a:hover::after {
     content:attr(data-label); position:absolute; right:20px; top:50%; transform:translateY(-50%);
     font-family:"IBM Plex Mono",monospace; font-size:0.62rem; letter-spacing:0.14em; text-transform:uppercase;
     color:var(--ink-dim); white-space:nowrap;
   }
-  .rail a.active { background:var(--accent); box-shadow:0 0 12px rgba(255,138,76,0.6); }
+  .rail a.active { background:var(--accent); box-shadow:0 0 12px color-mix(in srgb, var(--accent) 60%, transparent); }
   @media (max-width:1100px) { .rail { display:none; } }
 
-  a:focus-visible, button:focus-visible { outline:2px solid var(--accent); outline-offset:3px; border-radius:6px; }
+  /* ---------- Persistent contact cluster ---------- */
+  /* Always-available resume/contact path. Same glass pill language as the nav, parked
+     bottom-left: clear of the nav (top), the rail (right edge), and the name mark.
+     z-index sits above the deep overlay so it survives on deep-dive pages too. */
+  .quick-links {
+    position:fixed; left:clamp(16px, 3.5vw, 48px); bottom:clamp(16px, 3vh, 28px);
+    z-index:105;
+    display:flex; align-items:center; gap:clamp(12px, 2.5vw, 18px);
+    padding:10px 18px; border-radius:var(--r-pill);
+  }
+  .quick-links a, .quick-links button {
+    font-family:"IBM Plex Mono",monospace; font-size:0.63rem; letter-spacing:0.12em;
+    text-transform:uppercase; color:var(--ink-dim); text-decoration:none; white-space:nowrap;
+    background:none; border:0; padding:0; cursor:pointer; line-height:1;
+    transition:color 0.3s var(--ease);
+  }
+  /* resume is the highest-value link here: one step brighter, no extra color introduced */
+  .quick-links .ql-resume { color:var(--ink); }
+  .quick-links a:hover, .quick-links button:hover { color:var(--ink); }
+  .quick-links .ql-resume:hover { color:var(--accent-soft); }
+  /* On narrow screens the deep-dive text runs full width, so a floating island would sit
+     on top of body copy. Dock it edge to edge instead: same surface, reads as chrome. */
+  @media (max-width:640px) {
+    .quick-links {
+      left:0; right:0; bottom:0; justify-content:center;
+      border-radius:0; border-left:0; border-right:0; border-bottom:0;
+      padding:12px 16px;
+    }
+  }
+
+  a:focus-visible, button:focus-visible { outline:2px solid var(--accent); outline-offset:3px; border-radius:6px; } /* 6px: interaction micro-radius, below the radius scale */
 
   /* ---------- 3D fly-through ---------- */
   #travel { position:relative; width:1px; }
   #viewport { position:fixed; inset:0; perspective:1200px; perspective-origin:50% 46%; overflow:hidden; }
-  #world { position:absolute; inset:0; transform-style:preserve-3d; }
+  /* The dolly mirrors the active stop's --p1 here so the planets (which live in
+     #world, outside any .stop) inherit their stop's hue; the transition eases it. */
+  #world { position:absolute; inset:0; transform-style:preserve-3d; transition: --p1 0.6s var(--ease); }
   .stop {
     position:absolute; left:50%; top:50%;
     width:min(92vw, 620px);
@@ -126,75 +208,103 @@
     opacity:0; visibility:hidden;
   }
   .stop.hero-stop { width:min(94vw, 740px); }
-  .stop .loc-panel { border-radius:24px; padding:clamp(24px,4vw,42px); }
+  .stop .loc-panel { border-radius:var(--r-md); padding:clamp(24px,4vw,42px); }
 
   .loc-panel .idx { color:hsl(var(--p1,25),90%,70%); }
   .loc-panel h2 {
-    font-family:"Instrument Serif",serif; font-weight:400;
-    font-size:clamp(1.8rem,4.2vw,2.7rem); letter-spacing:-0.01em; line-height:1.08;
-    margin:12px 0 6px;
+    font-family:"Cabinet Grotesk","IBM Plex Sans",sans-serif; font-weight:800;
+    font-size:clamp(1.7rem,4vw,2.5rem); letter-spacing:-0.02em; line-height:1.1;
+    margin:var(--space-3) 0 var(--space-2);
   }
-  .loc-panel .sub { color:hsl(var(--p1,25),55%,75%); font-size:0.98rem; margin-bottom:14px; }
-  .loc-panel p.body { color:var(--ink-dim); font-size:0.98rem; max-width:52ch; }
-  .loc-panel ul.points { margin:14px 0 0 0; list-style:none; display:grid; gap:9px; }
-  .loc-panel ul.points li { color:var(--ink-dim); font-size:0.93rem; padding-left:20px; position:relative; }
+  .loc-panel .sub { color:hsl(var(--p1,25),55%,75%); font-size:0.98rem; margin-bottom:var(--space-4); }
+  .loc-panel p.body { color:var(--ink-body); font-size:0.98rem; max-width:52ch; }
+  .loc-panel ul.points { margin:var(--space-4) 0 0 0; list-style:none; display:grid; gap:var(--space-2); }
+  .loc-panel ul.points li { color:var(--ink-body); font-size:0.93rem; padding-left:20px; position:relative; }
   .loc-panel ul.points li::before { content:"◆"; position:absolute; left:0; top:2px; font-size:0.6rem; color:hsl(var(--p1,25),85%,68%); }
   .deep-link {
-    margin-top:22px; display:inline-flex; align-items:center; gap:10px;
+    margin-top:var(--space-5); display:inline-flex; align-items:center; gap:10px;
     color:hsl(var(--p1,25),90%,72%); text-decoration:none; font-size:0.93rem; font-weight:500;
     border-bottom:1px solid transparent; transition:gap 0.3s var(--ease), border-color 0.3s var(--ease);
   }
   .deep-link:hover { gap:16px; border-color:hsl(var(--p1,25),90%,72%); }
-  .status-chips { display:flex; flex-wrap:wrap; gap:9px; margin:14px 0 4px; }
-  .chip { padding:7px 14px; border-radius:999px; border:1px solid var(--glass-border); background:rgba(255,255,255,0.03); font-size:0.82rem; color:var(--ink-dim); }
+  .status-chips { display:flex; flex-wrap:wrap; gap:var(--space-2); margin:var(--space-4) 0 var(--space-1); }
+  .chip { padding:7px 14px; border-radius:var(--r-pill); border:1px solid var(--glass-border); background:var(--glass-fill); font-size:0.82rem; color:var(--ink-dim); }
+  /* status greens: one-off live-state palette (border/text/dot), used only on this chip */
   .chip.live { border-color:rgba(120,255,170,0.35); color:#9fe8bd; }
   .chip.live::before { content:"●"; color:#4ade80; margin-right:8px; font-size:0.6rem; vertical-align:middle; }
 
   /* Hero card */
-  .hero-glass { border-radius:28px; padding:clamp(30px,5.5vw,64px); overflow:hidden; position:relative; }
-  /* spacetime cursor canvas — sits above content, below deep view */
-  #warp { position:fixed; inset:0; z-index:90; pointer-events:none; }
-  /* reference imagery: pre-cut with baked feathered alpha — just place and scale */
+  .hero-glass { border-radius:var(--r-lg); padding:clamp(30px,5.5vw,64px); overflow:hidden; position:relative; }
+  /* reference imagery: pre-cut with baked feathered alpha, so just place and scale */
   .scene-planet {
     position:absolute; inset:0;
     background-size:contain; background-position:center; background-repeat:no-repeat;
-    /* seat the disk into the dark: soft dark base + faint accent halo */
+    /* seat the disk into the dark: soft dark base + faint accent halo (scene shading, not UI color) */
     filter: drop-shadow(0 0 34px rgba(0,0,0,0.55)) drop-shadow(0 0 60px hsla(var(--p1,210),60%,55%,0.14));
   }
-  .sat-photo {
-    width:106%; aspect-ratio:100/61;
-    background-size:contain; background-position:center; background-repeat:no-repeat;
-  }
   .hero-glass h1 {
-    font-family:"Instrument Serif",serif; font-weight:400;
-    font-size:clamp(2.4rem,7vw,4.6rem); line-height:1.03; letter-spacing:-0.01em;
-    margin-top:16px;
+    font-family:"Cabinet Grotesk","IBM Plex Sans",sans-serif; font-weight:800;
+    font-size:clamp(2.1rem,5.6vw,3.9rem); line-height:1.06; letter-spacing:-0.02em;
   }
-  .hero-glass h1 em { font-style:italic; color:var(--accent-soft); }
-  .hero-glass .tagline { margin-top:20px; max-width:48ch; font-size:clamp(0.98rem,2vw,1.15rem); color:var(--ink-dim); }
-  .hero-actions { margin-top:30px; display:flex; gap:13px; flex-wrap:wrap; }
+  /* one line when it fits; the only permitted break is between these two halves */
+  .hero-glass h1 .hline { white-space:nowrap; }
+  .hero-glass .tagline { margin-top:var(--space-5); max-width:48ch; font-size:clamp(0.98rem,2vw,1.15rem); color:var(--ink-dim); }
+  .status-line {
+    margin-top:var(--space-4); display:flex; align-items:center; gap:10px;
+    font-size:clamp(1.04rem,2.1vw,1.22rem); font-weight:500; color:var(--ink);
+  }
+  .pulse-dot {
+    flex:none; width:8px; height:8px; border-radius:50%;
+    background:var(--accent); box-shadow:0 0 10px color-mix(in srgb, var(--accent) 70%, transparent);
+    animation:pulseDot 2.2s ease-in-out infinite;
+  }
+  @keyframes pulseDot { 0%,100% { transform:scale(1); opacity:1; } 50% { transform:scale(0.7); opacity:0.55; } }
+  @media (prefers-reduced-motion: reduce) { .pulse-dot { animation:none; } }
+  .hero-actions { margin-top:var(--space-6); display:flex; gap:var(--space-3); flex-wrap:wrap; }
   .btn {
     display:inline-flex; align-items:center; gap:9px; text-decoration:none;
-    padding:12px 22px; border-radius:999px; font-size:0.93rem; font-weight:500;
+    padding:12px 22px; border-radius:var(--r-pill); font-size:0.93rem; font-weight:500;
     transition: transform 0.3s var(--ease), border-color 0.3s var(--ease), box-shadow 0.3s var(--ease);
   }
-  .btn.primary { background:linear-gradient(180deg,var(--accent-soft),var(--accent)); color:#1a0f08; box-shadow:0 6px 22px rgba(255,138,76,0.35); }
-  .btn.primary:hover { transform:translateY(-2px); box-shadow:0 10px 30px rgba(255,138,76,0.45); }
-  .btn.ghost { color:var(--ink); border:1px solid var(--glass-border); background:rgba(255,255,255,0.03); }
+  .btn.primary { background:linear-gradient(180deg,var(--accent-soft),var(--accent)); color:#1a0f08; box-shadow:0 6px 22px color-mix(in srgb, var(--accent) 35%, transparent); } /* #1a0f08: near-black warmed toward the accent, dark-on-amber text, single-use */
+  .btn.primary:hover { transform:translateY(-2px); box-shadow:0 10px 30px color-mix(in srgb, var(--accent) 45%, transparent); }
+  .btn.ghost { color:var(--ink); border:1px solid var(--glass-border); background:var(--glass-fill); }
   .btn.ghost:hover { border-color:var(--ink-dim); transform:translateY(-2px); }
-  .scroll-hint { margin-top:38px; display:flex; align-items:center; gap:12px; color:var(--ink-faint); font-size:0.78rem; }
-  .scroll-hint .line { width:52px; height:1px; background:linear-gradient(90deg,var(--accent),transparent); }
+  /* wordless scroll cue: a faint descent path with a bright segment riding down it */
+  .scroll-cue {
+    position:relative; width:1px; height:40px; margin:var(--space-6) auto 0; overflow:hidden;
+    background:color-mix(in srgb, var(--ink) 18%, transparent);
+    transition:opacity 0.8s var(--ease);
+  }
+  .scroll-cue::after {
+    content:""; position:absolute; left:0; top:0; width:1px; height:9px;
+    background:var(--accent-soft); box-shadow:0 0 8px color-mix(in srgb, var(--accent-soft) 80%, transparent);
+    animation:cueDrop 2.6s cubic-bezier(0.45,0,0.55,1) infinite;
+  }
+  @keyframes cueDrop {
+    0% { transform:translateY(-10px); opacity:0; }
+    14% { opacity:1; }
+    82% { opacity:1; }
+    100% { transform:translateY(41px); opacity:0; }
+  }
+  .scroll-cue.gone { opacity:0; }
+  @media (prefers-reduced-motion: reduce) { .scroll-cue::after { animation:none; opacity:0; } }
 
   /* ---------- Planets ---------- */
+  /* Color literals in this whole scene section (sphere shading, atmo, rings, moons, ship and
+     planet drop-shadows) are procedural chiaroscuro, not UI colors; they stay literal. */
+  /* Each planet is a world object living in #world beside the stops, NOT inside its .stop.
+     .stop sets will-change (transform, opacity), which forces its used transform-style to flat
+     and silently discarded the -460px below for the life of this file: the planets were pasted into their
+     card's plane. The dolly now writes --pz every frame so each planet rides PLANET_DEPTH
+     behind its own card and the two parallax against each other as you fly in.
+     --psz/--py are WORLD units: on screen they land at 1200/(1200+460) = 0.72x. */
   .planet3d {
     position:absolute; left:50%; top:50%;
-    width:var(--psz, 720px); height:var(--psz, 720px);
+    width:var(--psz, 996px); height:var(--psz, 996px);
     transform: translate(-50%,-50%) translate3d(var(--px, 0px), var(--py, 0px), var(--pz, -460px));
     transform-style:preserve-3d; pointer-events:none;
   }
-  /* planets sit centered on screen; cards stagger around them (offset applied in JS) */
-  .stop[data-side="r"] .planet3d { --px: 0px; --py: 0px; }
-  .stop[data-side="l"] .planet3d { --px: 0px; --py: 0px; }
   .sphere3d {
     position:absolute; inset:0; border-radius:50%;
     background-size:200% 100%; background-repeat:repeat-x; background-position:0 0;
@@ -204,7 +314,7 @@
       inset 10px 8px 34px rgba(255,255,255,0.08),
       0 0 60px rgba(0,0,0,0.45);
   }
-  /* soft sunlit side (subtle — real planets are matte) */
+  /* soft sunlit side (subtle: real planets are matte) */
   .sphere3d::before {
     content:""; position:absolute; inset:0; border-radius:50%;
     background: radial-gradient(circle at 32% 30%, rgba(255,255,255,0.14), rgba(255,255,255,0) 52%);
@@ -225,22 +335,29 @@
       radial-gradient(circle at 30% 28%, hsla(var(--ph,25),90%,85%,0.12), transparent 55%);
     filter: blur(1.5px);
   }
-  /* the satellite — one large, low-key craft lingering behind the hero card */
+  /* The derelict station: a real object in the world, not a decal on the hero card. It lives
+     in #world beside the .stop elements and is driven by the same camera, so flying past it
+     produces genuine parallax, growth and depth-sorting with no keyframes at all.
+     It has to live OUTSIDE .stop: .stop sets will-change (transform, opacity), which forces
+     its used transform-style to flat and silently discards any translateZ on its children.
+     JS owns transform/opacity (see the dolly); CSS owns only size and the tumble. */
+  /* Sized, dimmed, and slowed to read as scenery rather than a co-star of the hero:
+     it should register as distant drift you notice, not an object presented to you.
+     (33vw/420px keeps the same ~1275px vw-to-px crossover the old 47vw/600px had.) */
   .big-ship {
-    position:absolute; left:-58%; top:-20%; width:74%;
-    transform: translateZ(-520px);
-    opacity:0.9; pointer-events:none;
+    position:absolute; left:50%; top:50%;
+    width:min(33vw, 420px);
+    opacity:0; visibility:hidden; pointer-events:none;
+    will-change:transform, opacity;
     filter: drop-shadow(0 10px 30px rgba(0,0,0,0.6));
   }
-  .big-ship svg, .big-ship img { width:100%; height:auto; display:block; }
-  @media (prefers-reduced-motion: no-preference) {
-    .big-ship { animation: driftship 24s ease-in-out infinite alternate; }
-  }
-  @keyframes driftship {
-    from { transform: translateZ(-520px) translateY(-6px); }
-    to   { transform: translateZ(-520px) translateY(9px); }
-  }
-  @media (max-width:820px) { .big-ship { left:-26%; top:-44%; width:100%; } }
+  .big-ship img { width:100%; height:auto; display:block; }
+  /* nothing is holding its attitude, so it turns: one revolution every ten minutes,
+     slow enough that the motion reads as drift rather than spin */
+  .ship-tumble { animation: shiptumble 600s linear infinite; }
+  @keyframes shiptumble { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .ship-tumble { animation:none; } }
+  @media (max-width:820px) { .big-ship { width:72vw; } } /* scaled by the same 0.7 as the desktop size; PAIRED with the JS stagger cutoff (OFF, innerWidth > 820) */
   .ring3d {
     position:absolute; width:158%; height:44%; left:-29%; top:34%;
     border-radius:50%;
@@ -260,23 +377,21 @@
     position:fixed; inset:0; z-index:100; display:none; overflow-y:auto;
     background:
       radial-gradient(80% 60% at 50% 0%, hsla(var(--dh,25),70%,40%,0.16), transparent 70%),
-      rgba(6,7,10,0.85);
+      color-mix(in srgb, var(--bg) 85%, transparent);
     -webkit-backdrop-filter: blur(18px);
     backdrop-filter: blur(18px);
   }
   #deep.open { display:block; }
-  .deep-inner { max-width:860px; margin:0 auto; padding:110px 24px 100px; }
-  .deep-panel { border-radius:28px; padding:clamp(30px,5vw,60px); }
+  .deep-inner { max-width:860px; margin:0 auto; padding:110px clamp(var(--space-4), 4vw, var(--space-5)) 100px; }
+  .deep-panel { border-radius:var(--r-lg); padding:clamp(30px,5vw,60px); }
   .deep-panel h1 {
-    font-family:"Instrument Serif",serif; font-weight:400;
-    font-size:clamp(2.2rem,5.5vw,3.6rem); line-height:1.06; letter-spacing:-0.01em;
-    margin:14px 0 10px;
+    font-family:"Cabinet Grotesk","IBM Plex Sans",sans-serif; font-weight:800;
+    font-size:clamp(2rem,5vw,3.2rem); line-height:1.08; letter-spacing:-0.02em;
+    margin:0 0 var(--space-4);
   }
-  .deep-panel .idx { color:hsl(var(--dh,25),90%,70%); }
-  .deep-panel .sub { color:hsl(var(--dh,25),60%,75%); margin-bottom:26px; }
-  .deep-panel h3 { font-weight:500; font-size:1.06rem; letter-spacing:0.02em; margin:34px 0 12px; color:hsl(var(--dh,25),85%,74%); }
-  .deep-panel p { color:var(--ink-dim); font-size:1rem; margin-bottom:14px; max-width:66ch; }
-  .deep-panel ul { list-style:none; display:grid; gap:10px; margin:0 0 8px; }
+  .deep-panel h3 { font-weight:500; font-size:1.06rem; letter-spacing:0.02em; margin:var(--space-6) 0 var(--space-3); color:hsl(var(--dh,25),85%,74%); }
+  .deep-panel p { color:var(--ink-dim); font-size:1rem; margin-bottom:var(--space-4); max-width:66ch; }
+  .deep-panel ul { list-style:none; display:grid; gap:var(--space-3); margin:0 0 var(--space-2); }
   .deep-panel ul li { color:var(--ink-dim); font-size:0.97rem; padding-left:20px; position:relative; }
   .deep-panel ul li::before { content:"◆"; position:absolute; left:0; top:2px; font-size:0.6rem; color:hsl(var(--dh,25),85%,68%); }
   .deep-panel .note { font-size:0.85rem; color:var(--ink-faint); font-style:italic; }
@@ -285,266 +400,206 @@
   .deep-close {
     position:fixed; top:20px; right:22px; z-index:110;
     width:46px; height:46px; border-radius:50%; border:1px solid var(--glass-border);
-    background:rgba(255,255,255,0.05); color:var(--ink); font-size:1.15rem; cursor:pointer;
+    background:var(--hover-wash); color:var(--ink); font-size:1.15rem; cursor:pointer;
     -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
     transition:transform 0.3s var(--ease), border-color 0.3s var(--ease);
   }
   .deep-close:hover { transform:rotate(90deg); border-color:var(--ink-dim); }
-  .repo-list { display:grid; gap:12px; margin:6px 0 10px; }
+  .repo-list { display:grid; gap:var(--space-3); margin:var(--space-2) 0 var(--space-3); }
   .repo-list a {
-    display:block; padding:16px 18px; border-radius:14px; text-decoration:none;
-    border:1px solid var(--glass-border); background:rgba(255,255,255,0.03);
+    display:block; padding:16px 18px; border-radius:var(--r-sm); text-decoration:none;
+    border:1px solid var(--glass-border); background:var(--glass-fill);
     transition:border-color 0.3s var(--ease), transform 0.3s var(--ease);
   }
   .repo-list a:hover { border-color:hsl(var(--dh,25),60%,60%); transform:translateY(-2px); }
   .repo-list .rname { font-family:"IBM Plex Mono",monospace; font-size:0.85rem; color:hsl(var(--dh,25),85%,74%); }
   .repo-list .rdesc { color:var(--ink-dim); font-size:0.92rem; margin-top:4px; }
+  /* ---------- Deep-page imagery ---------- */
+  .photo-row { display:grid; grid-template-columns:repeat(3,1fr); gap:var(--space-3); margin-top:var(--space-6); }
+  .photo-row img {
+    width:100%; aspect-ratio:4/5; object-fit:cover; display:block;
+    border-radius:var(--r-sm); border:1px solid var(--glass-border);
+  }
+  @media (max-width:640px) { .photo-row { grid-template-columns:1fr; } }
+  .deep-figure { margin:var(--space-6) auto 0; text-align:center; }
+  /* the lander source is 440px wide: cap at its intrinsic size, never upscale */
+  .deep-figure img {
+    max-width:min(100%,440px); height:auto; display:inline-block;
+    border-radius:var(--r-sm); border:1px solid var(--glass-border);
+  }
+  .deep-figure.wide img { max-width:100%; width:100%; }
+  .img-caption { margin-top:var(--space-3); text-align:center; font-size:0.82rem; color:var(--ink-faint); }
+  .deep-panel p.img-caption { max-width:none; margin-bottom:0; }
+
   .next-stop {
-    margin-top:34px; padding-top:24px; border-top:1px solid var(--glass-border);
-    display:flex; justify-content:space-between; align-items:center; gap:14px; flex-wrap:wrap;
+    margin-top:var(--space-6); padding-top:var(--space-5); border-top:1px solid var(--glass-border);
+    display:flex; justify-content:space-between; align-items:center; gap:var(--space-4); flex-wrap:wrap;
   }
 
   /* Contact card extras */
   .contact-card { text-align:center; }
-  .contact-card h2 { font-family:"Instrument Serif",serif; font-weight:400; font-size:clamp(2rem,5vw,3.2rem); }
-  .contact-card p { color:var(--ink-dim); margin:14px auto 26px; max-width:44ch; }
-  .social { display:flex; gap:22px; justify-content:center; flex-wrap:wrap; margin-top:26px; }
-  .social a { color:var(--ink-dim); text-decoration:none; font-size:0.92rem; transition:color 0.3s var(--ease); }
-  .social a:hover { color:var(--ink); }
-  .colophon { margin-top:34px; }
+  /* no h2 override: the contact headline uses the standard .loc-panel h2 rule */
+  .contact-card p { color:var(--ink-dim); margin:var(--space-4) auto var(--space-5); max-width:44ch; }
+  .copy-email { border:0; cursor:pointer; font-family:inherit; min-width:200px; justify-content:center; }
+  .mail-fallback { margin-top:var(--space-3); }
+  .mail-fallback a { color:var(--ink-faint); font-size:0.82rem; text-decoration:underline; text-underline-offset:3px; transition:color 0.3s var(--ease); }
+  .mail-fallback a:hover { color:var(--ink-dim); }
 
   .sr-skip { position:absolute; left:-9999px; }
-  .sr-skip:focus { left:16px; top:16px; z-index:200; background:var(--bg); padding:10px 16px; border-radius:8px; }
+  .sr-skip:focus { left:16px; top:16px; z-index:200; background:var(--bg); padding:10px 16px; border-radius:8px; } /* 8px: interaction micro-radius, below the radius scale */
+
+  /* Resume PDF is not in the repo yet; body.resume-pending hides every button that
+     points at it. See DEPLOY.md: drop the PDF in, delete the class, buttons return. */
+  body.resume-pending a[href="Leif-Hellgren-Resume.pdf"] { display:none; }
 
   @media (max-width: 820px) {
-    nav .links { display:none; }
-    .menu-btn { display:inline-flex; }
-    .stop[data-side="r"] .planet3d, .stop[data-side="l"] .planet3d { --px:0px; --py:-320px; --psz:270px; --pz:-480px; }
+    /* PAIRED with the JS stagger cutoff (OFF, innerWidth > 820); change both together. */
+    /* world units: reads as the old -320px on screen once the 0.72x depth divide applies.
+       (No --psz here: buildPlanet sets it inline from PLANETS[].size, which wins over any
+       stylesheet rule. The old --psz:270px in this block never applied either. The vw half of
+       each size covers mobile.) */
+    .planet3d { --py:-443px; }
   }
   @media (prefers-reduced-motion: reduce) {
     .sphere3d { animation:none; }
   }
 </style>
 </head>
-<body>
+<body class="resume-pending">
   <a class="sr-skip" href="#now">Skip to content</a>
   <div class="ambient"></div>
   <canvas id="space" aria-hidden="true"></canvas>
-  <canvas id="warp" aria-hidden="true"></canvas>
   <div class="grain"></div>
 
   <nav class="glass">
-    <a class="brand" href="#top">Leif Hellgren</a>
     <div class="links">
-      <a href="#now">Now</a>
+      <a href="#now">Current</a>
       <a href="#blue-origin">Blue Origin</a>
-      <a href="#clubs">Clubs</a>
+      <a href="#clubs">Leadership</a>
       <a href="#education">Education</a>
-      <a href="#trading">Trading</a>
+      <a href="#trading">Software</a>
+      <a href="#contact">Contact</a>
     </div>
-    <div style="display:flex;align-items:center;gap:4px">
-      <a class="cta" href="#contact">Get in touch</a>
-      <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false">☰</button>
-    </div>
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false">☰</button>
   </nav>
-  <div class="mobile-menu glass" id="mobileMenu">
-    <a href="#now">Now</a>
+  <div class="mobile-menu glass" id="mobileMenu" inert>
+    <a href="#now">Current</a>
     <a href="#blue-origin">Blue Origin</a>
-    <a href="#clubs">Clubs</a>
+    <a href="#clubs">Leadership</a>
     <a href="#education">Education</a>
-    <a href="#trading">Trading</a>
+    <a href="#trading">Software</a>
     <a href="#contact">Contact</a>
   </div>
   <div class="rail" aria-label="Section navigation">
-    <a href="#now" data-label="Now"></a>
-    <a href="#blue-origin" data-label="Blue Origin"></a>
-    <a href="#clubs" data-label="Clubs"></a>
-    <a href="#education" data-label="Education"></a>
-    <a href="#trading" data-label="Trading"></a>
-    <a href="#contact" data-label="Contact"></a>
+    <a href="#now" data-label="Current" aria-label="Current"></a>
+    <a href="#blue-origin" data-label="Blue Origin" aria-label="Blue Origin"></a>
+    <a href="#clubs" data-label="Leadership" aria-label="Leadership"></a>
+    <a href="#education" data-label="Education" aria-label="Education"></a>
+    <a href="#trading" data-label="Software" aria-label="Software"></a>
+    <a href="#contact" data-label="Contact" aria-label="Contact"></a>
+  </div>
+  <div class="name-mark" id="nameMark">Leif Hellgren</div>
+
+  <!-- Persistent contact cluster: the one path to resume/contact that is never more than
+       one click away, on every stop and every deep-dive page. -->
+  <div class="quick-links glass" aria-label="Resume and contact">
+    <a class="ql-resume" href="Leif-Hellgren-Resume.pdf" download>Resume &darr;</a>
+    <button type="button" data-email="leif@exelor.com">Email</button>
+    <a href="https://github.com/leif-hellgren1" target="_blank" rel="noopener">GitHub &nearr;</a>
+    <a href="https://www.linkedin.com/in/leif-hellgren-a1177216a/" target="_blank" rel="noopener">LinkedIn &nearr;</a>
   </div>
 
-  <div id="viewport" aria-hidden="false">
+  <div id="viewport">
     <div id="world">
+
+      <!-- The derelict station: a world object, deliberately NOT part of any stop. Parked short
+           of Now, so the camera flies past it on the way to the first card. -->
+      <div class="big-ship" aria-hidden="true">
+        <div class="ship-tumble"><img src="ship.webp" alt="" /></div>
+      </div>
 
       <!-- STOP 0 · HERO -->
       <div class="stop hero-stop" data-loc="top">
-        <div class="big-ship" aria-hidden="true">
-          <img src="ship.webp" alt="" />
-        </div>
-        <div class="big-ship-svg-unused" hidden>
-          <svg viewBox="0 0 640 250" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="satFoil" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="#e0b34a"/><stop offset="0.5" stop-color="#c2932e"/><stop offset="1" stop-color="#7d5c14"/>
-              </linearGradient>
-              <linearGradient id="satCell" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="#26385f"/><stop offset="1" stop-color="#0e1830"/>
-              </linearGradient>
-              <linearGradient id="satDish" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="#f1efe7"/><stop offset="1" stop-color="#aeab9f"/>
-              </linearGradient>
-            </defs>
-            <g transform="rotate(-8 320 130)">
-              <!-- solar array booms -->
-              <line x1="196" y1="129" x2="252" y2="129" stroke="#9aa0a8" stroke-width="4"/>
-              <line x1="388" y1="129" x2="444" y2="129" stroke="#9aa0a8" stroke-width="4"/>
-              <!-- left solar wing (3 hinged panels) -->
-              <rect x="28" y="93" width="168" height="72" fill="url(#satCell)" stroke="#0b1120" stroke-width="1.6"/>
-              <g stroke="#2e4370" stroke-width="0.8">
-                <line x1="42" y1="93" x2="42" y2="165"/><line x1="56" y1="93" x2="56" y2="165"/>
-                <line x1="70" y1="93" x2="70" y2="165"/><line x1="98" y1="93" x2="98" y2="165"/>
-                <line x1="112" y1="93" x2="112" y2="165"/><line x1="126" y1="93" x2="126" y2="165"/>
-                <line x1="154" y1="93" x2="154" y2="165"/><line x1="168" y1="93" x2="168" y2="165"/>
-                <line x1="182" y1="93" x2="182" y2="165"/>
-                <line x1="28" y1="117" x2="196" y2="117"/><line x1="28" y1="141" x2="196" y2="141"/>
-              </g>
-              <line x1="84" y1="93" x2="84" y2="165" stroke="#0b1120" stroke-width="2.4"/>
-              <line x1="140" y1="93" x2="140" y2="165" stroke="#0b1120" stroke-width="2.4"/>
-              <polygon points="28,93 74,93 46,165 28,165" fill="#ffffff" opacity="0.05"/>
-              <line x1="28" y1="93" x2="196" y2="93" stroke="#cfd6e6" stroke-width="1.2" opacity="0.55"/>
-              <!-- right solar wing -->
-              <rect x="444" y="93" width="168" height="72" fill="url(#satCell)" stroke="#0b1120" stroke-width="1.6"/>
-              <g stroke="#2e4370" stroke-width="0.8">
-                <line x1="458" y1="93" x2="458" y2="165"/><line x1="472" y1="93" x2="472" y2="165"/>
-                <line x1="486" y1="93" x2="486" y2="165"/><line x1="514" y1="93" x2="514" y2="165"/>
-                <line x1="528" y1="93" x2="528" y2="165"/><line x1="542" y1="93" x2="542" y2="165"/>
-                <line x1="570" y1="93" x2="570" y2="165"/><line x1="584" y1="93" x2="584" y2="165"/>
-                <line x1="598" y1="93" x2="598" y2="165"/>
-                <line x1="444" y1="117" x2="612" y2="117"/><line x1="444" y1="141" x2="612" y2="141"/>
-              </g>
-              <line x1="500" y1="93" x2="500" y2="165" stroke="#0b1120" stroke-width="2.4"/>
-              <line x1="556" y1="93" x2="556" y2="165" stroke="#0b1120" stroke-width="2.4"/>
-              <polygon points="444,93 490,93 462,165 444,165" fill="#ffffff" opacity="0.05"/>
-              <line x1="444" y1="93" x2="612" y2="93" stroke="#cfd6e6" stroke-width="1.2" opacity="0.55"/>
-              <!-- central bus: gold MLI foil -->
-              <rect x="252" y="97" width="136" height="64" rx="6" fill="url(#satFoil)" stroke="#4a3a12" stroke-width="1.4"/>
-              <!-- foil crinkle -->
-              <g stroke="#f2c65e" stroke-width="1" opacity="0.55">
-                <path d="M262 108 l14 5 M282 122 l12 -4 M300 140 l14 3 M270 146 l10 -6 M330 112 l12 6" fill="none"/>
-              </g>
-              <g stroke="#6b4f12" stroke-width="1" opacity="0.6">
-                <path d="M268 128 l16 4 M296 106 l10 8 M318 148 l14 -5 M338 128 l12 4" fill="none"/>
-              </g>
-              <line x1="292" y1="97" x2="292" y2="161" stroke="#6b4f12" stroke-width="1"/>
-              <line x1="324" y1="97" x2="324" y2="161" stroke="#6b4f12" stroke-width="1"/>
-              <!-- white radiator panel -->
-              <rect x="352" y="105" width="28" height="48" fill="#e2e5e9" stroke="#9aa0a8" stroke-width="1"/>
-              <line x1="352" y1="121" x2="380" y2="121" stroke="#b7bcc3" stroke-width="0.9"/>
-              <line x1="352" y1="137" x2="380" y2="137" stroke="#b7bcc3" stroke-width="0.9"/>
-              <!-- high-gain dish -->
-              <line x1="264" y1="100" x2="248" y2="76" stroke="#8f959d" stroke-width="3"/>
-              <ellipse cx="238" cy="58" rx="46" ry="40" fill="url(#satDish)" stroke="#8f8d84" stroke-width="1.4"/>
-              <ellipse cx="238" cy="58" rx="33" ry="28" fill="none" stroke="#a8a69c" stroke-width="1" opacity="0.7"/>
-              <circle cx="238" cy="58" r="4" fill="#8f8d84"/>
-              <line x1="204" y1="44" x2="236" y2="26" stroke="#9aa0a8" stroke-width="1.4"/>
-              <line x1="272" y1="44" x2="240" y2="26" stroke="#9aa0a8" stroke-width="1.4"/>
-              <line x1="238" y1="58" x2="238" y2="28" stroke="#9aa0a8" stroke-width="1.2"/>
-              <rect x="231" y="18" width="14" height="11" rx="2.5" fill="#c9c7bd" stroke="#8f8d84"/>
-              <path d="M196 42 A46 40 0 0 1 278 40" stroke="#ffffff" stroke-width="1.4" opacity="0.5" fill="none"/>
-              <!-- omni whip antenna -->
-              <line x1="382" y1="97" x2="412" y2="44" stroke="#b9bec6" stroke-width="1.5"/>
-              <circle cx="413" cy="41" r="2.6" fill="#d8dce2"/>
-              <!-- instrument: camera cylinder -->
-              <rect x="300" y="161" width="26" height="20" rx="3" fill="#3a3f45" stroke="#14161a" stroke-width="1"/>
-              <circle cx="313" cy="184" r="8" fill="#141c2e" stroke="#4b5563" stroke-width="1.4"/>
-              <path d="M308 180 a8 8 0 0 1 6 -4" stroke="#8fa3c8" stroke-width="1.2" fill="none" opacity="0.7"/>
-              <!-- star tracker + thruster -->
-              <rect x="262" y="161" width="15" height="12" rx="2" fill="#565c64" stroke="#23262b"/>
-              <path d="M382 161 l10 12 h-14 z" fill="#6e747c" stroke="#3a3f45" stroke-width="1"/>
-              <!-- sunlit rims -->
-              <line x1="252" y1="97" x2="388" y2="97" stroke="#ffe9b0" stroke-width="1.5" opacity="0.8"/>
-            </g>
-          </svg>
-        </div>
         <div class="hero-glass glass" id="heroGlass">
-          <div class="mono">Leif Hellgren · Generalist Engineer</div>
-          <h1>Generalist engineer.<br />Physics to flight hardware<br /><em>to trading systems.</em></h1>
-          <p class="tagline">I've owned flight-critical hardware on a lunar lander, built my own analysis software from first principles, and trade futures systematically. Currently open to new roles.</p>
+          <h1><span class="hline">Physics. Aerospace.</span> <span class="hline">Software. Sales.</span></h1>
+          <p class="tagline">Studied physics at UCSB and founded its first rocket club. Owned and delivered a flight-critical subsystem on a first-gen lunar lander at Blue Origin. Built my own stock analysis software.</p>
+          <p class="status-line"><span class="pulse-dot" aria-hidden="true"></span>Looking for my next role in NYC.</p>
           <div class="hero-actions">
-            <a class="btn primary" href="#now">What I'm looking for</a>
-            <a class="btn ghost" href="https://github.com/leif-hellgren1" target="_blank" rel="noopener">GitHub &nearr;</a>
-            <a class="btn ghost" href="Leif-Hellgren-Resume.pdf" download>Resume &darr;</a>
+            <a class="btn primary" href="#/now">Hiring?</a>
           </div>
-          <div class="scroll-hint"><span class="line"></span><span class="mono">Scroll to explore</span></div>
+          <div class="scroll-cue" id="scrollCue" aria-hidden="true"></div>
         </div>
       </div>
 
       <!-- STOP 1 · NOW -->
       <div class="stop" data-loc="now" data-side="r" style="--p1:42">
-        <div class="planet-mount"></div>
         <div class="loc-panel glass">
-          <span class="mono idx">01 · Current trajectory</span>
-          <h2>Open for the next mission.</h2>
+          <span class="mono idx">Current trajectory</span>
+          <h2>What I'm looking for.</h2>
           <div class="status-chips">
             <span class="chip live">Actively seeking</span>
-            <span class="chip">Relocation-ready</span>
-            <span class="chip">[Move plan — city / timeline]</span>
+            <span class="chip">Moving to NYC · Sept 2026</span>
           </div>
-          <p class="body">A generalist on purpose: physics foundation, flight-critical aerospace ownership, and self-built software. I work AI-natively — agents and LLM tooling are part of how I engineer.</p>
+          <p class="body">Generalist with a physics base: flight hardware at Blue Origin, then self-built trading software. I work AI-natively, with agents and LLM tooling in the loop. Most recently a growth and engineering stint at an early-stage startup, where I shipped Next.js features, set up the CRM, and ran brand outreach. That put tech sales on the table for my next role.</p>
           <ul class="points">
             <li>Propulsion, fluid systems, mechanical, and systems engineering</li>
-            <li>Quant / trading technology and research engineering</li>
-            <li>AI-tooling and hard-tech generalist roles where range wins</li>
+            <li>Quant and trading technology: software built around markets, from backtesting to execution tools</li>
+            <li>AI tooling and systems development, building the automation rather than just using it</li>
+            <li>Tech sales and GTM, currently at the top of my list</li>
           </ul>
-          <a class="deep-link" href="#/now">Read more <span>→</span></a>
         </div>
       </div>
 
       <!-- STOP 2 · BLUE ORIGIN -->
       <div class="stop" data-loc="blue-origin" data-side="l" style="--p1:20">
-        <div class="planet-mount"></div>
         <div class="loc-panel glass">
-          <span class="mono idx">02 · Blue Origin — Lunar Program</span>
-          <h2>Responsible Engineer, cryogenic pressure management.</h2>
-          <div class="sub">Flight-critical subsystem · concept through test readiness</div>
-          <p class="body">Owned a flight-critical propellant-tank pressure-management subsystem on a lunar lander, end to end — design, analysis, procurement, integration, and risk.</p>
+          <span class="mono idx">Blue Origin · Lunar Permanence Program · Fluids</span>
+          <h2>Responsible Engineer, Thermodynamic Vent System</h2>
+          <div class="sub">Mk-1 Lunar Lander flight-critical subsystem</div>
+          <p class="body">Owned a propellant-tank pressure-management system end to end.</p>
           <ul class="points">
-            <li>Built first-principles fluid/thermal tools to size the system before formal analysis</li>
+            <li>Design, analysis, procurement and manufacturing, integration, and risk, including the full subsystem CAD model</li>
+            <li>Built first-principles fluid and thermal tools to size the system before formal analysis</li>
             <li>Led FMECA and hazard assessments; presented the subsystem at PDR, CDR, and TRR</li>
           </ul>
           <a class="deep-link" href="#/blue-origin">Read more <span>→</span></a>
         </div>
       </div>
 
-      <!-- STOP 3 · CLUBS -->
+      <!-- STOP 3 · CLUBS / LEADERSHIP -->
       <div class="stop" data-loc="clubs" data-side="r" style="--p1:6">
-        <div class="planet-mount"></div>
         <div class="loc-panel glass">
-          <span class="mono idx">03 · UCSB Rocketry</span>
-          <h2>Founded one rocket club. Co-founded another.</h2>
-          <div class="sub">ARC · RPL — now the largest engineering club on campus</div>
-          <p class="body">Started UCSB's first rocket club as a freshman, then co-founded the Rocket Propulsion Laboratory — now UCSB's largest engineering club and a sanctioned capstone option.</p>
+          <span class="mono idx">UCSB Aerospace Research Cooperative &amp; Rocket Propulsion Laboratory</span>
+          <h2>Founded UC Santa Barbara's first rocket club. Co-founded its largest engineering club.</h2>
+          <p class="body">Started UCSB's first rocket club as a freshman, then co-founded the Rocket Propulsion Laboratory, now UCSB's largest engineering club and a sanctioned capstone option.</p>
           <ul class="points">
-            <li>Led design of a methalox engine feed system — architecture, CAD, sourcing</li>
+            <li>Founded ARC and collaborated with Dr. Philip Lubin's Experimental Cosmology Lab on high-altitude and space-related engineering initiatives.</li>
+            <li>Co-founded RPL and led design and manufacturing of a methalox engine feed system specced to 45,000 ft for the FAR Mars competition.</li>
           </ul>
           <a class="deep-link" href="#/clubs">Read more <span>→</span></a>
         </div>
       </div>
 
-      <!-- STOP 4 · EDUCATION -->
+      <!-- STOP 4 · EDUCATION (card only; no deep dive) -->
       <div class="stop" data-loc="education" data-side="l" style="--p1:190">
-        <div class="planet-mount"></div>
         <div class="loc-panel glass">
-          <span class="mono idx">04 · UC Santa Barbara</span>
-          <h2>B.S. Physics, engineering emphasis.</h2>
+          <span class="mono idx">University of California, Santa Barbara</span>
+          <h2>Bachelor's in Physics</h2>
           <div class="sub">Top-ranked physics program</div>
-          <p class="body">Physics for the first-principles thinking, deliberately supplemented with mechanical design and engineering systems coursework so the theory could ship. The root of everything else on this flight path.</p>
-          <a class="deep-link" href="#/education">Read more <span>→</span></a>
+          <p class="body">Physics for the fundamentals. Supplemented the quantum coursework with mechanical design and engineering classes so I could build better rockets.</p>
         </div>
       </div>
 
-      <!-- STOP 5 · TRADING -->
+      <!-- STOP 5 · TRADING / DEV -->
       <div class="stop" data-loc="trading" data-side="r" style="--p1:152">
-        <div class="planet-mount"></div>
         <div class="loc-panel glass">
-          <span class="mono idx">05 · Independent work</span>
-          <h2>Futures trading &amp; the tools around it.</h2>
-          <div class="sub">Intraday futures · self-built tool stack</div>
-          <p class="body">Engineer and futures trader — systematic intraday futures backed by a personal stack of tools for alerts, journaling, screening, and automation.</p>
+          <span class="mono idx">Independent Systems Development</span>
+          <h2>Building software for analytical stock trading.</h2>
+          <div class="sub">Python &amp; Pine Script</div>
+          <p class="body">I set out to build complete software systems on my own and chose the stock market as the domain. The focus was development more than trading.</p>
           <ul class="points">
-            <li>Full pipeline ownership: research → backtesting → live execution tooling</li>
-            <li>Six public repos on GitHub, linked inside</li>
+            <li>Every tool built end to end: concept, Python or Pine Script implementation, testing, then daily use</li>
+            <li>All projects are public repos on GitHub</li>
           </ul>
           <a class="deep-link" href="#/trading">Read more <span>→</span></a>
         </div>
@@ -553,16 +608,11 @@
       <!-- STOP 6 · CONTACT -->
       <div class="stop" data-loc="contact" style="--p1:26">
         <div class="loc-panel glass contact-card">
-          <div class="mono" style="margin-bottom:14px">06 · Final destination</div>
-          <h2>Let's talk.</h2>
-          <p>If you're hiring for hard problems — hardware, software, or somewhere in between — I'd like to hear about them.</p>
-          <a class="btn primary" href="mailto:leif@exelor.com">leif@exelor.com</a>
-          <div class="social">
-            <a href="https://github.com/leif-hellgren1" target="_blank" rel="noopener">GitHub &nearr;</a>
-            <a href="https://www.linkedin.com/" target="_blank" rel="noopener">LinkedIn &nearr;</a>
-            <a href="Leif-Hellgren-Resume.pdf" download>Resume &darr;</a>
-          </div>
-          <div class="colophon mono">Leif Hellgren · Built AI-natively · © 2026 <span id="texCredit" hidden>· Planet maps © Solar System Scope (CC BY 4.0)</span></div>
+          <h2>Looking to connect?</h2>
+          <p>Hiring for engineering, software, or sales? Reach out below.</p>
+          <button class="btn primary copy-email" id="copyEmail" type="button" data-email="leif@exelor.com">leif@exelor.com</button>
+          <div class="mail-fallback"><a href="mailto:leif@exelor.com">open in mail app</a></div>
+          <span id="texCredit" hidden>Planet maps © Solar System Scope (CC BY 4.0)</span>
         </div>
       </div>
 
@@ -633,6 +683,8 @@ function hsl2rgb(h, s, l) {
   return [f(h + 1 / 3) * 255, f(h) * 255, f(h - 1 / 3) * 255];
 }
 function planetTexture(cfg) {
+  /* every color literal in this generator is procedural planet-surface shading
+     (oceans, craters, storm ovals), fallback-only scene art, not UI color */
   const W = 512, H = 256;
   const cv = document.createElement('canvas');
   cv.width = W; cv.height = H;
@@ -734,10 +786,12 @@ function planetTexture(cfg) {
   return cv.toDataURL('image/png');
 }
 /* Reference imagery: each planet tries repo-hosted art first (drop image files at the repo
-   root named planet-now, planet-blueorigin, planet-clubs, planet-education, planet-trading,
-   and sat-hero — any of .jpg/.png/.webp). Procedural generator remains the fallback. */
+   root named planet-now, planet-blueorigin, planet-clubs, planet-education, or planet-trading,
+   any of .jpg/.png/.webp). Procedural generator remains the fallback. */
 function probeImage(base, onOk, onFail) {
-  const exts = ['jpg', 'png', 'webp', 'jpeg'];
+  // webp first: every shipped planet asset is .webp, so leading with jpg/png cost two failed
+  // round-trips per planet before the real one loaded, and filled the console with 404s.
+  const exts = ['webp', 'jpg', 'png', 'jpeg'];
   let i = 0;
   (function next() {
     if (i >= exts.length) return onFail();
@@ -748,7 +802,7 @@ function probeImage(base, onOk, onFail) {
     im.src = src;
   })();
 }
-function buildProc(mount, cfg) {
+function buildProc(mount, cfg, done) {
   const p = document.createElement('div');
   p.className = 'planet3d';
   if (cfg.size) p.style.setProperty('--psz', cfg.size);
@@ -758,7 +812,7 @@ function buildProc(mount, cfg) {
   p.appendChild(glow);
   if (cfg.ring) {
     const rb = document.createElement('div');
-    rb.className = 'ring3d back';
+    rb.className = 'ring3d';
     rb.style.setProperty('--ph', cfg.c1[0]);
     p.appendChild(rb);
   }
@@ -785,9 +839,14 @@ function buildProc(mount, cfg) {
     }
   }
   mount.appendChild(p);
+  if (done) done(p);
 }
-function buildPlanet(mount, cfg) {
-  if (!cfg.img) return buildProc(mount, cfg);
+/* `done` matters: this path is async (probeImage waits on an Image load), so anything that needs
+   a handle on the finished .planet3d has to be called back rather than query for it. The dolly
+   used to do s.querySelector('.planet3d') synchronously at init and always got null, which is
+   why the depth haze never reached a single planet. */
+function buildPlanet(mount, cfg, done) {
+  if (!cfg.img) return buildProc(mount, cfg, done);
   probeImage(cfg.img,
     src => {
       const p = document.createElement('div');
@@ -798,21 +857,31 @@ function buildPlanet(mount, cfg) {
       sc.style.backgroundImage = 'url(' + src + ')';
       p.appendChild(sc);
       mount.appendChild(p);
+      if (done) done(p);
     },
-    () => buildProc(mount, cfg));
+    () => buildProc(mount, cfg, done));
 }
+/* `size` is in WORLD units and each is the old on-screen size / 0.7229, because a planet now
+   genuinely sits 460px behind its card and takes the perspective divide. On screen they land
+   where they always did: now 720px, blue-origin 780, clubs 660, education 580, trading 540. */
 const PLANETS = {
-  'now':         { type: 'gas',   c1: [26, 58, 46], c2: [12, 48, 24], bands: 5, ring: true, seed: 11, img: 'planet-now',        size: 'min(66vw,720px)' },
-  'blue-origin': { type: 'ice',   c1: [208, 42, 66], c2: [196, 34, 40], bands: 6, ring: true, seed: 22, img: 'planet-blueorigin', size: 'min(72vw,780px)' },
-  'clubs':       { type: 'rock',  c1: [14, 44, 44], c2: [355, 34, 18], seed: 33, moons: 2, img: 'planet-clubs',      size: 'min(60vw,660px)' },
-  'education':   { type: 'terra', c1: [210, 60, 34], c2: [110, 30, 32], seed: 44, img: 'planet-education',  size: 'min(54vw,580px)' },
-  'trading':     { type: 'gas',   c1: [152, 40, 42], c2: [172, 44, 22], bands: 6, ring: true, seed: 55, img: 'planet-trading',    size: 'min(50vw,540px)' }
+  'now':         { type: 'gas',   c1: [26, 58, 46], c2: [12, 48, 24], bands: 5, ring: true, seed: 11, img: 'planet-now',        size: 'min(91vw,996px)' },
+  'blue-origin': { type: 'ice',   c1: [208, 42, 66], c2: [196, 34, 40], bands: 6, ring: true, seed: 22, img: 'planet-blueorigin', size: 'min(100vw,1079px)' },
+  'clubs':       { type: 'rock',  c1: [14, 44, 44], c2: [355, 34, 18], seed: 33, moons: 2, img: 'planet-clubs',      size: 'min(83vw,913px)' },
+  'education':   { type: 'terra', c1: [210, 60, 34], c2: [110, 30, 32], seed: 44, img: 'planet-education',  size: 'min(75vw,802px)' },
+  'trading':     { type: 'gas',   c1: [152, 40, 42], c2: [172, 44, 22], bands: 6, ring: true, seed: 55, img: 'planet-trading',    size: 'min(69vw,747px)' }
 };
-document.querySelectorAll('.stop').forEach(st => {
-  const cfg = PLANETS[st.dataset.loc];
-  const mount = st.querySelector('.planet-mount');
-  if (cfg && mount) buildPlanet(mount, cfg);
-});
+/* Planets are built straight into #world (not into their .stop) so their translateZ survives;
+   see the .planet3d comment. The dolly reads st._planet, which the callback sets when the image
+   finally lands. */
+(function () {
+  const world = document.getElementById('world');
+  document.querySelectorAll('.stop').forEach(st => {
+    const cfg = PLANETS[st.dataset.loc];
+    if (!cfg) return;
+    buildPlanet(world, cfg, p => { st._planet = p; });
+  });
+})();
 /* satellite is the hand-rendered vector craft (transparent bg, consistent with our space) */
 
 /* ================= Starfield with warp ================= */
@@ -820,6 +889,11 @@ document.querySelectorAll('.stop').forEach(st => {
   const cv = document.getElementById('space');
   const ctx = cv.getContext('2d');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  /* star color comes from the CSS tokens (static, so one read at init is enough) */
+  const rootStyle = getComputedStyle(document.documentElement);
+  const SH = parseFloat(rootStyle.getPropertyValue('--star-h')) || 215;
+  const SS = parseFloat(rootStyle.getPropertyValue('--star-s')) || 55;
+  const SL = parseFloat(rootStyle.getPropertyValue('--star-l')) || 88;
   let W, H, CX, CY, SCALE, stars = [];
   function resize() {
     const dpr = Math.min(devicePixelRatio || 1, 2);
@@ -835,7 +909,7 @@ document.querySelectorAll('.stop').forEach(st => {
     return { x: Math.random() * 2 - 1, y: Math.random() * 2 - 1, z: Math.random() * 0.95 + 0.05, p: Math.random() * 6.28 };
   }
   let lastY = scrollY, sm = 0, t = 0;
-  function frame() {
+  function draw() {
     t += 0.016;
     const dy = scrollY - lastY; lastY = scrollY;
     sm += (dy - sm) * 0.12;
@@ -856,34 +930,54 @@ document.querySelectorAll('.stop').forEach(st => {
         const pz = Math.min(1, Math.max(0.045, s.z + zvel * (2.2 + aw * 9)));
         const px = CX + (s.x * SCALE) / pz;
         const py = CY + (s.y * SCALE) / pz;
-        ctx.strokeStyle = 'hsla(' + (215 - aw * 25) + ',' + (60 + aw * 30) + '%,' + (86 + aw * 10) + '%,' + (alpha * (0.5 + aw * 0.5)) + ')';
+        // warp streak = star color nudged +5% sat, -2% light, then pushed by warp amount
+        ctx.strokeStyle = 'hsla(' + (SH - aw * 25) + ',' + (SS + 5 + aw * 30) + '%,' + (SL - 2 + aw * 10) + '%,' + (alpha * (0.5 + aw * 0.5)) + ')';
         ctx.lineWidth = Math.max(0.6, 1.7 * (1 - s.z));
         ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(sx, sy); ctx.stroke();
       } else {
-        ctx.fillStyle = 'hsla(215,55%,88%,' + alpha + ')';
+        ctx.fillStyle = 'hsla(' + SH + ',' + SS + '%,' + SL + '%,' + alpha + ')';
         const r = Math.max(0.4, 1.5 * (1 - s.z));
         ctx.beginPath(); ctx.arc(sx, sy, r, 0, 6.29); ctx.fill();
       }
     }
-    requestAnimationFrame(frame);
   }
-  addEventListener('resize', resize);
+  function frame() { draw(); requestAnimationFrame(frame); }
+  addEventListener('resize', () => { resize(); if (reduced) draw(); });
   resize();
-  requestAnimationFrame(frame);
+  /* reduced motion: paint one static frame and never start the loop
+     (previously the draw loop and twinkle kept running with only drift zeroed) */
+  if (reduced) draw();
+  else requestAnimationFrame(frame);
 })();
 
 /* ================= Z-axis dolly (scroll = fly through space) ================= */
 (function () {
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const SPACING = 1600;
+  const PLANET_DEPTH = 460;   // how far each planet rides behind its own card, in world px
   const stops = Array.from(document.querySelectorAll('.stop'));
   const N = stops.length;
   const travel = document.getElementById('travel');
+  /* The derelict rides the same camera as the stops. It is parked short of Now (z=1600), so you
+     fly past it on the way to the first card and it is clear of the frame before Now arrives.
+     SHIP_X/Y are WORLD offsets, derived from where we want it to read on screen at rest by
+     undoing the perspective divide at SHIP_Z, which keeps it framed the same on any viewport. */
+  const ship = document.querySelector('.big-ship');
+  // the fixed name mark belongs to the hero: it fades on the same schedule as stop 0
+  const nameMark = document.getElementById('nameMark');
+  const SHIP_Z = 1400;
+  const SHIP_F = 1200 / (1200 + SHIP_Z);   // #viewport perspective is 1200px
+  let SHIP_X = 0, SHIP_Y = 0;
   let OFF = 0;
   function layout() {
     travel.style.height = ((N - 1) * SPACING + innerHeight) + 'px';
+    // PAIRED: 820 must match the CSS `@media (max-width: 820px)` scene breakpoint
+    // (planet --py offset, .big-ship width). Media queries cannot read custom
+    // properties, so the pairing is by convention; change both together.
     OFF = innerWidth > 820 ? Math.min(innerWidth * 0.16, 220) : 0;
     stops.forEach(s => { if (s._panel) s._panel.style.transform = s._dir ? 'translateX(' + (s._dir * OFF).toFixed(0) + 'px)' : ''; });
+    SHIP_X = (0.25 - 0.50) * innerWidth / SHIP_F;   // reads at 25vw: left of, and behind, the hero card
+    SHIP_Y = (0.40 - 0.46) * innerHeight / SHIP_F;  // reads at 40vh; perspective-origin sits at 46vh
   }
   layout();
   addEventListener('resize', layout);
@@ -894,7 +988,8 @@ document.querySelectorAll('.stop').forEach(st => {
     // card staggers to the side OPPOSITE its planet
     s._dir = s.dataset.side === 'r' ? -1 : s.dataset.side === 'l' ? 1 : 0;
     s._panel = s.querySelector('.loc-panel, .hero-glass');
-    s._planet = s.querySelector('.planet3d');
+    // NOTE: do not query for ._planet here. Planets are built asynchronously into #world and
+    // assign st._planet themselves; querying now would capture null and clobber it.
   });
   layout(); // now that _panel/_dir exist, apply card stagger offsets
   function goTo(i, instant) {
@@ -906,7 +1001,12 @@ document.querySelectorAll('.stop').forEach(st => {
     const h = a.getAttribute('href');
     if (h.startsWith('#/')) return; // deep routes
     const id = h.slice(1);
-    if (id in idToIndex) { e.preventDefault(); goTo(idToIndex[id]); }
+    if (id in idToIndex) {
+      e.preventDefault();
+      // a section link inside an open deep view (e.g. Next: Contact) must dismiss it first
+      if (window.__closeDeep) window.__closeDeep();
+      goTo(idToIndex[id]);
+    }
   });
   if (location.hash && !location.hash.startsWith('#/')) {
     const id = location.hash.slice(1);
@@ -914,10 +1014,17 @@ document.querySelectorAll('.stop').forEach(st => {
   }
   const railLinks = Array.from(document.querySelectorAll('.rail a'));
   const navLinks = Array.from(document.querySelectorAll('nav .links a'));
+  const menuLinks = Array.from(document.querySelectorAll('.mobile-menu a'));
+  const worldEl = document.getElementById('world');
   function setActive(i) {
     const id = stops[i] && stops[i].dataset.loc;
     railLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
     navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+    menuLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+    // mirror the active stop's hue onto #world so its planet's halo picks it up
+    // (the hero declares none; use the first planet's hue, which is the visible one)
+    const hue = (stops[i] && stops[i].style.getPropertyValue('--p1')) || '42';
+    worldEl.style.setProperty('--p1', hue);
   }
   let cam = 0, lastActive = -1;
   function frame() {
@@ -943,6 +1050,27 @@ document.querySelectorAll('.stop').forEach(st => {
       st.style.visibility = vis;
       st.style.transform = 'translate(-50%,-50%) translateZ(' + (-dz).toFixed(1) + 'px)';
       st.style.pointerEvents = (Math.abs(dz) < 700) ? 'auto' : 'none';
+      if (i === 0 && nameMark) {
+        nameMark.style.opacity = op.toFixed(3);
+        nameMark.style.visibility = vis;
+      }
+      // The planet is its own world object sitting PLANET_DEPTH behind its card, so the two
+      // separate in depth and parallax against each other on approach. Opacity/visibility stay
+      // slaved to the stop, so the fade choreography stays exactly as it was.
+      if (st._planet) {
+        st._planet.style.opacity = op.toFixed(3);
+        st._planet.style.visibility = vis;
+        st._planet.style.setProperty('--pz', (-(dz + PLANET_DEPTH)).toFixed(1) + 'px');
+      }
+    }
+    if (ship) {
+      // same rules as a stop: fade out over the last 150px as the camera overtakes it
+      const dz = SHIP_Z - cam;
+      const op = dz < -150 ? 0 : dz < 0 ? 1 + dz / 150 : 1;
+      ship.style.opacity = (op * 0.55).toFixed(3);   // distant debris, not a hero object
+      ship.style.visibility = op > 0 ? 'visible' : 'hidden';
+      ship.style.transform = 'translate(-50%,-50%) translate3d(' +
+        SHIP_X.toFixed(0) + 'px,' + SHIP_Y.toFixed(0) + 'px,' + (-dz).toFixed(1) + 'px)';
     }
     const act = Math.max(0, Math.min(N - 1, Math.round(cam / SPACING)));
     if (act !== lastActive) { lastActive = act; setActive(act); }
@@ -951,201 +1079,185 @@ document.querySelectorAll('.stop').forEach(st => {
   requestAnimationFrame(frame);
 })();
 
-/* ================= Spacetime cursor: a gravity well warping a faint grid ================= */
-(function () {
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
-  const cv = document.getElementById('warp');
-  if (!cv) return;
-  if (reduced || !fine) { cv.remove(); return; }
-  const ctx = cv.getContext('2d');
-  let W, H;
-  function rs() {
-    const dpr = Math.min(devicePixelRatio || 1, 2);
-    W = innerWidth; H = innerHeight;
-    cv.width = W * dpr; cv.height = H * dpr;
-    cv.style.width = W + 'px'; cv.style.height = H + 'px';
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  }
-  rs(); addEventListener('resize', rs);
-  let mx = -9999, my = -9999, cx = -9999, cy = -9999, active = 0;
-  addEventListener('pointermove', e => {
-    mx = e.clientX; my = e.clientY;
-    if (cx < -999) { cx = mx; cy = my; }
-  }, { passive: true });
-  document.documentElement.addEventListener('mouseleave', () => { mx = -9999; my = -9999; });
-  const GAP = 8, R = 29, SIG = 11, AMP = 7, STEP = 4;
-  function warp(x, y) {
-    const dx = x - cx, dy = y - cy;
-    const r = Math.hypot(dx, dy) + 0.0001;
-    const pull = Math.min(AMP * Math.exp(-(r * r) / (2 * SIG * SIG)), r * 0.6);
-    return [x - (dx / r) * pull, y - (dy / r) * pull];
-  }
-  function seg(ax, ay, bx, by) {
-    const sx = (ax + bx) / 2, sy = (ay + by) / 2;
-    const d = Math.hypot(sx - cx, sy - cy);
-    const a = Math.max(0, 1 - d / R) * 0.16 * active;
-    if (a < 0.005) return;
-    ctx.strokeStyle = 'rgba(190,205,235,' + a.toFixed(3) + ')';
-    ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke();
-  }
-  function frame() {
-    ctx.clearRect(0, 0, W, H);
-    const off = mx < -999;
-    active += ((off ? 0 : 1) - active) * 0.08;
-    if (!off) { cx += (mx - cx) * 0.16; cy += (my - cy) * 0.16; } // the well trails: mass has inertia
-    if (active > 0.02 && cx > -999) {
-      ctx.lineWidth = 1;
-      const gx0 = Math.floor((cx - R) / GAP) * GAP, gx1 = cx + R;
-      const gy0 = Math.floor((cy - R) / GAP) * GAP, gy1 = cy + R;
-      for (let gx = gx0; gx <= gx1; gx += GAP) { // vertical lines, bent through the well
-        let p = null;
-        for (let y = gy0; y <= gy1 + STEP; y += STEP) {
-          const q = warp(gx, y);
-          if (p) seg(p[0], p[1], q[0], q[1]);
-          p = q;
-        }
-      }
-      for (let gy = gy0; gy <= gy1; gy += GAP) { // horizontal lines
-        let p = null;
-        for (let x = gx0; x <= gx1 + STEP; x += STEP) {
-          const q = warp(x, gy);
-          if (p) seg(p[0], p[1], q[0], q[1]);
-          p = q;
-        }
-      }
-      // no core marker — the mass is felt purely through the warped grid
-    }
-    requestAnimationFrame(frame);
-  }
-  requestAnimationFrame(frame);
-})();
 
 /* ================= Mobile menu ================= */
 (function () {
   const btn = document.getElementById('menuBtn');
   const menu = document.getElementById('mobileMenu');
   if (!btn || !menu) return;
+  // the menu hangs 12px below the real measured nav, wherever the nav ends up
+  const navEl = document.querySelector('nav');
+  function setClearance() {
+    document.documentElement.style.setProperty('--nav-clearance',
+      Math.round(navEl.getBoundingClientRect().bottom + 12) + 'px');
+  }
+  setClearance();
+  addEventListener('resize', setClearance);
   btn.addEventListener('click', () => {
     const open = menu.classList.toggle('open');
     btn.setAttribute('aria-expanded', String(open));
     btn.textContent = open ? '✕' : '☰';
+    // inert keeps the closed menu out of the tab order and the accessibility tree
+    if (open) menu.removeAttribute('inert'); else menu.setAttribute('inert', '');
   });
   menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
     menu.classList.remove('open');
     btn.setAttribute('aria-expanded', 'false');
     btn.textContent = '☰';
+    menu.setAttribute('inert', '');
   }));
 })();
 
+/* ================= Click-to-copy email ================= */
+/* Runs for every [data-email] button: the contact card's and the corner cluster's.
+   Each keeps its own resting label, so the cluster reads "Email" and the card the address. */
+(function () {
+  document.querySelectorAll('[data-email]').forEach(btn => {
+    const email = btn.dataset.email;
+    const label = btn.textContent;
+    let timer;
+    function copied() {
+      btn.textContent = 'Copied';
+      clearTimeout(timer);
+      timer = setTimeout(() => { btn.textContent = label; }, 1500);
+    }
+    function legacyCopy() {
+      const ta = document.createElement('textarea');
+      ta.value = email;
+      ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); copied(); } catch (_) {}
+      ta.remove();
+    }
+    btn.addEventListener('click', () => {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(email).then(copied, legacyCopy);
+      } else legacyCopy();
+    });
+  });
+})();
+
+/* ================= Scroll cue: gone for good after the first scroll ================= */
+(function () {
+  const cue = document.getElementById('scrollCue');
+  if (!cue) return;
+  addEventListener('scroll', function once() {
+    if (scrollY < 4) return;
+    cue.classList.add('gone');
+    removeEventListener('scroll', once);
+  }, { passive: true });
+})();
+
 /* ================= Deep-page content ================= */
+/* next: drives the bottom link; the chain is now -> blue-origin -> clubs -> trading,
+   with trading handing off to the contact section on the main page. */
 const DEEP = {
   "now": {
-    hue: 42, idx: "01 · Current trajectory", title: "Where I'm headed.",
-    sub: "Roles, skills, and how I actually work",
+    hue: 42, title: "What I'm looking for.",
+    next: { href: "#/blue-origin", label: "Blue Origin" },
     body: `
       <h3>Roles I'm targeting</h3>
       <ul>
-        <li><strong>Propulsion / fluid systems / mechanical / systems engineering</strong> — where my flight-hardware ownership applies directly.</li>
-        <li><strong>Quant &amp; trading technology</strong> — research engineering, backtesting infrastructure, execution tooling.</li>
-        <li><strong>AI-tooling &amp; generalist engineering</strong> — teams that need someone who can move across hardware, software, and analysis without a handoff.</li>
+        <li><strong>Propulsion, fluid systems, mechanical, and systems engineering</strong>, where my flight-hardware ownership applies directly.</li>
+        <li><strong>Quant and trading technology</strong>: research tooling, backtesting infrastructure, and execution software.</li>
+        <li><strong>AI tooling and generalist engineering</strong>, for teams that need someone who can move across hardware, software, and analysis.</li>
+        <li><strong>Tech sales and GTM</strong>: I can go as deep as a customer's engineers, and my sales work at Launchpoint showed me I genuinely enjoy the job.</li>
       </ul>
-      <h3>Why a generalist is the right hire</h3>
-      <p>My track record is a chain of domain jumps that worked: physics degree → responsible engineer on flight-critical cryogenic hardware → self-built first-principles modeling tools → systematic futures trading. Each jump was faster than the last because the foundation transfers. I don't need the domain handed to me pre-digested.</p>
-      <h3>AI-native by default</h3>
-      <p>I use LLM agents and custom automation as core engineering leverage — for analysis tooling, design iteration, and building things like this site. Teams adopting AI seriously get someone who already works that way; teams that aren't get a preview.</p>
+      <h3>My Path</h3>
+      <p>Physics degree. Responsible Engineer on flight-critical cryogenic hardware. Self-built modeling tools and trading software. Most recently, growth and sales at an early-stage startup. Each jump came faster than the last because the fundamentals transfer, and I ramp up new domains on my own.</p>
+      <p>I use LLM agents and custom automation in everything: analysis tooling, design iteration, building this site. Teams taking AI seriously get someone who already works that way. Teams that aren't get a preview.</p>
       <h3>Working style</h3>
       <ul>
-        <li>First-principles models before formal tools — fast iteration, then rigor.</li>
-        <li>End-to-end ownership bias: concept, design, analysis, procurement, test.</li>
-        <li>Cross-functional by habit — thermal, GNC, structures, manufacturing, vendors.</li>
+        <li>First-principles models before formal tools. Iterate fast, then add rigor.</li>
+        <li>Bias toward end-to-end ownership, from concept through delivery.</li>
+        <li>Collaborative by default. Comfortable communicating with engineers, vendors, and customers alike.</li>
       </ul>
       <h3>Logistics</h3>
-      <p>[Move plan: city and timeline go here.] Relocation-ready, available to start on standard notice.</p>
-      <p class="note">Placeholder: exact move plan and start-date details pending.</p>
+      <p>Moving to NYC, ready to start September 2026.</p>
     `
   },
   "blue-origin": {
-    hue: 20, idx: "02 · Blue Origin — Lunar Program", title: "Cryogenic pressure management, owned end to end.",
-    sub: "Responsible Engineer · flight-critical subsystem",
+    hue: 20, title: "Thermodynamic Vent System: ownership scope",
+    next: { href: "#/clubs", label: "Leadership" },
     body: `
-      <p>Responsible Engineer for a flight-critical propellant-tank pressure-management subsystem on a lunar lander — a thermodynamic venting approach for managing cryogenic tank pressure in microgravity, where conventional venting isn't viable. Owned from early concept through hardware and test readiness.</p>
+      <p>Responsible Engineer for a flight-critical propellant-tank pressure-management subsystem on a lunar lander. The system uses a thermodynamic venting approach to manage cryogenic tank pressure in microgravity, where conventional venting doesn't work. I owned it from early concept through hardware and test readiness.</p>
       <h3>Ownership</h3>
       <ul>
-        <li>Accountable for subsystem delivery, performance, and risk — design, analysis, procurement, integration, test.</li>
+        <li>Accountable for subsystem delivery, performance, and risk across design, analysis, procurement, integration, and test.</li>
         <li>Owned drawings, releases, revisions, BOMs, and the subsystem P&amp;ID within the vehicle fluids architecture.</li>
-        <li>Selected vendors, wrote specs, reviewed quotes, managed fabrication and inspection across all subsystem hardware.</li>
+        <li>Selected vendors, wrote specs, reviewed quotes, and managed fabrication and inspection for all subsystem hardware.</li>
         <li>Presented the subsystem in its entirety at PDR, CDR, and TRR.</li>
       </ul>
       <h3>What I built</h3>
       <ul>
-        <li>A first-principles fluid/thermal modeling tool linking flow, geometry, and cooling performance — used to size the system and drive design decisions ahead of formal analysis.</li>
-        <li>A flow-restriction assembly with integrated heating to prevent cryogenic blockage, packaged with a custom-designed interface fitting for standard aerospace fluid systems.</li>
-        <li>A large cryogenic routing assembly — tubing, fittings, supports — designed in CAD around dense neighboring subsystems, with manufacturability, weld and bend feasibility, harness routing, assembly sequence, and wrench access designed in from the start.</li>
+        <li>A first-principles fluid and thermal modeling tool linking flow, geometry, and cooling performance. Used it to size the system and drive design decisions ahead of formal analysis.</li>
+        <li>A flow-restriction assembly with integrated heating to prevent cryogenic blockage, packaged with a custom interface fitting for standard aerospace fluid systems.</li>
+        <li>A large cryogenic routing assembly of tubing, fittings, and supports, designed in CAD around dense neighboring subsystems, with manufacturability, weld and bend feasibility, harness routing, assembly sequence, and wrench access built in from the start.</li>
         <li>The overboard venting interface, coordinated with GNC so venting behavior stayed compatible with vehicle control and stability.</li>
       </ul>
       <h3>Hard problems</h3>
       <ul>
-        <li>Routing through a constrained vehicle environment while meeting flow, structural, and thermal requirements simultaneously — including a cooling redesign after updated thermal data landed mid-design.</li>
-        <li>Reducing system mass versus the initial concept without giving up flow, structural, or thermal performance.</li>
-        <li>Preventing cryogenic freezing at the flow restriction — solved with an integrated heater sized within vehicle power constraints.</li>
+        <li>Routing through a tightly constrained vehicle while meeting flow, structural, and thermal requirements at once, including a cooling redesign after updated thermal data landed mid-design.</li>
+        <li>Cutting system mass versus the initial concept without giving up flow, structural, or thermal performance.</li>
+        <li>Preventing cryogenic freezing at the flow restriction, solved with an integrated heater sized within vehicle power constraints.</li>
       </ul>
       <h3>Engineering tradeoffs I owned</h3>
       <ul>
-        <li><strong>Thermal contact vs. pressure drop:</strong> more tank contact improved heat extraction but cost flow performance. Balanced with the sizing model rather than intuition.</li>
-        <li><strong>Bonded vs. welded attachment:</strong> welding offered conductivity but posed thermal-stress and tank-safety risk; a high-conductivity bonded approach met the heat-transfer requirement with far less risk. Validated by test.</li>
-        <li><strong>Extended cooling concept:</strong> evaluated routing residual cooling capacity further into the structure; killed it — the added complexity and mass outweighed the benefit. Knowing when not to build is part of the job.</li>
-      </ul>
-      <h3>Test</h3>
-      <ul>
-        <li>Defined component- and system-level test requirements, procedures, and success criteria.</li>
-        <li>Designed test rigs for vibration, thermal cycling/shock, and pressure/flow testing.</li>
-        <li>Oversaw vendor development, acceptance, and qualification testing; executed heater power/functional testing and adhesive strength testing with a thermal-conductivity trade study.</li>
+        <li><strong>Thermal contact vs. pressure drop:</strong> more tank contact improved heat extraction but cost flow performance. Settled it with the sizing model instead of intuition.</li>
+        <li><strong>Bonded vs. welded attachment:</strong> welding offered conductivity but carried thermal-stress and tank-safety risk. A high-conductivity bonded approach met the heat-transfer requirement with far less risk, validated by test.</li>
+        <li><strong>Extended cooling concept:</strong> evaluated routing residual cooling capacity further into the structure and killed it. The added complexity and mass outweighed the benefit. Knowing when not to build is part of the job.</li>
       </ul>
       <h3>Risk leadership</h3>
       <ul>
-        <li>Led the subsystem FMECA — failure modes, risk assessment, and mitigations driven back into the design.</li>
-        <li>Led an independent hazard assessment of hydrogen accumulation and ignition under off-nominal conditions; modeled the scenarios and presented findings demonstrating the design's mitigation.</li>
+        <li>Led the subsystem FMECA: failure modes, risk assessment, and mitigations driven back into the design.</li>
+        <li>Led an independent hazard assessment of hydrogen accumulation and ignition under off-nominal conditions. Modeled the scenarios and presented findings showing the design's mitigation.</li>
+      </ul>
+      <h3>Test</h3>
+      <ul>
+        <li>Defined component and system-level test requirements, procedures, and success criteria.</li>
+        <li>Designed test rigs for vibration, thermal cycling and shock, and pressure and flow testing.</li>
+        <li>Oversaw vendor development, acceptance, and qualification testing. Ran heater power and functional testing, plus adhesive strength testing with a thermal-conductivity trade study.</li>
       </ul>
       <h3>Environment</h3>
-      <p>Hands-on with cryogenic propellants — liquid hydrogen and liquid oxygen — with liquid nitrogen as a test surrogate. Day-to-day coordination across thermal, GNC, structures, manufacturing, integration, systems, test, and safety.</p>
-      <p class="note">Details are kept at scope-and-ownership level intentionally. Specifics available in conversation where appropriate.</p>
+      <p>Hands-on with cryogenic propellants, liquid hydrogen and liquid oxygen, with liquid nitrogen as a test surrogate. Day-to-day coordination across thermal, GNC, structures, manufacturing, integration, systems, test, and safety.</p>
+      <p class="note">Details are kept at the scope-and-ownership level on purpose. Specifics available in conversation where appropriate.</p>
+      <figure class="deep-figure">
+        <img src="blue-origin-mk1.jpg" alt="Blue Origin Mk1 lunar lander in a test stand" loading="lazy" width="440" height="454" />
+        <figcaption class="img-caption">Blue Origin's Mk1 lunar lander.</figcaption>
+      </figure>
     `
   },
   "clubs": {
-    hue: 6, idx: "03 · UCSB Rocketry", title: "ARC and RPL.",
-    sub: "Founder · co-founder · propulsion lead",
+    hue: 6, title: "ARC and RPL.",
+    next: { href: "#/trading", label: "Software" },
     body: `
-      <h3>ARC — the first one</h3>
-      <p>Founded UCSB's first rocket club as a freshman. Built it from nothing — recruiting, structure, projects — and established a collaboration with an experimental astrophysics lab on campus.</p>
-      <h3>RPL — the one that scaled</h3>
-      <p>Co-founded the Rocket Propulsion Laboratory, which grew into the largest engineering club at UCSB and is now a sanctioned capstone project option — an institution that will outlast every founding member.</p>
+      <h3>Aerospace Research Cooperative</h3>
+      <p>Founded UCSB's first rocket club as a freshman and built it from nothing: recruiting, structure, projects. We partnered with Dr. Philip Lubin's Experimental Cosmology Lab, built a drone from scratch, flew H-motor rockets for high-power certifications, and ran high-altitude balloon launches for the lab.</p>
+      <h3>Rocket Propulsion Laboratory</h3>
+      <p>Co-founded the Rocket Propulsion Laboratory. It grew into the largest engineering club at UCSB and is now a sanctioned capstone project option.</p>
       <ul>
-        <li>Led design of a methalox engine feed system: system architecture, full CAD model, and part sourcing.</li>
-        <li>Set engineering practices for a volunteer team — design reviews, documentation, and ownership culture borrowed from industry.</li>
+        <li>Led design and manufacturing of the methalox engine feed system: architecture, full CAD model, part sourcing, specced to 45,000 ft for the FAR Mars competition.</li>
+        <li>Set engineering practices for a volunteer team: design reviews, documentation, and an ownership culture borrowed from industry.</li>
       </ul>
-      <p class="note">Photos and build imagery slots reserved — send favorites and they drop in here.</p>
-    `
-  },
-  "education": {
-    hue: 190, idx: "04 · UC Santa Barbara", title: "Physics, with intent.",
-    sub: "B.S. Physics · engineering emphasis",
-    body: `
-      <p>Bachelor's in Physics with an engineering emphasis from UC Santa Barbara — a top-ranked physics program.</p>
-      <p>The physics degree was a deliberate choice over a standard engineering track: first-principles reasoning as the foundation, then targeted coursework in mechanical design and engineering systems layered on top so the theory could actually ship. The rocket clubs were the proving ground for that combination while still in school.</p>
-      <ul>
-        <li>First-principles modeling habit formed here — the same approach later used to size flight hardware.</li>
-        <li>Supplemented curriculum: mechanical design, engineering systems.</li>
-        <li>Applied immediately through ARC and RPL leadership.</li>
-      </ul>
+      <div class="photo-row">
+        <img src="arc-balloon-led-build.jpg" alt="Wiring a high-power LED payload before a balloon launch" loading="lazy" />
+        <img src="arc-balloon-team.jpg" alt="ARC team holding a weather balloon before a night launch" loading="lazy" />
+        <img src="arc-balloon-dawn.jpg" alt="Weather balloon silhouetted at dawn before release" loading="lazy" />
+      </div>
+      <p class="img-caption">High-altitude balloon launch that flew a record-setting high-power LED for the Experimental Cosmology Lab.</p>
+      <figure class="deep-figure wide">
+        <img src="arc-team.jpg" alt="ARC team group photo at UCSB" loading="lazy" />
+        <figcaption class="img-caption">ARC team</figcaption>
+      </figure>
     `
   },
   "trading": {
-    hue: 152, idx: "05 · Independent work", title: "Futures trading, run like engineering.",
-    sub: "Intraday futures · research → tooling → execution",
+    hue: 152, title: "Applying engineering to stock trading.",
+    next: { href: "#contact", label: "Contact" },
     body: `
-      <p>Systematic intraday futures trading, run as an engineering discipline: hypothesis-driven research, honest testing, and a self-built tool stack around execution — alerting, journaling, screening, and automation. Every recurring manual step becomes a tool.</p>
-      <h3>The public tooling</h3>
+      <p>Systematic intraday futures trading run as an engineering discipline. Hypothesis-driven research, honest testing, and a self-built stack for alerting, journaling, screening, and automation. Every recurring manual step becomes a tool.</p>
+      <h3>Tools I built</h3>
       <div class="repo-list">
         <a href="https://github.com/leif-hellgren1/trade-tracker" target="_blank" rel="noopener"><span class="rname">trade-tracker</span><div class="rdesc">Desktop app for logging trades on a calendar and tracking stats, with Google Sheets sync.</div></a>
         <a href="https://github.com/leif-hellgren1/tradingview-scripts" target="_blank" rel="noopener"><span class="rname">tradingview-scripts</span><div class="rdesc">Pine Script indicators for intraday futures trading.</div></a>
@@ -1155,14 +1267,8 @@ const DEEP = {
       </div>
       <h3>Beyond markets</h3>
       <div class="repo-list">
-        <a href="https://github.com/leif-hellgren1/subscriptio" target="_blank" rel="noopener"><span class="rname">subscriptio</span><div class="rdesc">Tracks subscriptions and negotiates retention discounts automatically — without ever cancelling.</div></a>
+        <a href="https://github.com/leif-hellgren1/subscriptio" target="_blank" rel="noopener"><span class="rname">subscriptio</span><div class="rdesc">Tracks subscriptions and negotiates retention discounts automatically, without ever cancelling.</div></a>
       </div>
-      <h3>Approach</h3>
-      <ul>
-        <li>Risk framing first: position sizing and drawdown discipline before signal cleverness.</li>
-        <li>The dev work is mine end to end — desktop apps, indicators, webhooks, automation.</li>
-      </ul>
-      <p class="note">Strategy specifics available in conversation.</p>
     `
   }
 };
@@ -1172,21 +1278,16 @@ const DEEP = {
   const deep = document.getElementById('deep');
   const panel = document.getElementById('deepPanel');
   const closeBtn = document.getElementById('deepClose');
-  const ORDER = ['now', 'blue-origin', 'clubs', 'education', 'trading'];
-  const LABEL = { 'now': 'Current trajectory', 'blue-origin': 'Blue Origin', 'clubs': 'UCSB Rocketry', 'education': 'UC Santa Barbara', 'trading': 'Trading & dev' };
   function openDeep(id) {
     const d = DEEP[id];
     if (!d) return closeDeep();
-    const next = ORDER[(ORDER.indexOf(id) + 1) % ORDER.length];
     deep.style.setProperty('--dh', d.hue);
     panel.innerHTML =
-      '<span class="mono idx">' + d.idx + ' · Deep dive</span>' +
       '<h1>' + d.title + '</h1>' +
-      '<div class="sub">' + d.sub + '</div>' +
       d.body +
       '<div class="next-stop">' +
         '<a class="btn ghost" href="#" data-close>← Return to map</a>' +
-        '<a class="deep-link" href="#/' + next + '">Next stop: ' + LABEL[next] + ' <span>→</span></a>' +
+        '<a class="deep-link" href="' + d.next.href + '">Next: ' + d.next.label + ' <span>→</span></a>' +
       '</div>';
     deep.classList.add('open');
     document.body.classList.add('locked');
@@ -1201,6 +1302,8 @@ const DEEP = {
       catch (_) { location.hash = ''; }
     }
   }
+  // the dolly's section-anchor click handler needs to dismiss an open deep view
+  window.__closeDeep = closeDeep;
   function route() {
     const h = location.hash;
     if (h.startsWith('#/')) openDeep(h.slice(2));
