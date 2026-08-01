@@ -261,13 +261,43 @@
       border-radius:0; border-left:0; border-right:0; border-bottom:0;
       padding:12px 16px;
     }
-    /* already docked directly beneath the card here, so there is nowhere useful to rise to:
-       it stays put and brightens instead of flying across a small screen */
+    /* at the contact stop it undocks from the bottom edge and rises to the heading, the same
+       move it makes on desktop. Width and the side borders snap rather than glide, since
+       neither animates from a docked full-width bar, but the rise itself reads clearly. */
     .quick-links.hailed {
-      left:0; bottom:0; transform:none;
-      padding:14px 16px; gap:clamp(12px, 2.5vw, 18px);
+      left:50%; right:auto; bottom:var(--hail-bottom, 30vh);
+      transform:translateX(-50%);
+      width:max-content; max-width:92vw;
+      border-radius:var(--r-pill); border-width:1px;
+      padding:13px 20px; gap:clamp(12px, 3vw, 18px);
     }
-    .quick-links.hailed a, .quick-links.hailed button { font-size:0.7rem; }
+    .quick-links.hailed a, .quick-links.hailed button { font-size:0.72rem; }
+  }
+
+  /* ---------- Phone density ---------- */
+  /* On a phone the cards ran nearly the full height of the screen, edge to edge, which left
+     no dark space around them and buried the planets the whole scene is built on. Everything
+     in this block is inside the phone breakpoint: the desktop layout is untouched. */
+  @media (max-width:640px) {
+    .stop .loc-panel { padding:20px; }
+    .hero-glass { padding:26px 20px; }
+    .loc-panel:not(.contact-card) h2 { font-size:1.55rem; line-height:1.16; margin:9px 0 6px; }
+    .loc-panel .sub { font-size:0.9rem; margin-bottom:11px; }
+    .loc-panel p.body { font-size:0.92rem; line-height:1.52; }
+    .loc-panel ul.points { margin-top:12px; gap:7px; }
+    .loc-panel ul.points li { font-size:0.89rem; line-height:1.5; padding-left:17px; }
+    .status-chips { gap:7px; margin:11px 0 3px; }
+    .chip { padding:6px 12px; font-size:0.78rem; }
+    .deep-link { margin-top:16px; }
+    .hero-glass .tagline { gap:10px; font-size:0.94rem; line-height:1.5; margin-top:18px; }
+    .status-line { margin-top:15px; font-size:1rem; }
+    .hero-actions { margin-top:20px; }
+    /* deep dives get the same treatment: they are the longest reads on the site */
+    .deep-inner { padding:86px 16px 80px; }
+    .deep-panel { padding:24px 20px; }
+    .deep-panel h1 { font-size:1.75rem; margin-bottom:14px; }
+    .deep-panel h2 { font-size:1rem; margin:24px 0 10px; }
+    .deep-panel p, .deep-panel ul li { font-size:0.92rem; line-height:1.55; }
   }
   /* the move still happens, it just happens instantly instead of gliding */
   @media (prefers-reduced-motion: reduce) {
@@ -1121,7 +1151,9 @@ const PLANETS = {
      50% line, so this needs the two layout heights and no live rects: the card sits mid
      fly-through under a 3D transform, which getBoundingClientRect would report mid-flight.
      The hailed height is measured with transitions off so the first frame is already right. */
-  const HAIL_GAP = 72;   // heading baseline to bar, measured from the text box itself
+  // heading to bar, measured from the text box itself; tighter on a phone, where both the
+  // heading and the screen are smaller and a desktop-sized gap reads as a hole
+  const hailGap = () => (innerWidth <= 640 ? 40 : 72);
   function measureHail() {
     const card = document.querySelector('[data-loc="contact"] .loc-panel');
     if (!card || !quickLinks) return;
@@ -1132,7 +1164,7 @@ const PLANETS = {
     if (!wasHailed) quickLinks.classList.remove('hailed');
     void quickLinks.offsetHeight;               // flush before transitions come back
     quickLinks.style.transition = '';
-    const b = Math.round(innerHeight / 2 - card.offsetHeight / 2 - HAIL_GAP - islandH);
+    const b = Math.round(innerHeight / 2 - card.offsetHeight / 2 - hailGap() - islandH);
     quickLinks.style.setProperty('--hail-bottom', Math.max(24, b) + 'px');
   }
   measureHail();
